@@ -2146,3 +2146,365 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* Visual focus sprint: reduce reading load and make the invader field feel full-screen. */
+.signal-field {
+  inset: 0;
+  pointer-events: none;
+}
+
+.alien-signal {
+  pointer-events: auto;
+}
+
+.hero-flashlight {
+  background:
+    radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.13), rgba(126, 212, 255, 0.07) 6.5rem, transparent 13rem),
+    radial-gradient(circle at var(--mouse-x) var(--mouse-y), transparent 0 8rem, rgba(0, 0, 0, 0.27) 22rem, rgba(0, 0, 0, 0.42));
+  opacity: 0.38;
+}
+
+.invaders-hero.is-light .hero-flashlight {
+  background:
+    radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.34), rgba(126, 212, 255, 0.16) 7rem, transparent 15rem);
+  opacity: 0.34;
+}
+
+.signal-radar {
+  position: absolute;
+  top: 110px;
+  right: clamp(26px, 5vw, 86px);
+  z-index: 2;
+  width: clamp(120px, 12vw, 190px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(126, 212, 255, 0.2);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(126, 212, 255, 0.2) 0 2px, transparent 3px),
+    repeating-radial-gradient(circle, rgba(126, 212, 255, 0.12) 0 1px, transparent 1px 34px);
+  opacity: 0.62;
+}
+
+.signal-radar span {
+  position: absolute;
+  inset: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #7ed4ff;
+  box-shadow: 0 0 16px rgba(126, 212, 255, 0.74);
+}
+
+.signal-radar span:nth-child(1) {
+  transform: translate(38px, -44px);
+}
+
+.signal-radar span:nth-child(2) {
+  transform: translate(-54px, 18px);
+  background: #ffb454;
+  box-shadow: 0 0 16px rgba(255, 180, 84, 0.68);
+}
+
+.signal-radar span:nth-child(3) {
+  transform: translate(22px, 54px);
+}
+
+.visual-scan-strip {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  border-top: 1px solid rgba(126, 212, 255, 0.18);
+  border-bottom: 1px solid rgba(126, 212, 255, 0.12);
+  background: rgba(5, 9, 15, 0.92);
+}
+
+.visual-scan-strip article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 14px;
+  min-height: 82px;
+  align-content: center;
+  padding: 18px clamp(18px, 4vw, 56px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.visual-scan-strip article:last-child {
+  border-right: 0;
+}
+
+.visual-scan-strip span {
+  grid-row: 1 / 3;
+  align-self: center;
+  color: #ffcb73;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.visual-scan-strip strong,
+.visual-scan-strip small {
+  display: block;
+}
+
+.visual-scan-strip strong {
+  color: #f7fbff;
+  font-size: clamp(1.1rem, 1.45vw, 1.6rem);
+  line-height: 1;
+}
+
+.visual-scan-strip small {
+  color: rgba(214, 225, 238, 0.64);
+  font-size: 0.82rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.cases-band {
+  padding-top: clamp(62px, 7vw, 112px);
+}
+
+.cases-band .section-heading {
+  grid-template-columns: minmax(260px, 0.5fr) minmax(320px, 1fr);
+  margin-bottom: clamp(24px, 3.4vw, 44px);
+}
+
+.cases-band .section-heading h2 {
+  max-width: 920px;
+  font-size: clamp(2.8rem, 5vw, 6.4rem);
+}
+
+.cases-band .section-heading p:not(.section-kicker) {
+  max-width: 470px;
+  font-size: 1rem;
+  line-height: 1.48;
+}
+
+.case-card {
+  position: relative;
+  display: block;
+  min-height: clamp(260px, 28vw, 440px);
+  padding: 0;
+  overflow: hidden;
+  border-color: rgba(126, 212, 255, 0.16);
+  background: #04070c;
+}
+
+.case-card:hover,
+.case-card.is-active {
+  transform: translateY(-2px);
+  border-color: rgba(255, 203, 115, 0.58);
+  background: #04070c;
+}
+
+.case-card-art,
+.case-card-copy {
+  margin: 0 !important;
+}
+
+.case-card-art {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.case-card-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(3, 6, 11, 0.06) 0%, rgba(3, 6, 11, 0.4) 46%, rgba(3, 6, 11, 0.94) 100%),
+    linear-gradient(90deg, rgba(126, 212, 255, 0.12), transparent 42%);
+}
+
+.case-card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  opacity: 0.82;
+  filter: saturate(0.92) contrast(1.08);
+}
+
+.case-card-copy {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+  padding: clamp(18px, 2.5vw, 34px);
+}
+
+.case-card-copy span,
+.case-card-copy .case-card-title,
+.case-card-copy strong {
+  margin: 0 !important;
+}
+
+.case-card-copy span {
+  color: rgba(226, 237, 249, 0.68);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.case-card-copy .case-card-title {
+  max-width: 520px;
+  color: #fff8e8;
+  font-weight: 850;
+  font-size: clamp(1.45rem, 2.7vw, 3rem);
+  line-height: 0.96;
+}
+
+.case-card-copy strong {
+  width: fit-content;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 203, 115, 0.28);
+  border-radius: 999px;
+  background: rgba(5, 9, 15, 0.74);
+  color: #ffcb73;
+  font-family: inherit;
+  font-size: 0.86rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lesson-snapshot {
+  grid-template-columns: minmax(280px, 0.54fr) minmax(0, 1fr);
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+  border-color: rgba(126, 212, 255, 0.18);
+}
+
+.lesson-snapshot-lead {
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  padding: clamp(24px, 3vw, 42px);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 203, 115, 0.2), transparent 18rem),
+    rgba(255, 255, 255, 0.045);
+}
+
+.lesson-snapshot-lead p:last-child {
+  max-width: 360px;
+  margin: 0;
+  color: rgba(221, 230, 242, 0.72);
+}
+
+.lesson-snapshot-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lesson-snapshot-grid div {
+  align-content: start;
+  padding: clamp(18px, 2vw, 28px);
+  background: rgba(5, 9, 15, 0.7);
+}
+
+.lesson-snapshot-grid dt {
+  color: #7ed4ff;
+}
+
+.lesson-snapshot .evidence-row,
+.lesson-snapshot .panel-cta {
+  margin: 0 clamp(20px, 3vw, 42px) clamp(20px, 3vw, 34px);
+}
+
+.lesson-snapshot .evidence-row {
+  grid-column: 1 / -1;
+  padding-top: clamp(20px, 3vw, 34px);
+}
+
+.report-band .report-decision-lane {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.report-band .decision-step {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 26px;
+  min-height: clamp(220px, 20vw, 340px);
+  padding: clamp(20px, 2.4vw, 34px);
+  border: 0;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(126, 212, 255, 0.08), transparent 12rem),
+    rgba(5, 9, 15, 0.76);
+}
+
+.report-band .decision-step:hover {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 203, 115, 0.12), transparent 12rem),
+    rgba(7, 12, 20, 0.86);
+}
+
+.report-band .decision-step .deliverable-index {
+  align-self: start;
+}
+
+.report-band .decision-step .deliverable-main {
+  align-self: end;
+}
+
+.report-band .decision-step h3 {
+  max-width: 260px;
+  font-size: clamp(1.2rem, 1.7vw, 2.05rem);
+}
+
+.report-band .decision-step strong {
+  max-width: 280px;
+  color: rgba(221, 230, 242, 0.72);
+  font-size: 0.94rem;
+  line-height: 1.46;
+}
+
+@media (max-width: 1120px) {
+  .visual-scan-strip,
+  .report-band .report-decision-lane {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-scan-strip article {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .lesson-snapshot,
+  .lesson-snapshot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .signal-radar {
+    top: 94px;
+    right: 18px;
+    width: 112px;
+    opacity: 0.44;
+  }
+
+  .invaders-hero .hero-copy {
+    margin-top: 280px;
+  }
+
+  .case-card {
+    min-height: 320px;
+  }
+
+  .case-card-copy .case-card-title {
+    font-size: clamp(1.7rem, 9vw, 2.6rem);
+  }
+}

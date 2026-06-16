@@ -3,24 +3,22 @@ import { ExternalLink, X } from 'lucide-react';
 function CaseLessonPanel({ caseStudy, onClose }) {
   const details = caseStudy.compactDetails;
   const rows = [
-    ['What looks comparable', details.whatLooksComparable],
-    ['What is actually different', details.whatIsDifferent],
-    ['What the report would flag', details.whatTheReportFlags],
-    ['Decision', details.decision],
+    ['Trap', details.whatIsDifferent],
+    ['Use safely', details.decision],
     ['Next action', details.nextAction],
   ];
 
   return (
-    <aside className="lesson-panel" aria-live="polite">
+    <aside className="lesson-panel lesson-snapshot" aria-live="polite">
       <button className="icon-button panel-close" type="button" onClick={onClose} aria-label="Close lesson panel">
         <X size={18} aria-hidden="true" />
       </button>
-      <div>
+      <div className="lesson-snapshot-lead">
         <p className="panel-label">{caseStudy.caseFile}</p>
         <h3>{caseStudy.title}</h3>
         <p>{caseStudy.lesson}</p>
       </div>
-      <dl className="lesson-list">
+      <dl className="lesson-list lesson-snapshot-grid">
         {rows.map(([label, value]) => (
           <div key={label}>
             <dt>{label}</dt>

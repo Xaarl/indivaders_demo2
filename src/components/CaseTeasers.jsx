@@ -25,12 +25,14 @@ function CaseTeasers() {
               type="button"
               onClick={() => setActiveId(caseStudy.id)}
             >
-              <img src={caseStudy.imageUrl} alt="" loading="lazy" />
-              <span>{caseStudy.caseFile}</span>
-              <h3>{caseStudy.title}</h3>
-              <p>{caseStudy.hook}</p>
-              <small>{caseStudy.teaser}</small>
-              <strong>{caseStudy.ctaText}</strong>
+              <span className="case-card-art">
+                <img src={caseStudy.imageUrl} alt="" loading="lazy" />
+              </span>
+              <span className="case-card-copy">
+                <span>{caseStudy.caseFile.replace('Real Game ', '')}</span>
+                <span className="case-card-title">{caseStudy.title}</span>
+                <strong>{caseStudy.hook}</strong>
+              </span>
             </button>
           ))}
         </div>

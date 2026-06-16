@@ -10,9 +10,13 @@ function LandingPage() {
     <main className="site-shell">
       <Hero copy={productCopy.hero} brand={productCopy.brand} />
 
-      <section className="trust-strip" aria-label="Trust points">
+      <section className="visual-scan-strip" aria-label="Steam positioning scan">
         {productCopy.trustStrip.items.map((item) => (
-          <span key={item}>{item}</span>
+          <article key={item.label}>
+            <span>{item.code}</span>
+            <strong>{item.label}</strong>
+            <small>{item.detail}</small>
+          </article>
         ))}
       </section>
 

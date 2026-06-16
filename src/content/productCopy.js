@@ -13,16 +13,28 @@ export const productCopy = {
   },
   trustStrip: {
     items: [
-      "For Steam pages, demos, and Next Fest prep",
-      "Compares games by context, not just tags",
-      "Built to turn research into next actions",
+      {
+        code: "01",
+        label: "Steam page",
+        detail: "promise, tags, screenshots",
+      },
+      {
+        code: "02",
+        label: "Demo read",
+        detail: "friction, first session, proof",
+      },
+      {
+        code: "03",
+        label: "Next Fest",
+        detail: "comparables, price, next move",
+      },
     ],
   },
   reportDeliverables: {
     eyebrow: "Report decisions",
     headline: "Five decisions before you ask players for attention.",
     intro:
-      "A short decision brief for your Steam page, demo promise, price, and launch prep.",
+      "A decision brief for the parts players judge fastest.",
     items: [
       {
         title: "True competitors",

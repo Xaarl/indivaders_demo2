@@ -1,5 +1,5 @@
 import { ArrowRight, RotateCcw, Volume2, VolumeX } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const SIGNALS = [
   {
@@ -71,10 +71,10 @@ const SIGNALS = [
 ];
 
 const DRIFT_BOUNDS = {
-  minX: 62,
-  maxX: 93,
-  minY: 18,
-  maxY: 84,
+  minX: 6,
+  maxX: 96,
+  minY: 8,
+  maxY: 90,
 };
 
 const GRAVITY_CAPTURE_RATIO = 0.34;
@@ -152,11 +152,6 @@ function Hero({ copy, brand }) {
   const audioContextRef = useRef(null);
 
   const absorbedCount = signals.filter((signal) => signal.state === 'absorbed').length;
-  const displayMode = phase === 'light' ? 'solutions' : 'challenges';
-  const displayedSignals = useMemo(
-    () => (phase === 'light' ? SIGNALS.map((signal) => signal.solution) : SIGNALS.map((signal) => signal.pain)),
-    [phase],
-  );
 
   const getSfx = useCallback((name) => {
     const paths = {
@@ -544,14 +539,11 @@ function Hero({ copy, brand }) {
         </div>
       </div>
 
-      <aside className="signal-list-panel" aria-live="polite">
-        <span>{displayMode}</span>
-        <ul>
-          {displayedSignals.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </aside>
+      <div className="signal-radar" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
 
       <div className="black-hole" ref={coreRef} aria-hidden="true">
         <span />

@@ -10,15 +10,14 @@ function ReportDeliverables() {
           <p>{productCopy.reportDeliverables.intro}</p>
         </div>
 
-        <div className="deliverable-grid">
+        <div className="deliverable-grid report-decision-lane">
           {productCopy.reportDeliverables.items.map((item, index) => (
-            <article className="deliverable-card" key={item.title}>
+            <article className="deliverable-card decision-step" key={item.title}>
               <span className="deliverable-index">{String(index + 1).padStart(2, '0')}</span>
               <div className="deliverable-main">
                 <h3>{item.title}</h3>
-                <p>{item.body}</p>
+                <strong>{item.example}</strong>
               </div>
-              {item.example ? <small>{item.example}</small> : null}
             </article>
           ))}
         </div>
