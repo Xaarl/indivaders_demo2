@@ -35,6 +35,7 @@ Project manager:
 - `docs/product/next-sprint-recommendations.md`
 - `docs/project-management/README.md`
 - `docs/project-management/sprint-001-plan.md`
+- `docs/project-management/github-issue-backlog.md`
 - `docs/project-management/decision-log.md`
 - `docs/project-management/handoff-checklist.md`
 
@@ -45,6 +46,7 @@ Graphic designer:
 - `docs/design/02-visual-direction.md`
 - `docs/design/03-page-architecture.md`
 - `docs/design/04-component-system.md`
+- `docs/design/designer-brief.md`
 - `docs/design/07-redesign-priorities.md`
 
 Engineer:

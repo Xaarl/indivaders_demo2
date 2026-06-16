@@ -34,6 +34,7 @@ Do not treat old external workspaces, generated output, or any unrelated folder 
 - [Clean handoff audit](docs/repository/clean-handoff-audit.md)
 - [PM workspace](docs/project-management/README.md)
 - [Design direction](docs/design/00-design-index.md)
+- [GitHub setup](docs/repository/github-setup.md)
 
 ## Safety Boundary
 

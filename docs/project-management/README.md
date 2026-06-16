@@ -36,6 +36,7 @@ Read in this order:
 
 - `decision-log.md`
 - `sprint-001-plan.md`
+- `github-issue-backlog.md`
 - `handoff-checklist.md`
 
 Keep PM docs short, dated, and linked back to the product source of truth.

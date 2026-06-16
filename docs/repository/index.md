@@ -19,6 +19,7 @@ Start here for repository structure and migration decisions.
 - [Clean Handoff Audit](./clean-handoff-audit.md)
 - [Team Handoff](./team-handoff.md)
 - [Baseline Commit Scope](./baseline-commit-scope.md)
+- [GitHub Setup](./github-setup.md)
 
 ## Active Product Docs
 
@@ -35,6 +36,7 @@ Start here for repository structure and migration decisions.
 ## Design And Research
 
 - [Design Direction Index](../design/00-design-index.md)
+- [Designer Brief](../design/designer-brief.md)
 - [Design Redesign Priorities](../design/07-redesign-priorities.md)
 - [Indie Developer Needs](../research/indie-developer-needs.md)
 - [Market Watch Research Plan](../research/market-watch-research-plan.md)
@@ -43,5 +45,6 @@ Start here for repository structure and migration decisions.
 
 - [PM Workspace](../project-management/README.md)
 - [Sprint 001 Plan](../project-management/sprint-001-plan.md)
+- [GitHub Issue Backlog](../project-management/github-issue-backlog.md)
 - [Decision Log](../project-management/decision-log.md)
 - [Handoff Checklist](../project-management/handoff-checklist.md)
