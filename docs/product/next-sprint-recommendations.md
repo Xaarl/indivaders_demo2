@@ -39,7 +39,7 @@ Engineering/content work:
 - Add a sharper above-the-fold "wrong benchmark caught" moment.
 - Make the top 3 next actions visibly tied to specific risks or evidence.
 - Add small evidence labels to verdict/source buttons without clutter.
-- Consider changing "Decision workspace" wording if it reads like product meta-copy rather than user value.
+- Keep sample-report overview wording focused on user decisions rather than product-meta labels.
 
 Acceptance criteria:
 

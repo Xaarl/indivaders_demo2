@@ -38,7 +38,7 @@ The product ladder is:
 
 - Existing invader/black-hole hero direction.
 - Real-game case file direction.
-- Interactive report as the proof artifact.
+- Interactive sample report as the proof surface.
 - Work-grade private workspace direction.
 - Evidence/source access as a trust signal.
 

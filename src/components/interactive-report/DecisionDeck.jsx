@@ -14,7 +14,7 @@ function DecisionDeck({ report, onSectionChange, onSourceDrawerOpen }) {
         <aside className="report-summary-card">
           <span>{report.meta.title}</span>
           <strong>{report.meta.readTime}</strong>
-          <p>Decision workspace: comparables, production reality, review risks, price pressure, actions, and sources.</p>
+          <p>Interactive sample report for comparables, production reality, review risks, price pressure, actions, and sources.</p>
         </aside>
       </div>
 

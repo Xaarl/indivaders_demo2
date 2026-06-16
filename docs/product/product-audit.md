@@ -30,7 +30,7 @@ The hero direction is worth preserving. The arcade/invader/black-hole interactio
 
 The real-game case files are directionally right. TMNT as a licensed benchmark trap, Balatro as an outlier-pattern warning, and Dave the Diver as a production-reality warning give the product a useful point of view.
 
-The interactive sample report is the strongest proof artifact. It shows decisions, not a wall of text: comparables, unsafe assumptions, review-risk actions, price/scope bands, creator angles, next actions, and sources.
+The interactive sample report is the strongest proof surface. It shows decisions, not a wall of text: comparables, unsafe assumptions, review-risk actions, price/scope bands, creator angles, next actions, and sources.
 
 The evidence model already exists in code. `reportSchema.js` defines labels and evidence types, and report data uses source IDs. This is a major credibility advantage if the UI applies it consistently.
 
@@ -38,7 +38,7 @@ The workspace prototype points at the right long-term product. It frames the rep
 
 ## Main Product Problems
 
-The product ladder is still blurry. The UI and docs use "sample reports", "sample brief", "sample report", "preview the brief", "paid report", "proof artifact", and "workspace" before the hierarchy is explicit. A visitor can understand the general value, but may not know what they are being asked to do next.
+The product ladder was blurry before cleanup: sample brief, interactive sample report, paid report, private workspace, and Market Watch needed clearer separation. The current sprint should keep that hierarchy explicit.
 
 The QA checklist now checks `#sample-report` and `#order-report`, which match the current app routes. Obsolete preview-route language has been removed from active user-facing docs.
 

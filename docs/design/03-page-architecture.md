@@ -109,7 +109,7 @@ Current equivalent: `OfferSection`.
 Structure:
 
 - Left: free sample report invitation and email form.
-- Right: $49 early automated report summary.
+- Right: $49 early Steam Positioning Report summary.
 - Bottom or inline: "Private workspace comes after order."
 
 The visual sequence should make it clear that the sample report is the trust step and the paid report is the next commitment.
@@ -177,7 +177,7 @@ The order flow should feel like a guided intake console.
 
 ### Recommended Sections
 
-1. Header: $49 early automated report, private workspace promise.
+1. Header: $49 early Steam Positioning Report, private workspace promise.
 2. Progress strip: Project -> References -> Concerns -> Submit.
 3. Main form: one visible group at a time on desktop or stacked groups on mobile.
 4. Side summary: what the report will produce from the answers.

@@ -134,7 +134,7 @@ Cut now:
 
 Merge:
 
-- "Sample reports" and "interactive sample report" into one primary proof concept.
+- Public proof language into one primary concept: Interactive sample report.
 - "Free sample brief" into lead capture, not a competing product surface.
 
 Delay:

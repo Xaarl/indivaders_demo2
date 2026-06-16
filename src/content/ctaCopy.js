@@ -1,6 +1,6 @@
 export const ctaCopy = {
   labels: {
-    primary: "Get the sample brief",
+    primary: "Get sample brief",
     secondary: "View report outline",
     earlyReport: "Order early report",
     submit: "Send me the sample brief",
@@ -24,8 +24,8 @@ export const ctaCopy = {
   },
   earlyReportInterestForm: {
     id: "early-report-interest",
-    headline: "Interested in the $49 early automated report?",
-    body: "Share your Steam page and we will follow up with next steps for the early automated report.",
+    headline: "Interested in the $49 early Steam Positioning Report?",
+    body: "Share your Steam page and we will follow up with next steps for the early Steam Positioning Report.",
     steamUrlLabel: "Steam page URL",
     steamUrlPlaceholder: "https://store.steampowered.com/app/...",
     messageLabel: "Anything we should know?",

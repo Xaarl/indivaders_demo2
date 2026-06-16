@@ -9,7 +9,7 @@ function CaseTeasers() {
   return (
     <section className="section-band cases-band" id="case-teasers">
       <div className="section-heading">
-        <p className="section-kicker">Sample reports</p>
+        <p className="section-kicker">Interactive sample report</p>
         <h2>Three games, three traps worth spotting.</h2>
         <p>
           Click a case to see the kind of mistake the report is designed to catch before you lock your tags, price, demo promise, or reference list.

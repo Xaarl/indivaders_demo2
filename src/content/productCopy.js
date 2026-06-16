@@ -9,7 +9,7 @@ export const productCopy = {
     subheadline:
       "Get a Steam positioning report that finds your true comparables, unsafe benchmarks, review risks, and the clearest next moves before demo, Next Fest, or launch.",
     primaryCta: "See examples",
-    secondaryCta: "Get email sample",
+    secondaryCta: "Get sample brief",
   },
   trustStrip: {
     items: [
@@ -62,8 +62,8 @@ export const productCopy = {
   },
   earlyReportOffer: {
     eyebrow: "Early report",
-    headline: "$49 early automated report",
-    body: "A focused automated Steam positioning report for indie teams preparing a Steam page, demo, Next Fest, pitch, or launch.",
+    headline: "$49 early Steam Positioning Report",
+    body: "A focused evidence-labeled Steam positioning report for indie teams preparing a Steam page, demo, Next Fest, pitch, or launch.",
     included: [
       "True comparables",
       "Unsafe benchmark warnings",
@@ -72,13 +72,13 @@ export const productCopy = {
       "Price and scope sanity check",
       "Next actions",
     ],
-    note: "Start with the sample report first. Order the early report only if the format feels useful for your game.",
-    cta: "Open sample report",
+    note: "Start with the interactive sample report first. Order the early report only if the format feels useful for your game.",
+    cta: "Open interactive sample report",
   },
   footer: {
     tagline: "Sharper Steam positioning for indie games with real launch ambitions.",
     links: [
-      { label: "Sample report", href: "#sample-report" },
+      { label: "Interactive sample report", href: "#sample-report" },
       { label: "Report details", href: "#report" },
       { label: "Early report", href: "#order-report" },
     ],

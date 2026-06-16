@@ -8,9 +8,10 @@
                     "build":  "vite build",
                     "preview":  "vite preview",
                     "lint":  "eslint . --max-warnings 0",
-                    "verify":  "npm run verify:report && npm run verify:ui-copy && npm run verify:workspace && npm run lint && npm run build",
+                    "verify":  "npm run verify:report && npm run verify:ui-copy && npm run verify:product-ladder && npm run verify:workspace && npm run lint && npm run build",
                     "verify:report":  "node scripts/verify-report-data.mjs",
                     "verify:ui-copy":  "node scripts/verify-ui-copy.mjs",
+                    "verify:product-ladder":  "node scripts/verify-product-ladder.mjs",
                     "verify:workspace":  "node scripts/verify-workspace-model.mjs"
                 },
     "dependencies":  {

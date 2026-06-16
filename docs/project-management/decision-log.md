@@ -92,7 +92,7 @@ The interactive sample report better demonstrates the product than a static brie
 Implications:
 
 - Public CTAs should point to `#sample-report` first.
-- The email sample brief remains a lead magnet concept, not the primary proof artifact.
+- The email sample brief remains a lead magnet concept, not the primary proof surface.
 - QA should test `#sample-report` and `#order-report`.
 
 Owner:
@@ -102,4 +102,3 @@ PM and engineering lead.
 Review date:
 
 After evaluating visitor behavior on the prototype.
-

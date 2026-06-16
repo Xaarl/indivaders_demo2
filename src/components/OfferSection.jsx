@@ -21,7 +21,7 @@ function OfferSection({ reportCopy, sampleCopy, labels }) {
           <p>{sampleCopy.body}</p>
           <a className="preview-link" href="#sample-report">
             <Eye size={18} aria-hidden="true" />
-            Preview the brief first
+            Open interactive sample report
           </a>
 
           <form className="sample-form compact-sample-form" onSubmit={handleSubmit}>

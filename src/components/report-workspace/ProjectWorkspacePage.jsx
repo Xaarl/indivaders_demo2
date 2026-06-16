@@ -79,7 +79,7 @@ function ProjectWorkspacePage({ requestId }) {
 
       <section className="workspace-hero">
         <div>
-          <p className="workspace-kicker">Private report workspace</p>
+          <p className="workspace-kicker">Private project workspace</p>
           <h1>{projectProfile.title}</h1>
           <p>{projectProfile.synopsis}</p>
         </div>
@@ -118,7 +118,7 @@ function ProjectWorkspacePage({ requestId }) {
 
       <section className="workspace-next-step">
         <div>
-          <p className="workspace-kicker">Current proof artifact</p>
+          <p className="workspace-kicker">Current report preview</p>
           <h2>{workspace.nextStep.label}</h2>
           <p>{workspace.nextStep.note}</p>
         </div>

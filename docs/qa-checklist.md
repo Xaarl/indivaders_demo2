@@ -41,7 +41,7 @@ Public UI must not contain:
 - Dave the Diver is framed as a production-context warning.
 - Full sample brief is separate from the landing page.
 - Paid report outline is compact and does not become a dashboard.
-- Public price is `$49 early automated report`.
+- Public price is `$49 early Steam Positioning Report`.
 
 ## Interaction Gate
 

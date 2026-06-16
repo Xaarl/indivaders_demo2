@@ -516,7 +516,7 @@ function Hero({ copy, brand }) {
           </span>
         </a>
         <div className="nav-actions">
-          <a href="#case-teasers">Sample reports</a>
+          <a href="#sample-report">Interactive sample report</a>
           <a href="#report">Report</a>
           <a href="#early-report">Pricing</a>
           <a className="nav-button" href="#sample-brief">

@@ -21,7 +21,7 @@ function SampleBriefForm({ copy, labels }) {
           <p>{copy.body}</p>
           <a className="preview-link" href="#sample-report">
             <Eye size={18} aria-hidden="true" />
-            Preview the brief first
+            Open interactive sample report
           </a>
         </div>
 

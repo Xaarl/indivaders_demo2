@@ -67,8 +67,8 @@ function EarlyReportIntakePage() {
 
       <section className="intake-hero">
         <div>
-          <p className="workspace-kicker">Early automated report</p>
-          <h1>Turn your game idea into a private positioning workspace.</h1>
+          <p className="workspace-kicker">Early Steam Positioning Report</p>
+          <h1>Turn your game idea into a Private project workspace.</h1>
           <p>
             Submit the minimum context needed to generate a Steam positioning report: what the game is, where it is in development, and which references matter.
           </p>

@@ -73,7 +73,7 @@ assert(
 
 const stored = getStoredReportRequest(created.request.id, { storage: memoryStorage });
 assert(stored?.projectProfile?.title === "Night City Brawler", "Created request should be stored locally");
-assert(stored.workspace.nextStep.href === "#sample-report", "Workspace should keep sample report as the current proof artifact");
+assert(stored.workspace.nextStep.href === "#sample-report", "Workspace should keep the interactive sample report as the current report preview");
 
 const tracked = addComparableToWorkspace(created.request.id, "balatro", { storage: memoryStorage });
 assert(tracked.ok, "Comparable should be saved to the workspace");

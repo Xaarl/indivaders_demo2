@@ -129,7 +129,7 @@ Relevant files:
 ### What Works
 
 - The form asks for the right minimum context: title, email, description, stage, Steam URL, references, concerns, notes.
-- The order flow explains that the private workspace is the immediate proof artifact.
+- The order flow explains that the local workspace preview is the immediate next state.
 - Concern chips are a good interaction pattern for non-technical users.
 - The $49 early report framing is clear.
 

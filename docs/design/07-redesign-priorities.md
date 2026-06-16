@@ -233,5 +233,5 @@ Keep fields and validation. Improve grouping, progress, and summary.
 - Source/confidence labels are visible and consistent.
 - Cards are used only where they are the right structure.
 - Public UI remains English-only.
-- The $49 early automated report remains the public offer.
+- The $49 early Steam Positioning Report remains the public offer.
 - The design avoids generic dark-purple SaaS styling.

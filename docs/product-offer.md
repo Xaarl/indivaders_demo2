@@ -19,7 +19,7 @@ The public landing page should stay short, attractive, and action-oriented. It s
 2. Visitor clicks through short real-game case studies.
 3. Visitor requests the free email sample brief.
 4. The sample brief demonstrates tone, format, and usefulness without exposing paid-report details.
-5. Follow-up email can invite qualified teams to ask about the "$49 early automated report".
+5. Follow-up email can invite qualified teams to ask about the "$49 early Steam Positioning Report".
 6. Paid report intake, payment, analysis, and delivery happen outside the public landing page until the product is validated.
 
 ## Pricing Wording
