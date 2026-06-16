@@ -1,0 +1,44 @@
+import productCopy from '../content/productCopy.js';
+import ctaCopy from '../content/ctaCopy.js';
+import Hero from './Hero.jsx';
+import CaseTeasers from './CaseTeasers.jsx';
+import ReportDeliverables from './ReportDeliverables.jsx';
+import OfferSection from './OfferSection.jsx';
+
+function LandingPage() {
+  return (
+    <main className="site-shell">
+      <Hero copy={productCopy.hero} brand={productCopy.brand} />
+
+      <section className="trust-strip" aria-label="Trust points">
+        {productCopy.trustStrip.items.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </section>
+
+      <CaseTeasers />
+      <ReportDeliverables />
+
+      <OfferSection
+        reportCopy={productCopy.earlyReportOffer}
+        sampleCopy={ctaCopy.leadMagnetForm}
+        labels={ctaCopy.labels}
+      />
+
+      <footer className="site-footer">
+        <p>{productCopy.footer.tagline}</p>
+        <nav aria-label="Footer links">
+          {productCopy.footer.links.map((link) => (
+            <a href={link.href} key={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </footer>
+    </main>
+  );
+}
+
+export default LandingPage;
+
+
