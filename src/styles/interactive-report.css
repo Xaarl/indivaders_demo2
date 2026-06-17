@@ -168,12 +168,69 @@
   line-height: 1.5;
 }
 
-.verdict-grid {
+.decision-lead {
   display: grid;
-  grid-template-columns: repeat(5, minmax(220px, 1fr));
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: end;
   width: min(1500px, 100%);
   margin: clamp(34px, 5vw, 70px) auto 0;
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid rgba(255, 203, 115, 0.32);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 203, 115, 0.17), transparent 22rem),
+    linear-gradient(135deg, rgba(126, 212, 255, 0.09), rgba(255, 255, 255, 0.035));
+}
+
+.decision-lead span,
+.priority-action-footer strong {
+  color: #ffcb73;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.decision-lead h2 {
+  max-width: 820px;
+  margin: 8px 0 0;
+  color: #fff9ed;
+  font-size: clamp(2rem, 4vw, 4.6rem);
+  line-height: 0.98;
+}
+
+.decision-lead p {
+  max-width: 760px;
+  margin: 16px 0 0;
+  color: rgba(221, 230, 242, 0.78);
+  font-size: clamp(1rem, 1.15vw, 1.18rem);
+  line-height: 1.5;
+}
+
+.decision-lead button,
+.priority-source-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid rgba(126, 212, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(4, 8, 14, 0.68);
+  color: #edf8ff;
+  cursor: pointer;
+  font-weight: 850;
+}
+
+.verdict-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 14px;
+  width: min(1500px, 100%);
+  margin: 14px auto 0;
 }
 
 .verdict-card,
@@ -250,7 +307,8 @@
 
 .card-footer button,
 .inline-source-link,
-.action-card button {
+.action-card button,
+.priority-source-chip {
   min-height: 34px;
   padding: 7px 10px;
   font-size: 0.82rem;
@@ -284,6 +342,18 @@
   color: #7ed4ff;
   font-family: "IBM Plex Mono", monospace;
   font-weight: 900;
+}
+
+.priority-action-footer {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.priority-action-footer strong {
+  color: #9fe4ff;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .workspace-preview {
@@ -798,6 +868,7 @@
   .evidence-columns,
   .risk-layout,
   .decision-hero,
+  .decision-lead,
   .priority-panel {
     grid-template-columns: 1fr;
   }

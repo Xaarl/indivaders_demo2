@@ -42,7 +42,7 @@ function App() {
   }
 
   if (route.name === 'workspace') {
-    return <ProjectWorkspacePage requestId={route.id} />;
+    return <ProjectWorkspacePage key={route.id} requestId={route.id} />;
   }
 
   return <LandingPage />;

@@ -4,12 +4,12 @@ export const productCopy = {
     descriptor: "Steam positioning for indie teams",
   },
   hero: {
-    eyebrow: "Automated Steam Positioning Report",
+    eyebrow: "$49 early Steam Positioning Report",
     headline: "Before you polish the wrong demo",
     subheadline:
       "Get a Steam positioning report that finds your true comparables, unsafe benchmarks, review risks, and the clearest next moves before demo, Next Fest, or launch.",
-    primaryCta: "See examples",
-    secondaryCta: "Get sample brief",
+    primaryCta: "Open sample report",
+    secondaryCta: "Request early report",
   },
   trustStrip: {
     items: [
@@ -84,7 +84,7 @@ export const productCopy = {
       "Price and scope sanity check",
       "Next actions",
     ],
-    note: "Start with the interactive sample report first. Order the early report only if the format feels useful for your game.",
+    note: "Start with the interactive sample report first. Request the early report only if the format feels useful for your game.",
     cta: "Open interactive sample report",
   },
   footer: {

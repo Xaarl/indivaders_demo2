@@ -32,6 +32,16 @@ function CaseTeasers() {
                 <span>{caseStudy.caseFile.replace('Real Game ', '')}</span>
                 <span className="case-card-title">{caseStudy.title}</span>
                 <strong>{caseStudy.hook}</strong>
+                <span className="case-card-contrast">
+                  <span>
+                    <small>Looks like</small>
+                    {caseStudy.cardContrast.looksLike}
+                  </span>
+                  <span>
+                    <small>Actually</small>
+                    {caseStudy.cardContrast.actually}
+                  </span>
+                </span>
               </span>
             </button>
           ))}

@@ -68,15 +68,15 @@ function EarlyReportIntakePage() {
       <section className="intake-hero">
         <div>
           <p className="workspace-kicker">Early Steam Positioning Report</p>
-          <h1>Turn your game idea into a Private project workspace.</h1>
+          <h1>Request the report, then preview the workspace shape.</h1>
           <p>
-            Submit the minimum context needed to generate a Steam positioning report: what the game is, where it is in development, and which references matter.
+            Submit the minimum context needed for a Steam positioning report: what the game is, where it is in development, and which references matter.
           </p>
         </div>
         <aside>
           <CheckCircle2 size={22} aria-hidden="true" />
           <strong>$49 early report</strong>
-          <span>Submit the request first. Payment confirmation follows when the report slot is available.</span>
+          <span>Submit the request first. Payment confirmation follows only when the report slot is available.</span>
         </aside>
       </section>
 
@@ -172,10 +172,10 @@ function EarlyReportIntakePage() {
         </label>
 
         <footer className="intake-submit-row">
-          <p>You will get a private workspace preview immediately after submitting.</p>
+          <p>You will get a browser-only local workspace preview immediately after submitting.</p>
           <button className="button button-primary" type="submit">
             <Send size={18} aria-hidden="true" />
-            Create workspace
+            Create local preview
             <ArrowRight size={18} aria-hidden="true" />
           </button>
         </footer>

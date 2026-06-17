@@ -15,6 +15,10 @@ export const caseStudies = [
     lesson:
       "Use it for genre clarity cues, not for sales, wishlist, or scope expectations.",
     ctaText: "Open the trap",
+    cardContrast: {
+      looksLike: "Small-team 2D action benchmark",
+      actually: "Licensed nostalgia plus publisher reach",
+    },
     compactDetails: {
       whatLooksComparable:
         "Fast 2D action, clear co-op appeal, readable combat fantasy, and a strong arcade beat-'em-up promise.",
@@ -55,6 +59,10 @@ export const caseStudies = [
     lesson:
       "Study hook clarity and replayability. Do not use an outlier as your baseline.",
     ctaText: "Open the pattern",
+    cardContrast: {
+      looksLike: "Compact idea with a repeatable hook",
+      actually: "Breakout outcome, not a forecast",
+    },
     compactDetails: {
       whatLooksComparable:
         "Compact presentation, clear rules hook, replayable structure, and strong word-of-mouth potential.",
@@ -93,6 +101,10 @@ export const caseStudies = [
       "Pixel art and cozy tone can hide publisher context, content breadth, and production support.",
     lesson: "Compare resource reality before copying scope.",
     ctaText: "Open the reality check",
+    cardContrast: {
+      looksLike: "Indie-friendly pixel scope",
+      actually: "Publisher-backed breadth and support",
+    },
     compactDetails: {
       whatLooksComparable:
         "Pixel art, approachable tone, hybrid loops, strong screenshots, and an inviting adventure/management fantasy.",

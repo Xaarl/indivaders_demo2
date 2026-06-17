@@ -514,8 +514,8 @@ function Hero({ copy, brand }) {
           <a href="#sample-report">Interactive sample report</a>
           <a href="#report">Report</a>
           <a href="#early-report">Pricing</a>
-          <a className="nav-button" href="#sample-brief">
-            Get sample
+          <a className="nav-button" href="#order-report">
+            Request report
           </a>
         </div>
       </nav>
@@ -529,11 +529,11 @@ function Hero({ copy, brand }) {
         <h1>{copy.headline}</h1>
         <p>{copy.subheadline}</p>
         <div className="hero-actions">
-          <a className="button button-primary" href="#case-teasers">
+          <a className="button button-primary" href="#sample-report">
             {copy.primaryCta}
             <ArrowRight size={18} aria-hidden="true" />
           </a>
-          <a className="button button-secondary" href="#sample-brief">
+          <a className="button button-secondary" href="#order-report">
             {copy.secondaryCta}
           </a>
         </div>

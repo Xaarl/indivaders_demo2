@@ -32,7 +32,7 @@ function ProjectWorkspacePage({ requestId }) {
         </header>
         <section className="workspace-empty">
           <p className="workspace-kicker">Workspace not found</p>
-          <h1>This private workspace only exists in your browser for now.</h1>
+          <h1>This Browser-only local preview only exists in your browser for now.</h1>
           <p>Create a new early report request to generate a local workspace preview.</p>
           <a className="button button-primary" href="#order-report">
             Create report request
@@ -44,6 +44,10 @@ function ProjectWorkspacePage({ requestId }) {
 
   const { projectProfile, workspace } = request;
   const doneActions = workspace.actionItems.filter((item) => item.status === "done").length;
+  const previewStatus = workspace.previewStatus ?? {
+    label: "Browser-only local preview",
+    summary: "This prototype workspace is saved in this browser only until a real backend exists.",
+  };
 
   function saveComparable(comparableId) {
     const result = addComparableToWorkspace(request.id, comparableId);
@@ -79,15 +83,38 @@ function ProjectWorkspacePage({ requestId }) {
 
       <section className="workspace-hero">
         <div>
-          <p className="workspace-kicker">Private project workspace</p>
+          <p className="workspace-kicker">{previewStatus.label}</p>
           <h1>{projectProfile.title}</h1>
           <p>{projectProfile.synopsis}</p>
         </div>
         <aside className="workspace-status-card">
           <span>Status</span>
           <strong>Request received</strong>
-          <p>{doneActions}/{workspace.actionItems.length} actions marked done. {workspace.comparableBoard.savedComparables.length} comparables saved.</p>
+          <p>{previewStatus.summary}</p>
         </aside>
+      </section>
+
+      <section className="workspace-command-strip" aria-label="Workspace status summary">
+        <article>
+          <span>Preview state</span>
+          <strong>Local browser</strong>
+          <small>Private project workspace persistence comes after backend support.</small>
+        </article>
+        <article>
+          <span>Saved work</span>
+          <strong>{workspace.comparableBoard.savedComparables.length} comparables</strong>
+          <small>{doneActions}/{workspace.actionItems.length} actions marked done.</small>
+        </article>
+        <article>
+          <span>Evidence</span>
+          <strong>{workspace.sourceLog.length} source rows</strong>
+          <small>Confirmed, reported, estimated, inferred, and unknown labels.</small>
+        </article>
+        <article>
+          <span>Market Watch</span>
+          <strong>Future layer</strong>
+          <small>No live scan is connected in this prototype.</small>
+        </article>
       </section>
 
       <section className="workspace-profile-grid" aria-label="Project profile">

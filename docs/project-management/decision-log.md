@@ -102,3 +102,31 @@ PM and engineering lead.
 Review date:
 
 After evaluating visitor behavior on the prototype.
+
+### 2026-06-17: Keep Codex Continuity Outside Chat Memory
+
+Decision:
+
+Pin and clearly name the main Indievaders Codex thread, and record sprint-critical decisions in this decision log instead of relying on chat history alone.
+
+Context:
+
+Recent Codex threads appeared easy to lose track of from the app sidebar. The repository itself is healthy, but conversation history should not be the only durable handoff surface.
+
+Chosen because:
+
+Pinned/named threads help navigation, while repo-tracked decisions survive app state, thread filtering, and local UI confusion.
+
+Implications:
+
+- The active thread is named `Indievaders Prototype Hardening` and pinned.
+- Sprint decisions that affect scope, product ladder, persistence, or handoff should be summarized here.
+- Chat remains useful for collaboration, but docs remain the source of truth.
+
+Owner:
+
+Repository owner.
+
+Review date:
+
+After the next sprint handoff.

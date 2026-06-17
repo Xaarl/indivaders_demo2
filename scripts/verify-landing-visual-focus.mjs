@@ -6,6 +6,8 @@ const files = {
   cases: new URL("../src/components/CaseTeasers.jsx", import.meta.url),
   lesson: new URL("../src/components/CaseLessonPanel.jsx", import.meta.url),
   report: new URL("../src/components/ReportDeliverables.jsx", import.meta.url),
+  sampleReport: new URL("../src/components/interactive-report/DecisionDeck.jsx", import.meta.url),
+  workspace: new URL("../src/components/report-workspace/ProjectWorkspacePage.jsx", import.meta.url),
   css: new URL("../src/styles/landing.css", import.meta.url),
 };
 
@@ -68,12 +70,28 @@ assert(
   "The selected case detail should be a compact lesson snapshot.",
 );
 assert(
+  sources.lesson.includes("Looks like") && sources.lesson.includes("Actually") && sources.lesson.includes("Unsafe if copied"),
+  "The selected case detail should show a direct looks-like / actually / unsafe-if-copied diagnostic.",
+);
+assert(
   sources.report.includes("report-decision-lane"),
   "Report decisions should render as a visual lane, not another card wall.",
 );
 assert(
   !sources.report.includes("<p>{item.body}</p>"),
   "Report decision rows should not expose every body paragraph in the first landing scan.",
+);
+assert(
+  sources.sampleReport.includes("decision-lead") && sources.sampleReport.includes("wrong-benchmark"),
+  "The sample report overview should lead with a wrong-benchmark-caught moment.",
+);
+assert(
+  sources.sampleReport.includes("priority-source-chip") && sources.sampleReport.includes("onSourceDrawerOpen(item.evidenceRefs)"),
+  "Top next actions should show source/confidence chips and open their evidence.",
+);
+assert(
+  sources.workspace.includes("workspace-command-strip") && sources.workspace.includes("Browser-only local preview"),
+  "The workspace should expose a command strip and clear browser-only preview status.",
 );
 
 if (failures.length) {

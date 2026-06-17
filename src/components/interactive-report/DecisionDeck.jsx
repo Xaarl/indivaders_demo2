@@ -2,6 +2,7 @@ import { ArrowRight, Database, Eye, Target } from "lucide-react";
 
 function DecisionDeck({ report, onSectionChange, onSourceDrawerOpen }) {
   const priorityActions = report.nextActions.slice(0, 3);
+  const [leadVerdict, ...supportingVerdicts] = report.verdicts;
 
   return (
     <section className="decision-deck">
@@ -18,8 +19,22 @@ function DecisionDeck({ report, onSectionChange, onSourceDrawerOpen }) {
         </aside>
       </div>
 
+      {leadVerdict ? (
+        <article className="decision-lead wrong-benchmark">
+          <div>
+            <span>{leadVerdict.label}</span>
+            <h2>Wrong benchmark caught before it shapes the plan.</h2>
+            <p>{leadVerdict.decision}</p>
+          </div>
+          <button type="button" onClick={() => onSourceDrawerOpen(leadVerdict.evidenceRefs)}>
+            <Database size={17} aria-hidden="true" />
+            Open evidence
+          </button>
+        </article>
+      ) : null}
+
       <div className="verdict-grid" aria-label="Report verdicts">
-        {report.verdicts.map((verdict) => (
+        {supportingVerdicts.map((verdict) => (
           <article className="verdict-card" key={verdict.id}>
             <span>{verdict.label}</span>
             <h2>{verdict.headline}</h2>
@@ -45,6 +60,13 @@ function DecisionDeck({ report, onSectionChange, onSourceDrawerOpen }) {
               <span>{String(index + 1).padStart(2, "0")}</span>
               <h3>{item.title}</h3>
               <p>{item.action}</p>
+              <footer className="priority-action-footer">
+                <strong>{item.impact}</strong>
+                <button className="priority-source-chip" type="button" onClick={() => onSourceDrawerOpen(item.evidenceRefs)}>
+                  <Database size={14} aria-hidden="true" />
+                  {item.evidenceRefs.length} sources
+                </button>
+              </footer>
             </article>
           ))}
         </div>

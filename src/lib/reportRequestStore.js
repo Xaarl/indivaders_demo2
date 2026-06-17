@@ -147,10 +147,14 @@ function buildWorkspace(projectProfile) {
   return {
     title: `${projectProfile.title} workspace`,
     state: "request_received",
+    previewStatus: {
+      label: "Browser-only local preview",
+      summary: "This prototype workspace is saved in this browser only until a real backend exists.",
+    },
     nextStep: {
       label: "Open the interactive sample report",
       href: "#sample-report",
-      note: "Your paid report will use this format, then become a private workspace for your game.",
+      note: "This local workspace preview shows the shape of the paid report surface; custom analysis still happens after manual review.",
     },
     reportSnapshot,
     comparableBoard,

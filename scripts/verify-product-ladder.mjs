@@ -17,6 +17,14 @@ const forbiddenCopy = [
     reason: "Use early Steam Positioning Report for the paid product.",
   },
   {
+    text: "Automated Steam Positioning Report",
+    reason: "Do not imply the report is automated before backend/report generation exists.",
+  },
+  {
+    text: "Order early report",
+    reason: "Use request language until payment and fulfillment are real.",
+  },
+  {
     text: "Early automated report",
     reason: "Use Early Steam Positioning Report for the paid product.",
   },
@@ -54,6 +62,14 @@ const requiredCopy = [
   {
     text: "local workspace preview",
     reason: "The current browser-only workspace must be clearly labelled as local preview.",
+  },
+  {
+    text: "Browser-only local preview",
+    reason: "The workspace route must explain the current persistence boundary in user-facing copy.",
+  },
+  {
+    text: "Request early report",
+    reason: "The intake path should be framed as a request, not an automated order.",
   },
 ];
 

@@ -22,7 +22,7 @@ function EarlyReportOffer({ copy, labels }) {
               <Mail size={18} aria-hidden="true" />
               {copy.cta}
             </a>
-            <a className="button button-ghost" href="mailto:hello@indievaders.com?subject=Early%20automated%20report%20interest">
+            <a className="button button-ghost" href="#order-report">
               <ArrowRight size={18} aria-hidden="true" />
               {labels.earlyReport}
             </a>

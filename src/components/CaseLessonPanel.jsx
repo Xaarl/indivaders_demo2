@@ -3,8 +3,10 @@ import { ExternalLink, X } from 'lucide-react';
 function CaseLessonPanel({ caseStudy, onClose }) {
   const details = caseStudy.compactDetails;
   const rows = [
-    ['Trap', details.whatIsDifferent],
-    ['Use safely', details.decision],
+    ['Looks like', details.whatLooksComparable],
+    ['Actually', details.whatIsDifferent],
+    ['Unsafe if copied', details.whatTheReportFlags],
+    ['Safe lesson', details.decision],
     ['Next action', details.nextAction],
   ];
 

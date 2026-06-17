@@ -1,8 +1,8 @@
 export const ctaCopy = {
   labels: {
-    primary: "Get sample brief",
+    primary: "Open sample report",
     secondary: "View report outline",
-    earlyReport: "Order early report",
+    earlyReport: "Request early report",
     submit: "Send me the sample brief",
   },
   leadMagnetForm: {
