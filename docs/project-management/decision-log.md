@@ -130,3 +130,31 @@ Repository owner.
 Review date:
 
 After the next sprint handoff.
+
+### 2026-06-18: Use GitHub Backup Before Share-Ready Sprint
+
+Decision:
+
+Use `https://github.com/Xaarl/Indievaders.git` as the remote backup for Indievaders work, and keep Sprint 003 focused on share-ready prototype polish rather than backend expansion.
+
+Context:
+
+Sprint 002 hardening was committed locally and pushed to `origin/codex/sprint-002-visual-focus`. The prototype now has a coherent main path, but it still needs reviewer-facing handoff and final mobile/share QA before it is useful outside the working thread.
+
+Chosen because:
+
+Remote backup protects the current state from local or Codex thread loss, while a share-ready sprint gives the project a useful external review checkpoint before introducing backend, auth, payment, or live Market Watch responsibilities.
+
+Implications:
+
+- Push meaningful sprint commits to GitHub before handoff.
+- Sprint 003 should improve review readiness, QA docs, mobile polish, and handoff clarity.
+- Backend persistence, payment, auth, customer-specific generation, and live monitoring remain out of scope.
+
+Owner:
+
+Repository owner.
+
+Review date:
+
+After Sprint 003 share-ready handoff.
