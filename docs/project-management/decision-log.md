@@ -158,3 +158,31 @@ Repository owner.
 Review date:
 
 After Sprint 003 share-ready handoff.
+
+### 2026-06-19: Dogfood Refractured Before Sharing
+
+Decision:
+
+The next product-learning step is a private Refractured client-style report, not public sharing.
+
+Context:
+
+The previous share-ready sprint plan was useful, but Refractured gives Indievaders a stronger immediate test: a real pre-Steam game with local project docs, combat prototype constraints, and public comparable needs.
+
+Chosen because:
+
+The prototype needs proof that its report format creates value on a real early-stage game before distribution features matter.
+
+Implications:
+
+- Do not build sharing, auth, payment, or live Market Watch for this sprint.
+- Use the client-facing dogfood report and internal workflow notes as the next proof point.
+- Treat Refractured as a private dogfood case, not a public case study.
+
+Owner:
+
+Repository owner.
+
+Review date:
+
+After the Refractured dogfood report and workflow notes are reviewed.
