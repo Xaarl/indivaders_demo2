@@ -1,7 +1,7 @@
 # Refractured Client Report Dogfood Design
 
 Date: 2026-06-19
-Status: Approved direction, awaiting written-spec review
+Status: Approved for implementation planning
 
 ## Decision
 
