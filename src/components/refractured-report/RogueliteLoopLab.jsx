@@ -16,10 +16,10 @@ function RogueliteLoopLab({ directions, onEvidenceOpen }) {
         </p>
       </div>
 
-      <div className="refractured-choice-strip" role="tablist" aria-label="Roguelite directions">
+      <div className="refractured-choice-strip" aria-label="Roguelite directions">
         {directions.map((direction) => (
           <button
-            aria-selected={direction.id === activeDirection.id}
+            aria-pressed={direction.id === activeDirection.id}
             className={direction.id === activeDirection.id ? "is-active" : ""}
             key={direction.id}
             type="button"

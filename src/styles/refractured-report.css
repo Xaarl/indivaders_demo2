@@ -289,14 +289,50 @@
   }
 }
 
-.refractured-signal-grid {
+.refractured-signal-inspector {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   margin-top: 28px;
 }
 
-.refractured-signal-grid article,
+.refractured-signal-selector {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.refractured-signal-selector button {
+  display: grid;
+  gap: 10px;
+  min-height: 128px;
+  padding: 18px;
+  border: 1px solid rgba(233, 197, 124, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #f7f3ea;
+  cursor: pointer;
+  text-align: left;
+}
+
+.refractured-signal-selector button.is-active {
+  border-color: rgba(233, 197, 124, 0.78);
+  background: rgba(233, 197, 124, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(233, 197, 124, 0.18);
+}
+
+.refractured-signal-selector strong {
+  color: #fff7df;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.refractured-signal-selector span {
+  color: rgba(247, 243, 234, 0.68);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.refractured-signal-detail,
 .refractured-feature-panel {
   border: 1px solid rgba(233, 197, 124, 0.22);
   border-radius: 8px;
@@ -304,7 +340,11 @@
   padding: 22px;
 }
 
-.refractured-signal-grid h2,
+.refractured-signal-detail {
+  width: 100%;
+}
+
+.refractured-signal-detail h2,
 .refractured-feature-panel h2 {
   margin: 0;
   color: #fff7df;
@@ -338,7 +378,7 @@
   color: rgba(247, 243, 234, 0.75);
 }
 
-.refractured-signal-grid button,
+.refractured-signal-detail button,
 .refractured-feature-panel button {
   display: inline-flex;
   align-items: center;
@@ -352,6 +392,15 @@
   color: #f7f3ea;
   cursor: pointer;
   font-weight: 900;
+}
+
+.refractured-signal-selector button:focus-visible,
+.refractured-signal-detail button:focus-visible,
+.refractured-choice-strip button:focus-visible,
+.refractured-feature-panel button:focus-visible {
+  outline: 3px solid #e9c57c;
+  outline-offset: 3px;
+  border-color: #fff7df;
 }
 
 .refractured-choice-strip {
@@ -395,10 +444,20 @@
   line-height: 1.5;
 }
 
+@media (max-width: 1180px) {
+  .refractured-signal-selector {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 860px) {
-  .refractured-signal-grid,
+  .refractured-signal-inspector,
   .refractured-signal-columns,
   .refractured-feature-panel dl {
+    grid-template-columns: 1fr;
+  }
+
+  .refractured-signal-selector {
     grid-template-columns: 1fr;
   }
 }
