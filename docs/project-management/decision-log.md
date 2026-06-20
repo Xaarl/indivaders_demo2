@@ -186,3 +186,138 @@ Repository owner.
 Review date:
 
 After the Refractured client-ready report and workflow notes are reviewed.
+
+### 2026-06-20: Reframe Refractured Report Around Commercial Positioning
+
+Decision:
+
+The Refractured report should be a commercial positioning and monetization
+readiness artifact, not a defensive demo-readiness or scope-control memo.
+
+Context:
+
+The first client-ready HTML report was stronger than the Markdown draft, but it
+still over-indexed on what Refractured should not promise yet. That made the
+output feel demotivating and less useful for the core Indievaders value
+proposition: helping indie developers understand whether their idea can become
+sellable before they spend years building the wrong game.
+
+Chosen because:
+
+A paid client report should help a team see the project's market lane, buyer
+fantasy, monetization options, niche gaps, creative tradeoffs, and short/mid/long
+commercial plan. Competitor references should identify useful player
+expectations and borrowable strategy, not only unsafe scope.
+
+Implications:
+
+- Refractured remains a private validation case.
+- Future report templates should lead with commercial verdict, audience,
+  market gap, strategic paths, monetization model, and roadmap.
+- Risk language should be framed as requirements for the chosen ambition level.
+- Public UI and client artifacts stay in English.
+- Backend, sharing, payment, auth, and live Market Watch remain out of scope
+  for this report sprint.
+
+Owner:
+
+Repository owner.
+
+Review date:
+
+After the rewritten Refractured commercial report is reviewed in browser.
+
+### 2026-06-20: Treat Refractured Roguelite As Core Product Premise
+
+Decision:
+
+The Refractured client report must treat `brutal 2.5D action roguelite` as the
+core product premise, not as one optional strategic path.
+
+Context:
+
+The commercial-positioning rewrite still missed a key local project fact:
+Refractured's archived Game Director notes describe the project as a
+combat-first action roguelite with a nightmare/ritual loop. User feedback
+correctly challenged the report because the previous recommendation framed
+roguelite as something to add later instead of a central source of player
+fantasy, replayability, marketing, and monetization.
+
+Chosen because:
+
+If Indievaders misses the client's actual premise, the resulting report loses
+trust even when the writing and visual design are polished. Future reports need
+an explicit premise-confidence gate before strategic recommendations: identify
+the project's intended genre loop, player fantasy, monetization loop, and
+evidence confidence from local docs before applying market patterns.
+
+Implications:
+
+- The Refractured report title and content now focus on `2.5D Roguelite
+  Market-Fit`, not generic commercial positioning.
+- Strategic paths are rebuilt around roguelite: focused nightmare roguelite,
+  content-forward rogue-em-up, and deep combat mastery platform.
+- The default recommendation is now a solo-first roguelite proof path:
+  one excellent arena, then a handcrafted 3-room micro-run with ritual choices.
+- Report templates should include player-profile, niche reality,
+  review-pattern mining, monetization strategy, and a market radar appendix.
+- Reddit/social listening is marked as a required evidence gap when direct
+  access is unavailable, not silently implied as completed.
+
+Owner:
+
+Repository owner.
+
+Review date:
+
+After the revised Refractured roguelite market-fit report is reviewed in
+browser and compared against local Refractured premise docs.
+
+### 2026-06-20: Make Refractured v2 Artifact-First With Repo Mirror
+
+Decision:
+
+The Refractured v2 report is a Data Analytics artifact first, with a static HTML
+mirror, Markdown summary, and JSON snapshot tracked under
+`docs/client-reports/`.
+
+Context:
+
+The previous static report improved the tone, but it still behaved too much like
+a document. The user asked for the kind of polished, decision-support report a
+client would actually read: cards, tables, scorecards, charts, KPI framework,
+decision gates, and an evidence ledger.
+
+Chosen because:
+
+The artifact format better demonstrates the intended Indievaders product value:
+turn local project evidence plus public market research into an interactive,
+source-backed commercial strategy report. The repo mirror preserves continuity
+and protects against chat or tool state loss.
+
+Implications:
+
+- Future report work should start from an artifact-ready data snapshot.
+- Static HTML and Markdown remain fallback exports, not the primary client
+  experience.
+- Every major claim should carry a confidence label: confirmed, reported,
+  estimated, inferred, or not publicly confirmed.
+- KPI design is part of the report product, not a separate appendix.
+- Backend, sharing, payment, auth, customer accounts, and live Market Watch
+  remain out of scope for this validation sprint.
+
+Owner:
+
+Repository owner.
+
+Review date:
+
+After the Refractured artifact and repo mirror are reviewed in the app.
+
+## 2026-06-20: Make Refractured V3 Interactive-First
+
+Decision: Refractured V3 will use one private interactive client-report route, `#client-report/refractured`, as the primary experience. The Data Analytics artifact, HTML, Markdown, and JSON snapshots are supporting evidence/archive surfaces.
+
+Reason: The v2 report looked too much like a generic AI deep-research output. A paid Indievaders product needs guided interaction, decision modules, source drawers, and premium visual hierarchy.
+
+Impact: Implementation shifts from static report rewriting to a React report experience with local data and focused modules. Backend, auth, payments, public sharing, and live Market Watch remain out of scope.
