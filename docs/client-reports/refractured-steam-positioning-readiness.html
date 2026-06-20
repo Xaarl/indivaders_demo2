@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Refractured Steam Positioning Readiness Report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #181512;
+      --muted: #625b53;
+      --paper: #fbf7f0;
+      --panel: #fffdf8;
+      --panel-strong: #f2eadf;
+      --line: #ddd2c4;
+      --red: #8f2f2f;
+      --red-soft: #f0dad4;
+      --blue: #245a70;
+      --blue-soft: #d8e7ea;
+      --green: #43633f;
+      --green-soft: #dfe8d9;
+      --gold: #8a6323;
+      --gold-soft: #f0e4c9;
+      --shadow: 0 18px 48px rgba(41, 31, 22, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 20px 72px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+      gap: 28px;
+      align-items: stretch;
+      padding: 34px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 850;
+    }
+
+    h2 {
+      font-size: clamp(26px, 3.4vw, 42px);
+      margin-bottom: 18px;
+    }
+
+    h3 {
+      font-size: 19px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.58;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    section {
+      margin-top: 32px;
+      padding: 30px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 360px;
+    }
+
+    .hero-copy > p {
+      max-width: 740px;
+      margin-top: 24px;
+      color: #443d36;
+      font-size: 19px;
+    }
+
+    .verdict-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 24px;
+      background: #161412;
+      color: #fffaf2;
+    }
+
+    .verdict-card p,
+    .verdict-card li {
+      color: #ded3c4;
+    }
+
+    .verdict-card strong {
+      display: block;
+      color: #fffaf2;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .meta-grid,
+    .summary-grid,
+    .cards-grid,
+    .risk-grid,
+    .actions-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .meta-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .meta-item {
+      padding: 14px;
+      border: 1px solid rgba(255, 250, 242, 0.2);
+    }
+
+    .meta-item span,
+    .source-chip {
+      display: block;
+      color: #a99f91;
+      font-size: 12px;
+      font-weight: 750;
+      text-transform: uppercase;
+    }
+
+    .meta-item b {
+      display: block;
+      margin-top: 5px;
+      color: #fffaf2;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .summary-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .summary-card,
+    .finding-card,
+    .comparable-card,
+    .action-card,
+    .caveat-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: #fffaf3;
+    }
+
+    .summary-card {
+      min-height: 170px;
+    }
+
+    .summary-card b,
+    .finding-card b,
+    .action-card b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .finding-layout {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .status-lane {
+      display: grid;
+      gap: 12px;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: #fffaf3;
+    }
+
+    .status-row span,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      max-width: 100%;
+      padding: 5px 8px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .tag.confirmed,
+    .status-row span {
+      background: var(--green-soft);
+      color: var(--green);
+      border-color: #c7d7be;
+    }
+
+    .tag.inferred {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border-color: #ddc891;
+    }
+
+    .tag.reported {
+      background: var(--blue-soft);
+      color: var(--blue);
+      border-color: #bdd4da;
+    }
+
+    .cards-grid {
+      grid-template-columns: repeat(5, minmax(190px, 1fr));
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .comparable-card {
+      min-width: 190px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .comparable-card h3 {
+      min-height: 44px;
+    }
+
+    .lesson-block {
+      padding: 12px;
+      background: var(--green-soft);
+      border: 1px solid #c7d7be;
+    }
+
+    .trap-block {
+      padding: 12px;
+      background: var(--red-soft);
+      border: 1px solid #dec0ba;
+    }
+
+    .lesson-block p,
+    .trap-block p {
+      color: #312c27;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .risk-grid {
+      grid-template-columns: repeat(5, minmax(180px, 1fr));
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .risk-card {
+      min-width: 180px;
+      padding: 18px;
+      background: #fffaf3;
+      border: 1px solid var(--line);
+    }
+
+    .risk-card h3 {
+      color: var(--red);
+    }
+
+    .risk-card p {
+      font-size: 14px;
+    }
+
+    .actions-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .action-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .action-card .index {
+      display: inline-grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      background: var(--ink);
+      color: #fffaf2;
+      font-weight: 850;
+    }
+
+    .source-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      background: #fffaf3;
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--panel-strong);
+      color: #37312b;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: var(--muted);
+    }
+
+    .print-note {
+      margin-top: 18px;
+      padding: 16px;
+      border-left: 4px solid var(--blue);
+      background: var(--blue-soft);
+    }
+
+    @media (max-width: 860px) {
+      main {
+        padding: 18px 14px 48px;
+      }
+
+      header,
+      .finding-layout,
+      .summary-grid,
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header,
+      section {
+        padding: 22px;
+      }
+
+      .hero-copy {
+        min-height: unset;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+
+      header,
+      section {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main data-report-audience="product stakeholders">
+    <header data-contract-section="title">
+      <div class="hero-copy">
+        <div>
+          <span class="eyebrow">Client report | Steam positioning readiness</span>
+          <h1>Refractured is ready for positioning discipline, not public Steam positioning.</h1>
+          <p>Indievaders turns the current private combat prototype into a demo-readiness brief: what the game can credibly promise, what expectations it should avoid creating, and what must be proven before a Steam page, trailer, or public share copy exists.</p>
+        </div>
+      </div>
+
+      <aside class="verdict-card" aria-label="Report verdict">
+        <strong>Verdict</strong>
+        <p>The evidence supports a focused dark 2.5D combat-readability lane. It does not yet support broad action-game, open 3D, launch-readiness, or content-depth claims.</p>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span>Project stage</span>
+            <b>Pre-Steam combat foundation</b>
+          </div>
+          <div class="meta-item">
+            <span>Report mode</span>
+            <b>Local review + public comparables</b>
+          </div>
+          <div class="meta-item">
+            <span>Prepared by</span>
+            <b>Indievaders</b>
+          </div>
+          <div class="meta-item">
+            <span>Date</span>
+            <b>June 19, 2026</b>
+          </div>
+        </div>
+      </aside>
+    </header>
+
+    <section class="executive-summary-box" data-contract-section="executive-summary">
+      <h2>Executive Summary</h2>
+      <div class="summary-grid">
+        <article class="summary-card">
+          <b>Use the report before the Steam page exists.</b>
+          <p>The useful output now is a pre-Steam promise sheet, a demo-readiness gate list, a risk map, and sprint priorities tied to current proof.</p>
+        </article>
+        <article class="summary-card">
+          <b>Keep the public claim narrow.</b>
+          <p>Refractured should sell readable pressure, heavy impact, defensive timing, and controlled camera clarity before it claims broad action scope.</p>
+        </article>
+        <article class="summary-card">
+          <b>Benchmark for lessons, not forecasts.</b>
+          <p>Sifu, Absolver, Midnight Fight Express, Streets of Rage 4, and Fight'N Rage clarify expectations, but none should be used as a sales or scope forecast.</p>
+        </article>
+      </div>
+    </section>
+
+    <section data-contract-section="key-findings">
+      <h2>The current prototype is a demo-readiness candidate</h2>
+      <div class="finding-layout">
+        <article class="finding-card">
+          <b>What Indievaders can say with confidence</b>
+          <p>Local documentation supports a stylized 3D combat-first direction aimed at controlled 3D/2.5D brawler readability. It also shows a deliberately small playable baseline, known animation intake risk, and active performance constraints.</p>
+        </article>
+        <div class="status-lane">
+          <div class="status-row">
+            <span>Confirmed</span>
+            <p>Main reviewed scenes: <code>combat_lab.tscn</code>, <code>animation_lab.tscn</code>, and <code>battle_stage_25d.tscn</code>.</p>
+          </div>
+          <div class="status-row">
+            <span>Confirmed</span>
+            <p>Current combat proof is intentionally small: verified attack and defense checks, not a full move set or final loop.</p>
+          </div>
+          <div class="status-row">
+            <span>Inferred</span>
+            <p>The game is stronger today as a private demo-readiness case than as a public Steam-page candidate.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-contract-section="key-findings">
+      <h2>Comparable games clarify the trap, not the target</h2>
+      <p>These are reference comparables for positioning and expectation-setting. They are not commercial comps, production forecasts, or scope promises.</p>
+      <div class="cards-grid" aria-label="Comparable games">
+        <article class="comparable-card">
+          <h3>Sifu</h3>
+          <span class="tag reported">Reported</span>
+          <div class="lesson-block">
+            <p><strong>Safe lesson:</strong> defensive timing, enemy pressure, and environmental combat must be readable before the promise expands.</p>
+          </div>
+          <div class="trap-block">
+            <p><strong>Unsafe assumption:</strong> Refractured should not imply Sifu-level authored combat density, animation polish, or mastery depth yet.</p>
+          </div>
+        </article>
+
+        <article class="comparable-card">
+          <h3>Midnight Fight Express</h3>
+          <span class="tag confirmed">Confirmed</span>
+          <div class="lesson-block">
+            <p><strong>Safe lesson:</strong> compact, readable, impact-heavy brawling is a closer promise than broad open 3D action.</p>
+          </div>
+          <div class="trap-block">
+            <p><strong>Unsafe assumption:</strong> do not borrow its mission count, weapon breadth, cosmetics, or mo-cap polish as near-term scope.</p>
+          </div>
+        </article>
+
+        <article class="comparable-card">
+          <h3>Absolver</h3>
+          <span class="tag confirmed">Confirmed</span>
+          <div class="lesson-block">
+            <p><strong>Safe lesson:</strong> deep combat-system language quickly creates expectations for mastery and customization.</p>
+          </div>
+          <div class="trap-block">
+            <p><strong>Unsafe assumption:</strong> avoid open-world, RPG, multiplayer, or combat-deck language unless those systems are scoped and demonstrable.</p>
+          </div>
+        </article>
+
+        <article class="comparable-card">
+          <h3>Streets of Rage 4</h3>
+          <span class="tag confirmed">Confirmed</span>
+          <div class="lesson-block">
+            <p><strong>Safe lesson:</strong> beat-em-up players expect immediate impact, legible enemy waves, and clear stage pressure.</p>
+          </div>
+          <div class="trap-block">
+            <p><strong>Unsafe assumption:</strong> do not promise co-op, arcade revival structure, or franchise-scale polish.</p>
+          </div>
+        </article>
+
+        <article class="comparable-card">
+          <h3>Fight'N Rage</h3>
+          <span class="tag confirmed">Confirmed</span>
+          <div class="lesson-block">
+            <p><strong>Safe lesson:</strong> responsive controls and compact mastery pressure matter more than raw feature count.</p>
+          </div>
+          <div class="trap-block">
+            <p><strong>Unsafe assumption:</strong> Refractured does not need to become a 2D arcade-route game or promise local co-op.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section data-contract-section="key-findings">
+      <h2>Five production risks decide whether the promise lands</h2>
+      <div class="risk-grid" aria-label="Production and review risks">
+        <article class="risk-card">
+          <h3>Animation intake</h3>
+          <p>Known retargeting and promotion gates mean demo-critical clips must pass lab and runtime review before public use.</p>
+        </article>
+        <article class="risk-card">
+          <h3>First-hit feel</h3>
+          <p>Players will judge impact and responsiveness before they understand the larger combat system.</p>
+        </article>
+        <article class="risk-card">
+          <h3>Camera readability</h3>
+          <p>Controlled 3D/2.5D combat depends on threat direction, spacing, recovery, and enemy staging being legible.</p>
+        </article>
+        <article class="risk-card">
+          <h3>Scope drift</h3>
+          <p>Comparable games imply weapons, levels, co-op, online systems, and mastery depth that are not yet evidenced.</p>
+        </article>
+        <article class="risk-card">
+          <h3>Performance claims</h3>
+          <p>Public performance language should wait until the demo slice is measured on target-like hardware.</p>
+        </article>
+      </div>
+    </section>
+
+    <section data-contract-section="recommended-next-steps">
+      <h2>Recommended Next Steps</h2>
+      <div class="actions-grid">
+        <article class="action-card">
+          <span class="index">1</span>
+          <b>Revalidate the combat baseline</b>
+          <p>Review one attack, one defensive response, one enemy pressure pattern, and one reset loop. Output: pass/fail note for first-hit feel, defense clarity, recovery, and repeatability.</p>
+        </article>
+        <article class="action-card">
+          <span class="index">2</span>
+          <b>Tighten first-minute proof</b>
+          <p>Curate one readable encounter that shows pressure, impact, defense, and camera clarity without feature explanation. Output: first-minute checklist and capture target.</p>
+        </article>
+        <article class="action-card">
+          <span class="index">3</span>
+          <b>Write a one-page Steam promise before building a page</b>
+          <p>Define the player fantasy, supported claims, deferred claims, and evidence labels. Output: a team-approved promise sheet.</p>
+        </article>
+        <article class="action-card">
+          <span class="index">4</span>
+          <b>Lock demo-critical animation rules</b>
+          <p>Identify the minimum promoted clip set and reject clips that fail source, retarget, root motion, return pose, combat speed, lab review, or runtime checks.</p>
+        </article>
+        <article class="action-card">
+          <span class="index">5</span>
+          <b>Validate camera and encounter readability together</b>
+          <p>Review camera framing, enemy spacing, threat direction, hit reaction, and recovery timing in the same encounter.</p>
+        </article>
+        <article class="action-card">
+          <span class="index">6</span>
+          <b>Define the performance claim boundary</b>
+          <p>Measure the demo slice on target-like hardware and document what was tested, what was not, and what should not be claimed yet.</p>
+        </article>
+      </div>
+    </section>
+
+    <section data-contract-section="further-questions">
+      <h2>Open Questions Before Public Positioning</h2>
+      <div class="summary-grid">
+        <article class="caveat-card">
+          <h3>What is the first public slice?</h3>
+          <p>The report assumes demo-readiness is the next useful milestone. A different target, such as publisher pitch or combat prototype grant, would shift wording.</p>
+        </article>
+        <article class="caveat-card">
+          <h3>Which clips are truly demo-critical?</h3>
+          <p>The animation policy is clear, but the minimum public-facing clip set still needs a pass/fail list.</p>
+        </article>
+        <article class="caveat-card">
+          <h3>What hardware claim is safe?</h3>
+          <p>Older PC and Steam Deck-class constraints are documented, but public performance language needs slice-level validation first.</p>
+        </article>
+      </div>
+    </section>
+
+    <section data-contract-section="caveats-and-assumptions">
+      <h2>Caveats And Evidence Boundary</h2>
+      <div class="print-note">
+        <p><strong>Local project evidence was reviewed, not reproduced.</strong> This report uses local docs and public store pages to create decision guidance. It does not include raw Refractured source files, assets, private paths, sales estimates, budget guesses, wishlist forecasts, team-size guesses, or marketing-spend claims.</p>
+      </div>
+    </section>
+
+    <section data-contract-section="key-findings">
+      <h2>Evidence Log</h2>
+      <div class="source-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Source</th>
+              <th>Type</th>
+              <th>Used For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Confirmed</td>
+              <td>Refractured local project docs</td>
+              <td>local_project_doc</td>
+              <td>Project identity, local structure, direction, scenes, combat baseline, animation policy, performance constraints.</td>
+            </tr>
+            <tr>
+              <td>Confirmed</td>
+              <td><a href="https://store.steampowered.com/app/1390410/Midnight_Fight_Express/">Midnight Fight Express Steam page</a></td>
+              <td>steam_store</td>
+              <td>Steam tag/store-page action-brawler reference. Accessed June 19, 2026.</td>
+            </tr>
+            <tr>
+              <td>Confirmed</td>
+              <td><a href="https://store.steampowered.com/app/473690/Absolver/">Absolver Steam page</a></td>
+              <td>steam_store</td>
+              <td>Combat-system depth and scope-complexity reference. Accessed June 19, 2026.</td>
+            </tr>
+            <tr>
+              <td>Confirmed</td>
+              <td><a href="https://store.steampowered.com/app/985890/Streets_of_Rage_4/">Streets of Rage 4 Steam page</a></td>
+              <td>steam_store</td>
+              <td>Mainstream beat-em-up expectation reference. Accessed June 19, 2026.</td>
+            </tr>
+            <tr>
+              <td>Confirmed</td>
+              <td><a href="https://store.steampowered.com/app/674520/FightN_Rage/">Fight'N Rage Steam page</a></td>
+              <td>steam_store</td>
+              <td>Focused brawler mastery and responsiveness reference. Accessed June 19, 2026.</td>
+            </tr>
+            <tr>
+              <td>Reported</td>
+              <td><a href="https://en.wikipedia.org/wiki/Sifu_(video_game)">Sifu public background summary</a></td>
+              <td>public_database</td>
+              <td>Aspirational combat/readability reference and scope warning. Accessed June 19, 2026.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

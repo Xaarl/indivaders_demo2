@@ -1,4 +1,4 @@
-# Refractured Dogfood Workflow Notes
+# Refractured Report Workflow Notes
 
 Date: 2026-06-19
 Audience: Indievaders product planning

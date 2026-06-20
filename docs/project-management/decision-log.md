@@ -159,11 +159,11 @@ Review date:
 
 After Sprint 003 share-ready handoff.
 
-### 2026-06-19: Dogfood Refractured Before Sharing
+### 2026-06-19: Review Refractured Privately Before Sharing
 
 Decision:
 
-The next product-learning step is a private Refractured client-style report, not public sharing.
+The next product-learning step is a private Refractured client-ready report, not public sharing.
 
 Context:
 
@@ -176,8 +176,8 @@ The prototype needs proof that its report format creates value on a real early-s
 Implications:
 
 - Do not build sharing, auth, payment, or live Market Watch for this sprint.
-- Use the client-facing dogfood report and internal workflow notes as the next proof point.
-- Treat Refractured as a private dogfood case, not a public case study.
+- Use the client-ready report and internal workflow notes as the next proof point.
+- Treat Refractured as a private validation case, not a public case study.
 
 Owner:
 
@@ -185,4 +185,4 @@ Repository owner.
 
 Review date:
 
-After the Refractured dogfood report and workflow notes are reviewed.
+After the Refractured client-ready report and workflow notes are reviewed.

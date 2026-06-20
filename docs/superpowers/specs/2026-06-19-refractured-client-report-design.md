@@ -1,11 +1,11 @@
-# Refractured Client Report Dogfood Design
+# Refractured Client Report Design
 
 Date: 2026-06-19
 Status: Approved for implementation planning
 
 ## Decision
 
-Create a client-facing dogfood report for Refractured before building more sharing, account, backend, or public distribution features in Indievaders.
+Create a client-ready report for Refractured before building more sharing, account, backend, or public distribution features in Indievaders.
 
 The report should show what an early-stage game team could gain from Indievaders before a Steam page exists. It must combine local project evidence from the Refractured Godot workspace with public Steam and market context, while preserving uncertainty labels for anything not directly confirmed.
 
@@ -61,7 +61,7 @@ Every recommendation must be tied to at least one evidence label. Unknown budget
 
 ## Report Shape
 
-The dogfood report should be written as a client-facing Markdown artifact in `docs/dogfood/refractured-client-report.md`.
+The client-ready report should be delivered as a readable HTML artifact in `docs/client-reports/refractured-steam-positioning-readiness.html`, with `docs/client-reports/refractured-steam-positioning-readiness.md` kept as the editorial source.
 
 Recommended sections:
 
@@ -146,4 +146,4 @@ Before treating the report as ready for review:
 
 ## Expected Follow-Up
 
-After this spec is reviewed, create an implementation plan for the report-writing pass. The first implementation pass should create the dogfood report and a short internal note listing what the report exposed about Indievaders' future report workflow.
+After this spec is reviewed, create an implementation plan for the report-writing pass. The first implementation pass should create the client report and a short internal note listing what the report exposed about Indievaders' future report workflow.

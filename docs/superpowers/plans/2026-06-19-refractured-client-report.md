@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Create a client-facing Indievaders dogfood report for the early-stage Refractured Godot project, backed by local project evidence and public Steam/market sources.
+**Goal:** Create a client-facing Indievaders client report for the early-stage Refractured Godot project, backed by local project evidence and public Steam/market sources.
 
-**Architecture:** This is a documentation and research deliverable, not an app change. The client-facing report lives in `docs/dogfood/refractured-client-report.md`; the internal workflow/product-learning note lives beside it and is clearly separated from the client-facing artifact. Source confidence follows the existing Indievaders evidence model, and raw Refractured assets or source files are not copied into this repository.
+**Architecture:** This is a documentation and research deliverable, not an app change. The client-facing report lives in `docs/client-reports/refractured-steam-positioning-readiness.html`, with `docs/client-reports/refractured-steam-positioning-readiness.md` kept as the editorial source. The internal workflow/product-learning note lives in `docs/project-management/refractured-report-workflow-notes.md` and is clearly separated from the client-facing artifact. Source confidence follows the existing Indievaders evidence model, and raw Refractured assets or source files are not copied into this repository.
 
 **Tech Stack:** Markdown, Git, local filesystem inspection, public web research, existing Indievaders evidence labels.
 
@@ -12,16 +12,21 @@
 
 ## File Structure
 
-- Create: `docs/dogfood/refractured-client-report.md`
-  - Client-facing report that reads like a paid Indievaders deliverable.
+- Create: `docs/client-reports/refractured-steam-positioning-readiness.html`
+  - Client-facing HTML report that reads like a paid Indievaders deliverable.
+  - This is the primary reading artifact.
+
+- Create: `docs/client-reports/refractured-steam-positioning-readiness.md`
+  - Editorial source for report text and evidence labels.
+  - This is not the primary reading artifact.
   - Contains executive read, current game snapshot, market lane, true comparables, production reality, demo/Steam promise drafts, review risks, prioritized actions, and source appendix.
 
-- Create: `docs/dogfood/refractured-indievaders-workflow-notes.md`
-  - Internal note about what the dogfood pass reveals about the future Indievaders report workflow.
+- Create: `docs/project-management/refractured-report-workflow-notes.md`
+  - Internal note about what the report validation pass reveals about the future Indievaders report workflow.
   - Keeps product-process observations out of the client-facing report.
 
 - Modify: `docs/project-management/decision-log.md`
-  - Add one short decision entry that the next sprint shifts from public sharing toward a Refractured dogfood report.
+  - Add one short decision entry that the next sprint shifts from public sharing toward a Refractured client report.
 
 - Read only: `E:\Projekty Gier\Godot\Refractured\README.md`
 - Read only: `E:\Projekty Gier\Godot\Refractured\godot_game_project\documentation\CURRENT_PROJECT_STATE.md`
@@ -30,31 +35,31 @@
 - Read only: `E:\Projekty Gier\Godot\Refractured\godot_game_project\documentation\Animation_Pipeline_Sandbox.md`
 - Read only: `E:\Projekty Gier\Godot\Refractured\docs\superpowers\specs\2026-06-02-combat-foundation-v2-slice-design.md`
 
-## Task 1: Create Dogfood Report Skeleton
+## Task 1: Create client report Skeleton
 
 **Files:**
-- Create: `docs/dogfood/refractured-client-report.md`
-- Create: `docs/dogfood/refractured-indievaders-workflow-notes.md`
+- Create: `docs/client-reports/refractured-steam-positioning-readiness.md`
+- Create: `docs/project-management/refractured-report-workflow-notes.md`
 
-- [ ] **Step 1: Create the dogfood directory**
+- [ ] **Step 1: Create the client report directory**
 
 Run:
 
 ```powershell
-New-Item -ItemType Directory -Path 'docs\dogfood' -Force
+New-Item -ItemType Directory -Path 'docs\\client-reports' -Force
 ```
 
-Expected: PowerShell reports `G:\Game Dev\Indievaders\docs\dogfood`.
+Expected: PowerShell reports `G:\Game Dev\Indievaders\docs\\client-reports`.
 
 - [ ] **Step 2: Add the client-facing report skeleton**
 
-Use `apply_patch` to create `docs/dogfood/refractured-client-report.md` with this exact structure:
+Use `apply_patch` to create `docs/client-reports/refractured-steam-positioning-readiness.md` with this exact structure:
 
 ```markdown
 # Refractured Steam Positioning Readiness Report
 
 Date: 2026-06-19
-Prepared by: Indievaders dogfood pass
+Prepared by: Indievaders report validation pass
 Project stage: Pre-Steam, combat-foundation prototype
 Evidence mode: Local project review plus public Steam/market research
 
@@ -79,10 +84,10 @@ Evidence mode: Local project review plus public Steam/market research
 
 - [ ] **Step 3: Add the internal workflow note skeleton**
 
-Use `apply_patch` to create `docs/dogfood/refractured-indievaders-workflow-notes.md` with this exact structure:
+Use `apply_patch` to create `docs/project-management/refractured-report-workflow-notes.md` with this exact structure:
 
 ```markdown
-# Refractured Dogfood Workflow Notes
+# Refractured Report Workflow Notes
 
 Date: 2026-06-19
 Audience: Indievaders product planning
@@ -103,7 +108,7 @@ Audience: Indievaders product planning
 Run:
 
 ```powershell
-Get-ChildItem -LiteralPath 'docs\dogfood' -File | Select-Object Name,Length
+Get-ChildItem -LiteralPath 'docs\\client-reports' -File | Select-Object Name,Length
 ```
 
 Expected: output includes `refractured-client-report.md` and `refractured-indievaders-workflow-notes.md`.
@@ -111,7 +116,7 @@ Expected: output includes `refractured-client-report.md` and `refractured-indiev
 ## Task 2: Validate Local Refractured Facts
 
 **Files:**
-- Modify: `docs/dogfood/refractured-client-report.md`
+- Modify: `docs/client-reports/refractured-steam-positioning-readiness.md`
 
 - [ ] **Step 1: Re-read the local source files**
 
@@ -190,7 +195,7 @@ Use `apply_patch` to add a `### Local Sources` subsection with one row per local
 ## Task 3: Research Public Comparables
 
 **Files:**
-- Modify: `docs/dogfood/refractured-client-report.md`
+- Modify: `docs/client-reports/refractured-steam-positioning-readiness.md`
 
 - [ ] **Step 1: Browse required public sources**
 
@@ -256,7 +261,7 @@ Required comparables:
 ## Task 4: Draft Client-Facing Findings
 
 **Files:**
-- Modify: `docs/dogfood/refractured-client-report.md`
+- Modify: `docs/client-reports/refractured-steam-positioning-readiness.md`
 
 - [ ] **Step 1: Fill `Executive Read`**
 
@@ -335,7 +340,7 @@ At least three actions must be sprint-sized and local to Refractured, such as re
 ## Task 5: Write Internal Workflow Notes
 
 **Files:**
-- Modify: `docs/dogfood/refractured-indievaders-workflow-notes.md`
+- Modify: `docs/project-management/refractured-report-workflow-notes.md`
 - Modify: `docs/project-management/decision-log.md`
 
 - [ ] **Step 1: Fill `What Worked`**
@@ -369,9 +374,9 @@ Use `apply_patch` to add:
 Use `apply_patch` to append this decision to `docs/project-management/decision-log.md`:
 
 ```markdown
-## 2026-06-19 - Dogfood Refractured Before Sharing
+## 2026-06-19 - Review Refractured Privately Before Sharing
 
-The next product-learning step is a private Refractured client-style report, not public sharing.
+The next product-learning step is a private Refractured client-ready report, not public sharing.
 
 Reason:
 - The prototype needs proof that its report format creates value on a real early-stage game before distribution features matter.
@@ -379,21 +384,21 @@ Reason:
 
 Implications:
 - Do not build sharing, auth, payment, or live Market Watch for this sprint.
-- Create a client-facing dogfood report and internal workflow notes first.
+- Create a client-ready report and internal workflow notes first.
 ```
 
 ## Task 6: Review And Verify The Report
 
 **Files:**
-- Modify if needed: `docs/dogfood/refractured-client-report.md`
-- Modify if needed: `docs/dogfood/refractured-indievaders-workflow-notes.md`
+- Modify if needed: `docs/client-reports/refractured-steam-positioning-readiness.md`
+- Modify if needed: `docs/project-management/refractured-report-workflow-notes.md`
 
 - [ ] **Step 1: Scan for placeholders and weak wording**
 
 Run:
 
 ```powershell
-Select-String -Path 'docs\dogfood\*.md' -Pattern 'TBD|TODO|PLACEHOLDER|\?\?|should probably|seems to|maybe'
+Select-String -Path 'docs\\client-reports\*.md' -Pattern 'TBD|TODO|PLACEHOLDER|\?\?|should probably|seems to|maybe'
 ```
 
 Expected: no matches. If there are matches, use `apply_patch` to replace them with explicit claims, evidence labels, or removals.
@@ -403,7 +408,7 @@ Expected: no matches. If there are matches, use `apply_patch` to replace them wi
 Run:
 
 ```powershell
-Select-String -Path 'docs\dogfood\refractured-client-report.md' -Pattern 'Confirmed|Reported|Estimated|Inferred|Not publicly confirmed'
+Select-String -Path 'docs\\client-reports\\refractured-steam-positioning-readiness.md' -Pattern 'Confirmed|Reported|Estimated|Inferred|Not publicly confirmed'
 ```
 
 Expected: evidence labels appear in the body and source appendix.
@@ -413,10 +418,10 @@ Expected: evidence labels appear in the body and source appendix.
 Run:
 
 ```powershell
-Get-ChildItem -LiteralPath 'docs\dogfood' -Recurse -File | Select-Object FullName,Length
+Get-ChildItem -LiteralPath 'docs\\client-reports' -Recurse -File | Select-Object FullName,Length
 ```
 
-Expected: only Markdown report/workflow files exist in `docs\dogfood`.
+Expected: the client report HTML and its Markdown editorial source exist in `docs\\client-reports`; workflow notes live under `docs\\project-management`.
 
 - [ ] **Step 4: Check no app source changed**
 
@@ -433,13 +438,13 @@ Expected: changed files are only docs unless an intentional docs-only plan updat
 Run:
 
 ```powershell
-git add docs/dogfood/refractured-client-report.md docs/dogfood/refractured-indievaders-workflow-notes.md docs/project-management/decision-log.md
+git add docs/client-reports/refractured-steam-positioning-readiness.html docs/client-reports/refractured-steam-positioning-readiness.md docs/project-management/refractured-report-workflow-notes.md docs/project-management/decision-log.md
 ```
 
 Run:
 
 ```powershell
-git commit -m "docs: add refractured dogfood report"
+git commit -m "docs: add refractured client report"
 ```
 
 Expected: one local commit containing the report, workflow notes, and decision-log entry.
@@ -447,8 +452,9 @@ Expected: one local commit containing the report, workflow notes, and decision-l
 ## Task 7: Final Handoff
 
 **Files:**
-- Read: `docs/dogfood/refractured-client-report.md`
-- Read: `docs/dogfood/refractured-indievaders-workflow-notes.md`
+- Read: `docs/client-reports/refractured-steam-positioning-readiness.html`
+- Read: `docs/client-reports/refractured-steam-positioning-readiness.md`
+- Read: `docs/project-management/refractured-report-workflow-notes.md`
 
 - [ ] **Step 1: Summarize the client-facing result**
 
