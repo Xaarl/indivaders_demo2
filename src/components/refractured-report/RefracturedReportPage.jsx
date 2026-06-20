@@ -2,7 +2,9 @@ import { useState } from "react";
 import refracturedPremiumReport from "../../data/refracturedPremiumReport.js";
 import LensHub from "./LensHub.jsx";
 import OpeningThesis from "./OpeningThesis.jsx";
+import PlayerSignalInspector from "./PlayerSignalInspector.jsx";
 import RefracturedReportFrame from "./RefracturedReportFrame.jsx";
+import RogueliteLoopLab from "./RogueliteLoopLab.jsx";
 
 const sections = [
   { id: "overview", label: "Thesis" },
@@ -16,16 +18,6 @@ const sections = [
 ];
 
 const sectionPlaceholders = {
-  player: {
-    title: "Player DNA",
-    description:
-      "This module is wired and will be replaced by the dedicated interactive component in the next implementation tasks.",
-  },
-  roguelite: {
-    title: "Roguelite loop",
-    description:
-      "This module is wired and will be replaced by the dedicated interactive component in the next implementation tasks.",
-  },
   comparables: {
     title: "Comparables",
     description:
@@ -109,14 +101,27 @@ function RefracturedReportPage() {
             onLensSelect={handleLensSelect}
           />
         </>
-      ) : (
+      ) : null}
+      {activeSection === "player" ? (
+        <PlayerSignalInspector
+          onEvidenceOpen={openEvidenceDrawer}
+          signals={refracturedPremiumReport.playerSignals}
+        />
+      ) : null}
+      {activeSection === "roguelite" ? (
+        <RogueliteLoopLab
+          directions={refracturedPremiumReport.rogueliteDirections}
+          onEvidenceOpen={openEvidenceDrawer}
+        />
+      ) : null}
+      {activePlaceholder ? (
         <section className="refractured-module">
           <p className="refractured-kicker">Private interactive report</p>
           <h2>{activePlaceholder.title}</h2>
           <p>{activePlaceholder.description}</p>
           {activeSection === "evidence" ? <p className="refractured-selected-evidence">{selectedEvidenceCopy}</p> : null}
         </section>
-      )}
+      ) : null}
     </RefracturedReportFrame>
   );
 }
