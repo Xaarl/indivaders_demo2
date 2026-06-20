@@ -4,6 +4,7 @@ import App from './App.jsx';
 import './styles/landing.css';
 import './styles/interactive-report.css';
 import './styles/report-workspace.css';
+import './styles/refractured-report.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -3,6 +3,7 @@ import LandingPage from './components/LandingPage.jsx';
 import EarlyReportIntakePage from './components/report-workspace/EarlyReportIntakePage.jsx';
 import ProjectWorkspacePage from './components/report-workspace/ProjectWorkspacePage.jsx';
 import InteractiveReportPage from './components/interactive-report/InteractiveReportPage.jsx';
+import RefracturedReportPage from './components/refractured-report/RefracturedReportPage.jsx';
 
 function getRouteFromHash() {
   if (window.location.hash === '#sample-report') {
@@ -18,6 +19,10 @@ function getRouteFromHash() {
       name: 'workspace',
       id: window.location.hash.replace('#workspace/', ''),
     };
+  }
+
+  if (window.location.hash === '#client-report/refractured') {
+    return { name: 'refractured-report' };
   }
 
   return { name: 'landing' };
@@ -43,6 +48,10 @@ function App() {
 
   if (route.name === 'workspace') {
     return <ProjectWorkspacePage key={route.id} requestId={route.id} />;
+  }
+
+  if (route.name === 'refractured-report') {
+    return <RefracturedReportPage />;
   }
 
   return <LandingPage />;
