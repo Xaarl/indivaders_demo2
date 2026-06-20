@@ -55,17 +55,40 @@ const sectionPlaceholders = {
 
 function RefracturedReportPage() {
   const [activeSection, setActiveSection] = useState("overview");
+  const [activeLensId, setActiveLensId] = useState(refracturedPremiumReport.readerLenses[0]?.id ?? null);
+  const [activeEvidenceRefs, setActiveEvidenceRefs] = useState([]);
 
-  function openEvidenceDrawer() {
+  function handleSectionChange(sectionId) {
+    const matchingLens = refracturedPremiumReport.readerLenses.find((lens) => lens.section === sectionId);
+
+    setActiveLensId(matchingLens?.id ?? null);
+    setActiveSection(sectionId);
+    if (sectionId !== "evidence") {
+      setActiveEvidenceRefs([]);
+    }
+  }
+
+  function handleLensSelect(lens) {
+    setActiveLensId(lens.id);
+    setActiveSection(lens.section);
+    if (lens.section === "evidence") {
+      setActiveEvidenceRefs(lens.evidenceRefs ?? []);
+    }
+  }
+
+  function openEvidenceDrawer(refs = []) {
+    setActiveEvidenceRefs(Array.isArray(refs) ? refs : []);
     setActiveSection("evidence");
   }
 
   const activePlaceholder = sectionPlaceholders[activeSection];
+  const selectedEvidenceCopy =
+    activeEvidenceRefs.length > 0 ? `Selected evidence: ${activeEvidenceRefs.join(", ")}` : "Selected evidence: none selected.";
 
   return (
     <RefracturedReportFrame
       activeSection={activeSection}
-      onSectionChange={setActiveSection}
+      onSectionChange={handleSectionChange}
       onSourceDrawerOpen={openEvidenceDrawer}
       report={refracturedPremiumReport}
       sections={sections}
@@ -74,16 +97,22 @@ function RefracturedReportPage() {
         <>
           <OpeningThesis
             onEvidenceOpen={openEvidenceDrawer}
-            onSectionChange={setActiveSection}
+            onSectionChange={handleSectionChange}
             report={refracturedPremiumReport}
           />
-          <LensHub lenses={refracturedPremiumReport.readerLenses} onSectionChange={setActiveSection} />
+          <LensHub
+            activeLensId={activeLensId}
+            activeSection={activeSection}
+            lenses={refracturedPremiumReport.readerLenses}
+            onLensSelect={handleLensSelect}
+          />
         </>
       ) : (
         <section className="refractured-module">
           <p className="refractured-kicker">Private interactive report</p>
           <h2>{activePlaceholder.title}</h2>
           <p>{activePlaceholder.description}</p>
+          {activeSection === "evidence" ? <p className="refractured-selected-evidence">{selectedEvidenceCopy}</p> : null}
         </section>
       )}
     </RefracturedReportFrame>

@@ -234,6 +234,19 @@
   text-align: left;
 }
 
+.refractured-opening-actions button:focus-visible,
+.refractured-lens-grid button:focus-visible {
+  outline: 3px solid #e9c57c;
+  outline-offset: 3px;
+  border-color: #fff7df;
+}
+
+.refractured-lens-grid button.is-active {
+  border-color: rgba(233, 197, 124, 0.82);
+  background: rgba(233, 197, 124, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(233, 197, 124, 0.2);
+}
+
 .refractured-lens-grid strong {
   color: #fff7df;
   font-size: 1.18rem;
@@ -246,9 +259,32 @@
   line-height: 1.5;
 }
 
+.refractured-selected-evidence {
+  padding: 14px 16px;
+  border: 1px solid rgba(233, 197, 124, 0.26);
+  border-radius: 8px;
+  background: rgba(233, 197, 124, 0.08);
+  color: #fff7df;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 940px) {
   .refractured-opening,
   .refractured-lens-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .refractured-opening-copy h1 {
+    font-size: 2.55rem;
+    line-height: 1;
+  }
+}
+
+@media (max-width: 420px) {
+  .refractured-opening-copy h1 {
+    font-size: 2.25rem;
   }
 }
