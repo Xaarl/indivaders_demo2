@@ -1,0 +1,1275 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Refractured Commercial Strategy Archive v2",
+    "description": "Static backup mirror of the archived v2 report snapshot. The primary client experience is the interactive Indievaders route #client-report/refractured.",
+    "archiveStatus": "Static backup mirror",
+    "primaryExperience": "#client-report/refractured",
+    "generatedAt": "2026-06-20T00:00:00+02:00",
+    "sources": [
+      {
+        "id": "local_docs",
+        "label": "Local Refractured project docs",
+        "path": "E:/Projekty Gier/Godot/Refractured/godot_game_project/documentation/archive/handoffs/Game_Director_Initial_Report_2026_06_02.md"
+      },
+      {
+        "id": "steam_visibility",
+        "label": "Steamworks Visibility",
+        "href": "https://partner.steamgames.com/doc/marketing/visibility"
+      },
+      {
+        "id": "steam_early_access",
+        "label": "Steamworks Early Access",
+        "href": "https://partner.steamgames.com/doc/store/earlyaccess"
+      },
+      {
+        "id": "steam_next_fest",
+        "label": "Steamworks Next Fest",
+        "href": "https://partner.steamgames.com/doc/marketing/upcoming_events/nextfest"
+      },
+      {
+        "id": "steam_utm",
+        "label": "Steamworks UTM Analytics",
+        "href": "https://partner.steamgames.com/doc/marketing/utm_analytics"
+      },
+      {
+        "id": "absolum_steam",
+        "label": "Absolum Steam page",
+        "href": "https://store.steampowered.com/app/1904480/Absolum/"
+      },
+      {
+        "id": "rotwood_steam",
+        "label": "Rotwood Steam page",
+        "href": "https://store.steampowered.com/app/2015270/Rotwood/"
+      },
+      {
+        "id": "dead_cells_steam",
+        "label": "Dead Cells Steam page",
+        "href": "https://store.steampowered.com/app/588650/Dead_Cells/"
+      },
+      {
+        "id": "hades_ii_steam",
+        "label": "Hades II Steam page",
+        "href": "https://store.steampowered.com/app/1145350/Hades_II/"
+      },
+      {
+        "id": "ravenswatch_steam",
+        "label": "Ravenswatch Steam page",
+        "href": "https://store.steampowered.com/app/2071280/Ravenswatch/"
+      },
+      {
+        "id": "curse_steam",
+        "label": "Curse of the Dead Gods Steam page",
+        "href": "https://store.steampowered.com/app/1123770/Curse_of_the_Dead_Gods/"
+      },
+      {
+        "id": "pcgamer_next_fest",
+        "label": "PC Gamer June 2026 Next Fest coverage",
+        "href": "https://www.pcgamer.com/games/it-would-take-you-90-straight-days-to-play-each-of-steam-next-fests-demos-for-just-30-minutes/"
+      },
+      {
+        "id": "gamesradar_next_fest",
+        "label": "GamesRadar June 2026 Next Fest coverage",
+        "href": "https://www.gamesradar.com/platforms/pc-gaming/even-more-games-on-steam-are-using-ai-there-are-over-8-600-demos-in-this-weeks-next-fest-event-and-nearly-1-700-use-ai/"
+      },
+      {
+        "id": "gamesradar_slay_spire",
+        "label": "GamesRadar Slay the Spire 2 launch coverage",
+        "href": "https://www.gamesradar.com/games/roguelike/slay-the-spire-2-has-been-out-for-merely-a-week-and-we-have-already-hit-3-million-units-sold-with-more-than-25-million-runs-says-a-stunned-mega-crit-after-becoming-steams-biggest-roguelike/"
+      },
+      {
+        "id": "steam_review_api_attempt",
+        "label": "Steam review API attempt",
+        "path": "Tool attempt on 2026-06-20 failed in the local Windows TLS environment; store aggregates and public pages were used instead."
+      },
+      {
+        "id": "social_gap",
+        "label": "Reddit and Discord social listening gap",
+        "path": "Logged-in social listening was not completed in this pass."
+      }
+    ],
+    "cards": [
+      {
+        "id": "fit_card",
+        "dataset": "headline_metrics",
+        "description": "Composite strategic read from local premise, public market evidence, and current prototype stage. Directional, not a revenue forecast.",
+        "metrics": [
+          {
+            "label": "Market-fit readiness",
+            "field": "market_fit_readiness",
+            "format": "percent"
+          },
+          {
+            "label": "Confidence",
+            "field": "confidence",
+            "format": "percent"
+          }
+        ]
+      },
+      {
+        "id": "path_card",
+        "dataset": "headline_metrics",
+        "description": "Recommended first path, scored as a first proof loop rather than final production ambition.",
+        "metrics": [
+          {
+            "label": "Path A first-test fit",
+            "field": "path_a_fit",
+            "format": "percent"
+          },
+          {
+            "label": "Proof burden",
+            "field": "proof_burden",
+            "format": "percent"
+          }
+        ]
+      },
+      {
+        "id": "kpi_card",
+        "dataset": "headline_metrics",
+        "description": "Pre-Steam success metric for proving buyer intent through playable evidence.",
+        "metrics": [
+          {
+            "label": "North-star clarity",
+            "field": "north_star_clarity",
+            "format": "percent"
+          },
+          {
+            "label": "Telemetry gap",
+            "field": "telemetry_gap",
+            "format": "percent",
+            "signed": true
+          }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "market_score_chart",
+        "title": "Market-fit scorecard",
+        "subtitle": "Directional 1-5 scores from reviewed public evidence and local premise fit.",
+        "type": "bar",
+        "dataset": "market_scorecard",
+        "sourceId": "local_docs",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT dimension, score, confidence, evidence_level FROM market_scorecard",
+            "description": "Loads the directional market-fit scorecard from the reviewed report snapshot.",
+            "tables_used": [
+              "market_scorecard"
+            ],
+            "filters": [
+              "Refractured v2 report evidence reviewed on 2026-06-20"
+            ],
+            "metric_definitions": [
+              "score: directional 1-5 strategic score; confidence: fractional confidence in the supporting evidence"
+            ]
+          }
+        },
+        "encodings": {
+          "x": {
+            "field": "dimension",
+            "type": "nominal",
+            "label": "Dimension"
+          },
+          "y": {
+            "field": "score",
+            "type": "quantitative",
+            "label": "Score out of 5"
+          },
+          "tooltip": [
+            {
+              "field": "confidence",
+              "type": "quantitative",
+              "label": "Confidence"
+            },
+            {
+              "field": "evidence_level",
+              "type": "nominal",
+              "label": "Evidence level"
+            }
+          ]
+        },
+        "yAxisTitle": "Score out of 5",
+        "layout": "full"
+      },
+      {
+        "id": "review_theme_chart",
+        "title": "Review pressure themes",
+        "subtitle": "Themes to validate in playtests before public Steam positioning.",
+        "type": "bar",
+        "dataset": "review_theme_map",
+        "sourceId": "absolum_steam",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT theme, reward_weight, punish_risk, primary_segment, validation_signal FROM review_theme_map",
+            "description": "Loads review pressure themes inferred from public comparable evidence and stakeholder review.",
+            "tables_used": [
+              "review_theme_map"
+            ],
+            "filters": [
+              "Qualitative public evidence only; no completed Reddit or Discord sample"
+            ],
+            "metric_definitions": [
+              "reward_weight and punish_risk: directional 1-5 relative weights for early validation"
+            ]
+          }
+        },
+        "encodings": {
+          "x": {
+            "field": "theme",
+            "type": "nominal",
+            "label": "Theme"
+          },
+          "y": {
+            "fields": [
+              "reward_weight",
+              "punish_risk"
+            ],
+            "type": "quantitative",
+            "label": "Theme weight"
+          },
+          "tooltip": [
+            {
+              "field": "primary_segment",
+              "type": "nominal",
+              "label": "Primary segment"
+            },
+            {
+              "field": "validation_signal",
+              "type": "text",
+              "label": "Validation signal"
+            }
+          ]
+        },
+        "yAxisTitle": "Relative weight",
+        "layout": "full"
+      },
+      {
+        "id": "steam_funnel_chart",
+        "title": "Pre-Steam proof funnel",
+        "subtitle": "Use playtest and campaign signals before treating wishlists as demand proof.",
+        "type": "bar",
+        "dataset": "steam_funnel",
+        "sourceId": "steam_utm",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT stage, target_signal_strength, measure, source_or_tool FROM steam_funnel ORDER BY funnel_order",
+            "description": "Loads pre-Steam proof funnel stages from the report KPI framework.",
+            "tables_used": [
+              "steam_funnel"
+            ],
+            "filters": [
+              "Pre-Steam and Steam-page readiness metrics only"
+            ],
+            "metric_definitions": [
+              "target_signal_strength: directional 1-5 strength of evidence needed before scaling production or marketing"
+            ]
+          }
+        },
+        "encodings": {
+          "x": {
+            "field": "stage",
+            "type": "ordinal",
+            "label": "Stage"
+          },
+          "y": {
+            "field": "target_signal_strength",
+            "type": "quantitative",
+            "label": "Target signal strength"
+          },
+          "tooltip": [
+            {
+              "field": "measure",
+              "type": "text",
+              "label": "Measure"
+            },
+            {
+              "field": "source_or_tool",
+              "type": "text",
+              "label": "Source or tool"
+            }
+          ]
+        },
+        "yAxisTitle": "Target signal strength",
+        "layout": "full"
+      }
+    ],
+    "tables": [
+      {
+        "id": "competitor_matrix_table",
+        "title": "Comparable evidence matrix",
+        "subtitle": "Use references as expectation maps, not as sales forecasts.",
+        "dataset": "competitor_matrix",
+        "sourceId": "absolum_steam",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT game, lane, steam_signal, relevance_score, borrow, avoid FROM competitor_matrix ORDER BY relevance_score DESC",
+            "description": "Loads comparable evidence rows from public Steam pages and public coverage.",
+            "tables_used": [
+              "competitor_matrix"
+            ],
+            "filters": [
+              "Comparable games relevant to 2.5D, beat 'em up, action roguelite, dark action, or premium Steam positioning"
+            ]
+          }
+        },
+        "defaultSort": {
+          "field": "relevance_score",
+          "direction": "desc"
+        },
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "game",
+            "label": "Reference",
+            "type": "text"
+          },
+          {
+            "field": "lane",
+            "label": "Lane",
+            "type": "text"
+          },
+          {
+            "field": "steam_signal",
+            "label": "Public signal",
+            "type": "text"
+          },
+          {
+            "field": "relevance_score",
+            "label": "Relevance score",
+            "format": "number"
+          },
+          {
+            "field": "borrow",
+            "label": "Borrow carefully",
+            "type": "text"
+          },
+          {
+            "field": "avoid",
+            "label": "Avoid copying",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "player_segments_table",
+        "title": "Player segment map",
+        "subtitle": "The report should say who is buying the fantasy and how they judge it.",
+        "dataset": "player_segments",
+        "sourceId": "local_docs",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT priority, segment, rewards, punishes, validation_metric FROM player_segments ORDER BY priority",
+            "description": "Loads player segment hypotheses from local premise and public comparable evidence.",
+            "tables_used": [
+              "player_segments"
+            ],
+            "filters": [
+              "Pre-Steam target segments for Refractured commercial validation"
+            ]
+          }
+        },
+        "defaultSort": {
+          "field": "priority",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "priority",
+            "label": "Priority",
+            "format": "number"
+          },
+          {
+            "field": "segment",
+            "label": "Segment",
+            "type": "text"
+          },
+          {
+            "field": "rewards",
+            "label": "Rewards",
+            "type": "text"
+          },
+          {
+            "field": "punishes",
+            "label": "Punishes",
+            "type": "text"
+          },
+          {
+            "field": "validation_metric",
+            "label": "Validation metric",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "kpi_framework_table",
+        "title": "KPI framework",
+        "subtitle": "Pre-Steam metrics should prove the hook, the run, and the player intent.",
+        "dataset": "kpi_framework",
+        "sourceId": "steam_utm",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT priority, metric, definition, decision_use, target_range, evidence_status FROM kpi_framework ORDER BY priority",
+            "description": "Loads the KPI framework for pre-Steam Refractured validation.",
+            "tables_used": [
+              "kpi_framework"
+            ],
+            "filters": [
+              "Pre-Steam proof metrics and future Steam UTM metrics"
+            ],
+            "metric_definitions": [
+              "Qualified Wishlist Intent from Playable Proof combines hook comprehension, second-run desire, and stated wishlist intent from the target player segment"
+            ]
+          }
+        },
+        "defaultSort": {
+          "field": "priority",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "priority",
+            "label": "Priority",
+            "format": "number"
+          },
+          {
+            "field": "metric",
+            "label": "Metric",
+            "type": "text"
+          },
+          {
+            "field": "definition",
+            "label": "Definition",
+            "type": "text"
+          },
+          {
+            "field": "decision_use",
+            "label": "Decision use",
+            "type": "text"
+          },
+          {
+            "field": "target_range",
+            "label": "Initial target range",
+            "type": "text"
+          },
+          {
+            "field": "evidence_status",
+            "label": "Evidence status",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "decision_gates_table",
+        "title": "Strategic path decision gates",
+        "subtitle": "Path A is the first test; Path B or C should be earned by player evidence.",
+        "dataset": "decision_gates",
+        "sourceId": "local_docs",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT gate_order, gate, pass_signal, path_trigger, failure_response FROM decision_gates ORDER BY gate_order",
+            "description": "Loads strategic path gates that convert playtest evidence into scope decisions.",
+            "tables_used": [
+              "decision_gates"
+            ],
+            "filters": [
+              "Path A/B/C strategy for Refractured report v2"
+            ]
+          }
+        },
+        "defaultSort": {
+          "field": "gate_order",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "gate_order",
+            "label": "Order",
+            "format": "number"
+          },
+          {
+            "field": "gate",
+            "label": "Gate",
+            "type": "text"
+          },
+          {
+            "field": "pass_signal",
+            "label": "Pass signal",
+            "type": "text"
+          },
+          {
+            "field": "path_trigger",
+            "label": "Path trigger",
+            "type": "text"
+          },
+          {
+            "field": "failure_response",
+            "label": "Failure response",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "evidence_ledger_table",
+        "title": "Evidence confidence ledger",
+        "subtitle": "Major claims are labeled by confidence and source type.",
+        "dataset": "evidence_ledger",
+        "sourceId": "local_docs",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT confidence_rank, claim, evidence_type, confidence, source_label, report_use FROM evidence_ledger ORDER BY confidence_rank DESC",
+            "description": "Loads the evidence confidence ledger for auditability.",
+            "tables_used": [
+              "evidence_ledger"
+            ],
+            "filters": [
+              "Claims used in Refractured report v2"
+            ]
+          }
+        },
+        "defaultSort": {
+          "field": "confidence_rank",
+          "direction": "desc"
+        },
+        "density": "dense",
+        "columns": [
+          {
+            "field": "confidence_rank",
+            "label": "Rank",
+            "format": "number"
+          },
+          {
+            "field": "claim",
+            "label": "Claim",
+            "type": "text"
+          },
+          {
+            "field": "evidence_type",
+            "label": "Evidence type",
+            "type": "text"
+          },
+          {
+            "field": "confidence",
+            "label": "Confidence",
+            "type": "text"
+          },
+          {
+            "field": "source_label",
+            "label": "Source",
+            "type": "text"
+          },
+          {
+            "field": "report_use",
+            "label": "Report use",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "roadmap_table",
+        "title": "30 / 90 / 365 day plan",
+        "subtitle": "The plan turns positioning into measurable proof instead of long speculative production.",
+        "dataset": "roadmap",
+        "sourceId": "local_docs",
+        "source": {
+          "query": {
+            "engine": "manual_snapshot",
+            "language": "sql",
+            "sql": "SELECT period_order, period, objective, deliverable, success_signal FROM roadmap ORDER BY period_order",
+            "description": "Loads the phased commercial validation plan.",
+            "tables_used": [
+              "roadmap"
+            ],
+            "filters": [
+              "0-30 days, 30-90 days, 3-6 months, and 6-12 months"
+            ]
+          }
+        },
+        "defaultSort": {
+          "field": "period_order",
+          "direction": "asc"
+        },
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "period_order",
+            "label": "Order",
+            "format": "number"
+          },
+          {
+            "field": "period",
+            "label": "Period",
+            "type": "text"
+          },
+          {
+            "field": "objective",
+            "label": "Objective",
+            "type": "text"
+          },
+          {
+            "field": "deliverable",
+            "label": "Deliverable",
+            "type": "text"
+          },
+          {
+            "field": "success_signal",
+            "label": "Success signal",
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "layout": "full",
+        "body": "# Refractured Commercial Strategy Archive v2\n\nStatus: Static backup mirror\n\nPrimary experience: `#client-report/refractured`\n\nThis archived artifact snapshot is not the current client report surface."
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Commercial Verdict\n\n- **Refractured has a real commercial lane if it sells a brutal 2.5D action roguelite, not a generic brawler.** Local project docs confirm the recurring nightmare or ritual loop as a core premise, and public Steam evidence shows that beat 'em up plus roguelite is viable when combat feel and replay value are credible.\n- **Path A is the best first market test, not the final ambition ceiling.** The next proof should be a solo-first nightmare micro-run that tests whether players want one more run before the team commits to larger content, co-op, or deep mastery systems.\n- **The buyer will judge contact, fairness, and run texture before scope.** The highest-risk complaints are floaty combat, unclear pressure, generic roguelite upgrades, content-thin value, and misleading solo/co-op framing.\n- **The product should be measured before it is scaled.** The north star is Qualified Wishlist Intent from Playable Proof: players understand the hook, want a second run, and would wishlist because of the playable fantasy, not because the pitch sounds promising."
+      },
+      {
+        "id": "headline_metrics",
+        "type": "metric-strip",
+        "layout": "full",
+        "cardIds": [
+          "fit_card",
+          "path_card",
+          "kpi_card"
+        ]
+      },
+      {
+        "id": "market_fit_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Archived Readiness Snapshot\n\n**The opportunity is the overlap between loyal beat 'em up players and action roguelite players who want mastery.** This retained chart data is directional archive material. The current client experience lives in the interactive route, where these signals can be reviewed in context with updated modules."
+      },
+      {
+        "id": "market_score",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "market_score_chart"
+      },
+      {
+        "id": "comparables_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Comparable Evidence\n\n**Absolum is the closest modern signal because it directly combines beat 'em up and roguelite language.** Rotwood shows the risk of mixed solo/co-op framing and content expectations. Dead Cells and Hades II set the broader action roguelite bar for replay clarity and polish, but Refractured should not invite a direct comparison unless the demo earns it."
+      },
+      {
+        "id": "competitor_matrix",
+        "type": "table",
+        "layout": "full",
+        "tableId": "competitor_matrix_table"
+      },
+      {
+        "id": "player_segments_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Player Segments\n\n**A brutal 2.5D action roguelite is judged by several overlapping buyers.** The beat 'em up loyalist is unforgiving about hit feel and collision. The roguelite optimizer audits fairness and build behavior. The dark-action buyer needs style and ritual identity. Creators need a clip-worthy moment, while publishers need proof that the hook can become a repeatable demand loop."
+      },
+      {
+        "id": "player_segments",
+        "type": "table",
+        "layout": "full",
+        "tableId": "player_segments_table"
+      },
+      {
+        "id": "roguelite_fit_matrix",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Archived Roguelite Proof Notes\n\nThe archived v2 snapshot framed replay proof around fast retry, run-local ritual choices, fair pressure, meta progression only after the run is fun, and content density after repeat desire is proven. Use the interactive route for the current module-level treatment."
+      },
+      {
+        "id": "review_themes_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Archived Review Theme Notes\n\n**The most useful review themes are not generic sentiment; they are failure modes that can be measured in playtests.** This archive keeps the v2 theme data for traceability; the current client-facing review should happen in the interactive route."
+      },
+      {
+        "id": "review_theme_chart_block",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "review_theme_chart"
+      },
+      {
+        "id": "paths_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Strategic Path Decision Tree\n\n**The recommendation is conditional.** Start with Path A because it answers the hardest commercial question fastest: does the fight make people want another run? Move toward Path B only if players ask for more routes, enemies, content, and co-op. Move toward Path C only if combat mastery becomes the reason people return and funding supports the burden."
+      },
+      {
+        "id": "decision_gates",
+        "type": "table",
+        "layout": "full",
+        "tableId": "decision_gates_table"
+      },
+      {
+        "id": "kpi_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## KPI Framework\n\n**Pre-Steam KPIs should connect gameplay proof to Steam demand.** Steamworks UTM reporting can later measure campaign visits, wishlist conversions, purchases, and activations, but before the Steam page exists the team needs controlled playtest metrics that show whether the promise is understood and repeatable."
+      },
+      {
+        "id": "steam_funnel_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Steam Demo / Wishlist Funnel\n\n**Wishlist intent should come after hook, combat feel, and second-run proof.** The funnel below shows how the report turns a pre-Steam concept into source-attributed demand signals."
+      },
+      {
+        "id": "steam_funnel",
+        "type": "chart",
+        "layout": "full",
+        "chartId": "steam_funnel_chart"
+      },
+      {
+        "id": "kpi_framework",
+        "type": "table",
+        "layout": "full",
+        "tableId": "kpi_framework_table"
+      },
+      {
+        "id": "roadmap_intro",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## 30 / 90 / 365 Day Plan\n\n**The short plan is not to shrink ambition; it is to earn bigger ambition with evidence.** A capture-ready arena, then a 3-room micro-run, then a measured Steam/demo funnel gives the team more leverage than a long private build with no market signal."
+      },
+      {
+        "id": "roadmap",
+        "type": "table",
+        "layout": "full",
+        "tableId": "roadmap_table"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "layout": "full",
+        "body": "## Evidence Confidence Ledger\n\n- **No sales forecast is claimed.** Pricing and revenue remain strategic hypotheses until content volume, traffic, wishlist behavior, and conversion data exist.\n- **Steam review API sampling was attempted but unavailable in this local environment.** Store-page aggregate sentiment, public reviews, Steamworks docs, and public market coverage were used instead.\n- **Logged-in Reddit, Discord, and creator-comment mining are not completed evidence.** They should be the next research upgrade before this becomes a repeatable premium report template.\n- **The biggest open question is the lead promise.** Refractured can combine brutality, roguelite replay, and nightmare ritual identity, but the Steam page and trailer need one of those to lead."
+      },
+      {
+        "id": "evidence_ledger",
+        "type": "table",
+        "layout": "full",
+        "tableId": "evidence_ledger_table"
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "status": "ready",
+    "generatedAt": "2026-06-20T00:00:00+02:00",
+    "datasets": {
+      "headline_metrics": [
+        {
+          "market_fit_readiness": 0.72,
+          "confidence": 0.68,
+          "path_a_fit": 0.84,
+          "proof_burden": 0.62,
+          "north_star_clarity": 0.88,
+          "telemetry_gap": -0.55
+        }
+      ],
+      "market_scorecard": [
+        {
+          "dimension": "Premise fit",
+          "score": 4.4,
+          "confidence": 0.85,
+          "evidence_level": "confirmed",
+          "why_it_matters": "Local docs already frame Refractured as a combat-first action roguelite with nightmare or ritual loop."
+        },
+        {
+          "dimension": "Market legibility",
+          "score": 4.1,
+          "confidence": 0.75,
+          "evidence_level": "inferred",
+          "why_it_matters": "Beat 'em up plus roguelite is a recognizable lane, but needs a sharper hook than genre labels."
+        },
+        {
+          "dimension": "Differentiation",
+          "score": 4.0,
+          "confidence": 0.7,
+          "evidence_level": "inferred",
+          "why_it_matters": "Brutal physicality plus nightmare ritual can avoid generic Hades-like positioning."
+        },
+        {
+          "dimension": "Proof readiness",
+          "score": 2.8,
+          "confidence": 0.65,
+          "evidence_level": "inferred",
+          "why_it_matters": "The current commercial risk is whether combat feel creates second-run desire before scope expands."
+        },
+        {
+          "dimension": "Monetization fit",
+          "score": 3.6,
+          "confidence": 0.7,
+          "evidence_level": "inferred",
+          "why_it_matters": "Premium Steam first is coherent, but price depends on content density and review confidence."
+        },
+        {
+          "dimension": "Social evidence",
+          "score": 2.1,
+          "confidence": 0.45,
+          "evidence_level": "not publicly confirmed",
+          "why_it_matters": "Reddit, Discord, creator comments, and broader review mining remain incomplete."
+        }
+      ],
+      "competitor_matrix": [
+        {
+          "game": "Absolum",
+          "lane": "Roguelite beat 'em up",
+          "steam_signal": "Released Oct 2025; Steam page shows Very Positive English reviews, demo, Beat 'em up and Roguelite tags.",
+          "relevance_score": 5,
+          "borrow": "Use the hybrid lane, demo logic, impact clarity, and run-based brawler framing.",
+          "avoid": "Avoid copying fantasy tone or assuming content volume can be lighter without review risk."
+        },
+        {
+          "game": "Rotwood",
+          "lane": "Co-op combat roguelite",
+          "steam_signal": "Released Mar 2026; Steam page shows strong English lifetime sentiment but mixed recent sentiment.",
+          "relevance_score": 4,
+          "borrow": "Use combat mastery and gear/build learning as proof of replay value.",
+          "avoid": "Avoid ambiguous solo/co-op promise and content pacing issues."
+        },
+        {
+          "game": "Dead Cells",
+          "lane": "Action roguelite benchmark",
+          "steam_signal": "Long-running Steam benchmark with Overwhelmingly Positive English reviews and clear kill, die, learn, repeat promise.",
+          "relevance_score": 4,
+          "borrow": "Use clear loop language, fast retry, and permanent learning as marketing clarity.",
+          "avoid": "Avoid inviting content-depth comparison before Refractured earns it."
+        },
+        {
+          "game": "Hades II",
+          "lane": "Premium action roguelite benchmark",
+          "steam_signal": "Major Steam benchmark for replayability, polish, and high expectation bar.",
+          "relevance_score": 3,
+          "borrow": "Use the clarity of a repeatable fantasy and strong run structure.",
+          "avoid": "Avoid Hades-like positioning unless narrative, content, and polish justify it."
+        },
+        {
+          "game": "Ravenswatch",
+          "lane": "Co-op roguelike action",
+          "steam_signal": "Steam page positions solo and up-to-4 co-op action roguelike with hero variety.",
+          "relevance_score": 3,
+          "borrow": "Use hero/build variety and replayability as expectation references.",
+          "avoid": "Avoid co-op-first tuning if Refractured is selling solo-first brutality."
+        },
+        {
+          "game": "Curse of the Dead Gods",
+          "lane": "Dark action roguelite",
+          "steam_signal": "Steam page positions skill, curses, relics, weapons, traps, and dark temple runs.",
+          "relevance_score": 3,
+          "borrow": "Use fair danger, curses, and dark mechanical identity as reference points.",
+          "avoid": "Avoid repetition and run-length friction without strong combat payoffs."
+        }
+      ],
+      "player_segments": [
+        {
+          "priority": 1,
+          "segment": "Beat 'em up loyalist",
+          "rewards": "Immediate hit impact, readable depth collision, enemy-wave rhythm, fair contact, strong animations.",
+          "punishes": "Floaty hits, cheap damage, unclear z-axis collision, shallow enemy roles.",
+          "validation_metric": "Combat feel score and unclear-damage complaint rate."
+        },
+        {
+          "priority": 2,
+          "segment": "Action roguelite optimizer",
+          "rewards": "Fast retry, meaningful build changes, fair RNG, auditable rules, mastery across runs.",
+          "punishes": "Flat stat upgrades, grind, unpredictable unfairness, low run variety.",
+          "validation_metric": "Second-run intent and behavior-changing build recall."
+        },
+        {
+          "priority": 3,
+          "segment": "Dark-action mood buyer",
+          "rewards": "Brutal tone, ritual identity, audio/visual violence tied to mechanics, memorable enemy threat.",
+          "punishes": "Gore without consequence, generic fantasy, muddy readability.",
+          "validation_metric": "Hook recall after 30-45 seconds of gameplay footage."
+        },
+        {
+          "priority": 4,
+          "segment": "Creator or streamer",
+          "rewards": "Clip-worthy reversal, visible perfect read, brutal punish, surprising second-run change.",
+          "punishes": "Slow setup, menu-heavy systems, unclear stakes, non-visual progression.",
+          "validation_metric": "Shareable moment recall and creator pitch response."
+        },
+        {
+          "priority": 5,
+          "segment": "Publisher or funding evaluator",
+          "rewards": "Clear market lane, measurable proof loop, scope gates, Steam funnel plan, evidence discipline.",
+          "punishes": "Unbounded ambition, no telemetry, genre confusion, unsupported sales claims.",
+          "validation_metric": "Decision gate pass/fail and evidence confidence ledger completeness."
+        }
+      ],
+      "review_theme_map": [
+        {
+          "theme": "Contact feel",
+          "reward_weight": 5,
+          "punish_risk": 5,
+          "primary_segment": "Beat 'em up loyalist",
+          "validation_signal": "Players describe hits as heavy, readable, and fair without prompting."
+        },
+        {
+          "theme": "Pressure readability",
+          "reward_weight": 4,
+          "punish_risk": 5,
+          "primary_segment": "Beat 'em up loyalist",
+          "validation_signal": "Low unclear-damage complaint rate during crowded encounters."
+        },
+        {
+          "theme": "Run desire",
+          "reward_weight": 5,
+          "punish_risk": 4,
+          "primary_segment": "Action roguelite optimizer",
+          "validation_signal": "Players voluntarily start a second run or ask what changes next."
+        },
+        {
+          "theme": "Build behavior",
+          "reward_weight": 4,
+          "punish_risk": 4,
+          "primary_segment": "Action roguelite optimizer",
+          "validation_signal": "Players can name how a ritual choice changed their play."
+        },
+        {
+          "theme": "Content value",
+          "reward_weight": 3,
+          "punish_risk": 5,
+          "primary_segment": "Publisher evaluator",
+          "validation_signal": "Players accept a focused demo because it is replayable, not because they imagine future content."
+        },
+        {
+          "theme": "Solo/co-op framing",
+          "reward_weight": 3,
+          "punish_risk": 4,
+          "primary_segment": "Publisher evaluator",
+          "validation_signal": "Solo players feel the arena, camera, and pacing were tuned for them."
+        },
+        {
+          "theme": "Style identity",
+          "reward_weight": 4,
+          "punish_risk": 3,
+          "primary_segment": "Dark-action mood buyer",
+          "validation_signal": "Players remember nightmare ritual identity more than generic genre labels."
+        },
+        {
+          "theme": "Creator clarity",
+          "reward_weight": 4,
+          "punish_risk": 3,
+          "primary_segment": "Creator or streamer",
+          "validation_signal": "A short clip communicates threat, read, punish, and changed next run."
+        }
+      ],
+      "strategic_paths": [
+        {
+          "path": "Path A: Focused Nightmare Roguelite",
+          "ambition_order": 1,
+          "commercial_role": "Best first market test",
+          "condition": "Use now by default.",
+          "requires": "One excellent arena, then a 3-room micro-run with 8-12 behavior-changing ritual choices.",
+          "upside": "Proves hook, combat feel, replay desire, and Steam page promise before large production.",
+          "risk": "Can look small if the demo is not dense, polished, and replayable."
+        },
+        {
+          "path": "Path B: Content-Forward Rogue-em-up",
+          "ambition_order": 2,
+          "commercial_role": "Scale when players ask for breadth",
+          "condition": "Choose if playtests ask for routes, enemy variety, character options, and co-op or content depth.",
+          "requires": "Content pipeline, enemy role library, route structure, progression tuning, possible co-op clarity.",
+          "upside": "Supports higher premium price and broader repeat play if content density is real.",
+          "risk": "Solo identity can blur and content expectations rise fast."
+        },
+        {
+          "path": "Path C: Deep Combat Mastery Platform",
+          "ambition_order": 3,
+          "commercial_role": "Funding-backed long-tail ambition",
+          "condition": "Choose only if combat mastery becomes the return reason and funding supports depth.",
+          "requires": "Advanced enemies, teaching UX, mastery systems, balance cadence, long-tail updates.",
+          "upside": "Can become a durable premium action roguelite if the combat system earns loyalty.",
+          "risk": "Highest proof burden; weak core feel will be exposed immediately."
+        }
+      ],
+      "decision_gates": [
+        {
+          "gate_order": 1,
+          "gate": "30-second hook test",
+          "pass_signal": "70%+ of target players can describe the hook as brutal 2.5D action roguelite with ritual/retry identity.",
+          "path_trigger": "Stay Path A and prepare capture-ready arena.",
+          "failure_response": "Rewrite promise, trailer beat, and Steam tags before expanding systems."
+        },
+        {
+          "gate_order": 2,
+          "gate": "First arena feel test",
+          "pass_signal": "Players rate contact and readability high, with low unclear-damage complaints.",
+          "path_trigger": "Build 3-room micro-run.",
+          "failure_response": "Fix combat feel, hit reaction, enemy tells, camera, and collision before adding progression."
+        },
+        {
+          "gate_order": 3,
+          "gate": "Second-run test",
+          "pass_signal": "50%+ of qualified players voluntarily retry or say they want another run.",
+          "path_trigger": "Add ritual choice layer and controlled run variation.",
+          "failure_response": "Tighten room pacing, retry loop, and run-local decisions."
+        },
+        {
+          "gate_order": 4,
+          "gate": "Build behavior test",
+          "pass_signal": "Players can explain how a ritual choice changed tactics, not just stats.",
+          "path_trigger": "Keep Path A or graduate toward Path C if mastery drives repeat play.",
+          "failure_response": "Replace flat modifiers with behavior-changing choices."
+        },
+        {
+          "gate_order": 5,
+          "gate": "Content demand test",
+          "pass_signal": "Positive players ask for routes, enemies, weapons, or co-op after the core loop works.",
+          "path_trigger": "Consider Path B with a scoped content plan.",
+          "failure_response": "Hold content expansion until retention signals are real."
+        },
+        {
+          "gate_order": 6,
+          "gate": "Steam funnel test",
+          "pass_signal": "Steam page or campaign traffic converts into qualified wishlist intent with clear source attribution.",
+          "path_trigger": "Decide premium launch, Early Access, or publisher pitch timing.",
+          "failure_response": "Improve capsule, trailer, demo CTA, and traffic source targeting."
+        }
+      ],
+      "kpi_framework": [
+        {
+          "priority": 1,
+          "metric": "Qualified Wishlist Intent from Playable Proof",
+          "definition": "Share of target players who understand the hook, want another run, and would wishlist because of the playable demo or clip.",
+          "decision_use": "North-star pre-Steam demand proxy.",
+          "target_range": "30-40%+ in qualified closed tests before broad public push.",
+          "evidence_status": "Needs playtest baseline."
+        },
+        {
+          "priority": 2,
+          "metric": "Hook comprehension",
+          "definition": "Percent of viewers or players who can describe the fantasy after 30-45 seconds without being coached.",
+          "decision_use": "Validates trailer, Steam capsule, tags, and one-line promise.",
+          "target_range": "70%+ among target players.",
+          "evidence_status": "Needs video/demo test."
+        },
+        {
+          "priority": 3,
+          "metric": "Second-run intent",
+          "definition": "Percent of players who voluntarily retry, ask what changes next, or report wanting another run after failure or completion.",
+          "decision_use": "Validates roguelite loop before content expansion.",
+          "target_range": "50%+ in controlled early playtests.",
+          "evidence_status": "Needs playable micro-run."
+        },
+        {
+          "priority": 4,
+          "metric": "Combat feel score",
+          "definition": "Average player rating of hit impact, input response, enemy readability, camera, and depth collision.",
+          "decision_use": "Blocks false positives from good concept but weak feel.",
+          "target_range": "4.0/5 or better with low unclear-damage complaints.",
+          "evidence_status": "Needs structured playtest survey."
+        },
+        {
+          "priority": 5,
+          "metric": "Ritual behavior recall",
+          "definition": "Percent of players who can name how a run-local choice changed their tactics.",
+          "decision_use": "Tests whether roguelite choices alter behavior instead of stats only.",
+          "target_range": "60%+ after first micro-run session.",
+          "evidence_status": "Needs ritual-choice prototype."
+        },
+        {
+          "priority": 6,
+          "metric": "Steam UTM wishlist conversion",
+          "definition": "Wishlist additions within Steamworks UTM reporting windows by campaign source once the store page exists.",
+          "decision_use": "Connects creator/demo traffic to measurable demand.",
+          "target_range": "Set after first campaign baseline; avoid inventing before traffic exists.",
+          "evidence_status": "Future Steamworks data."
+        }
+      ],
+      "steam_funnel": [
+        {
+          "funnel_order": 1,
+          "stage": "Clip watched",
+          "target_signal_strength": 3.5,
+          "measure": "Hook recall after 30-45 seconds",
+          "source_or_tool": "Playtest survey or creator outreach form"
+        },
+        {
+          "funnel_order": 2,
+          "stage": "Demo started",
+          "target_signal_strength": 4.0,
+          "measure": "Start-to-first-fight completion",
+          "source_or_tool": "Demo telemetry"
+        },
+        {
+          "funnel_order": 3,
+          "stage": "First run completed or failed",
+          "target_signal_strength": 4.4,
+          "measure": "Combat feel and unclear-damage feedback",
+          "source_or_tool": "Telemetry plus survey"
+        },
+        {
+          "funnel_order": 4,
+          "stage": "Second run started",
+          "target_signal_strength": 5.0,
+          "measure": "Voluntary retry or replay intent",
+          "source_or_tool": "Demo telemetry"
+        },
+        {
+          "funnel_order": 5,
+          "stage": "Wishlist intent",
+          "target_signal_strength": 4.6,
+          "measure": "Would wishlist and why",
+          "source_or_tool": "Survey pre-Steam; Steamworks later"
+        },
+        {
+          "funnel_order": 6,
+          "stage": "Steam UTM conversion",
+          "target_signal_strength": 4.2,
+          "measure": "Wishlist conversion by traffic source",
+          "source_or_tool": "Steamworks UTM Analytics"
+        }
+      ],
+      "roadmap": [
+        {
+          "period_order": 1,
+          "period": "0-30 days",
+          "objective": "Lock the sellable thesis.",
+          "deliverable": "Capture-ready arena clip showing threat, read, punish, and retry fantasy.",
+          "success_signal": "Target players understand the hook and describe the game with intended words."
+        },
+        {
+          "period_order": 2,
+          "period": "30-90 days",
+          "objective": "Build the playable proof loop.",
+          "deliverable": "3-room micro-run with one post-room ritual choice and quick retry.",
+          "success_signal": "Players voluntarily want another run and remember how the ritual changed play."
+        },
+        {
+          "period_order": 3,
+          "period": "3-6 months",
+          "objective": "Validate Steam-facing demand.",
+          "deliverable": "Steam page draft, demo CTA, creator pitch, and UTM plan.",
+          "success_signal": "Qualified wishlist intent and source-attributed traffic start to emerge."
+        },
+        {
+          "period_order": 4,
+          "period": "6-12 months",
+          "objective": "Choose the bigger business path.",
+          "deliverable": "Decision on Path A launch scope, Path B content expansion, or Path C funding-backed mastery platform.",
+          "success_signal": "Decision gates show which ambition is earned by player evidence."
+        }
+      ],
+      "evidence_ledger": [
+        {
+          "confidence_rank": 5,
+          "claim": "Refractured is intended as a combat-first action roguelite with nightmare or ritual loop.",
+          "evidence_type": "confirmed",
+          "confidence": "High",
+          "source_label": "Local Refractured project docs",
+          "report_use": "Sets core premise and prevents generic brawler framing."
+        },
+        {
+          "confidence_rank": 5,
+          "claim": "Steam visibility depends on customer response such as purchasing, playing, reviewing, and related factors.",
+          "evidence_type": "confirmed",
+          "confidence": "High",
+          "source_label": "Steamworks Visibility",
+          "report_use": "Supports focus on playable proof and demand signals."
+        },
+        {
+          "confidence_rank": 5,
+          "claim": "Steam Early Access is not a crowdfunding substitute and must deliver a playable game at purchase.",
+          "evidence_type": "confirmed",
+          "confidence": "High",
+          "source_label": "Steamworks Early Access",
+          "report_use": "Frames Early Access as conditional, not default financing."
+        },
+        {
+          "confidence_rank": 5,
+          "claim": "Steam Next Fest requires a public trailer, demo readiness, updated store page, and accurate tags/categories.",
+          "evidence_type": "confirmed",
+          "confidence": "High",
+          "source_label": "Steamworks Next Fest",
+          "report_use": "Shapes demo and Steam page readiness plan."
+        },
+        {
+          "confidence_rank": 4,
+          "claim": "Absolum confirms an active roguelite beat 'em up lane on Steam.",
+          "evidence_type": "confirmed",
+          "confidence": "Medium-high",
+          "source_label": "Absolum Steam page",
+          "report_use": "Closest comparable and expectation map."
+        },
+        {
+          "confidence_rank": 4,
+          "claim": "Rotwood shows the promise and risk of co-op combat roguelite framing.",
+          "evidence_type": "confirmed",
+          "confidence": "Medium-high",
+          "source_label": "Rotwood Steam page",
+          "report_use": "Cautions against unclear solo/co-op positioning."
+        },
+        {
+          "confidence_rank": 4,
+          "claim": "June 2026 Next Fest discovery pressure is high due to thousands of demos and AI-disclosure noise.",
+          "evidence_type": "reported",
+          "confidence": "Medium",
+          "source_label": "GamesRadar and PC Gamer Next Fest coverage",
+          "report_use": "Supports need for sharp first 5 seconds and clear demo hook."
+        },
+        {
+          "confidence_rank": 3,
+          "claim": "Beat 'em up players are especially sensitive to hit feel, collision, readability, and cheap damage.",
+          "evidence_type": "inferred",
+          "confidence": "Medium",
+          "source_label": "Comparable store pages and public review themes",
+          "report_use": "Defines player segment and validation metrics."
+        },
+        {
+          "confidence_rank": 3,
+          "claim": "Qualified Wishlist Intent is the right pre-Steam north star.",
+          "evidence_type": "inferred",
+          "confidence": "Medium",
+          "source_label": "Steamworks UTM and current project stage",
+          "report_use": "KPI framework; needs real telemetry later."
+        },
+        {
+          "confidence_rank": 2,
+          "claim": "Logged-in Reddit and Discord sentiment for this exact niche was not completed in this pass.",
+          "evidence_type": "not publicly confirmed",
+          "confidence": "Low",
+          "source_label": "Social listening gap",
+          "report_use": "Evidence gap for the next research pass."
+        },
+        {
+          "confidence_rank": 2,
+          "claim": "Steam review API theme sampling was attempted but unavailable in this local environment.",
+          "evidence_type": "not publicly confirmed",
+          "confidence": "Low",
+          "source_label": "Steam review API attempt",
+          "report_use": "Uses public store aggregates instead; API sampling remains an evidence gap."
+        }
+      ]
+    }
+  }
+}
