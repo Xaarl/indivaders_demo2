@@ -83,7 +83,9 @@ function RefracturedReportPage() {
 
   const activePlaceholder = sectionPlaceholders[activeSection];
   const selectedEvidenceCopy =
-    activeEvidenceRefs.length > 0 ? `Selected evidence: ${activeEvidenceRefs.join(", ")}` : "Selected evidence: none selected.";
+    activeEvidenceRefs.length > 0
+      ? `Selected evidence (${activeEvidenceRefs.length}): ${activeEvidenceRefs.join(", ")}`
+      : "Selected evidence (0): none selected.";
 
   return (
     <RefracturedReportFrame
