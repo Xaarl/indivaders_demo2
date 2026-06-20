@@ -120,11 +120,9 @@ What changed:
   - `docs/client-reports/refractured-report-v2-artifact.json`;
   - `docs/client-reports/refractured-steam-positioning-readiness.html`;
   - `docs/client-reports/refractured-steam-positioning-readiness.md`.
-- The report is structured around decision support instead of prose:
-  Commercial Verdict, Market Fit Scorecard, Player Segments, Roguelite Fit
-  Matrix, Comparable Evidence, Review Theme Mining, Strategic Path Decision
-  Tree, KPI Framework, Steam Demo/Wishlist Funnel, Roadmap, and Evidence
-  Confidence Ledger.
+- The now-archived report was structured around decision support instead of
+  prose, with verdict, player, roguelite, comparable, review-theme, decision,
+  KPI, Steam funnel, roadmap, and evidence-ledger sections.
 - The north star is now `Qualified Wishlist Intent from Playable Proof`.
 - Path A/B/C is no longer an arbitrary recommendation:
   - Path A is the first market test;

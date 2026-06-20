@@ -145,15 +145,15 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
   gap: clamp(28px, 6vw, 88px);
-  align-items: end;
-  padding-top: clamp(44px, 7vw, 102px);
+  align-items: center;
+  padding-top: clamp(36px, 5vw, 72px);
 }
 
 .refractured-opening-copy h1 {
-  max-width: 1080px;
+  max-width: 980px;
   margin: 0;
-  font-size: clamp(2.8rem, 6.5vw, 7.2rem);
-  line-height: 0.92;
+  font-size: clamp(2.8rem, 5.4vw, 6rem);
+  line-height: 0.96;
   letter-spacing: 0;
 }
 
