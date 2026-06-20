@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import refracturedPremiumReport from "../../data/refracturedPremiumReport.js";
 import ActionPlanTimeline from "./ActionPlanTimeline.jsx";
 import ComparableExplorer from "./ComparableExplorer.jsx";
@@ -27,6 +27,14 @@ function RefracturedReportPage() {
   const [activeLensId, setActiveLensId] = useState(refracturedPremiumReport.readerLenses[0]?.id ?? null);
   const [activeEvidenceRefs, setActiveEvidenceRefs] = useState([]);
   const [evidenceDrawerOpen, setEvidenceDrawerOpen] = useState(false);
+  const [evidenceReturnFocusTo, setEvidenceReturnFocusTo] = useState(null);
+
+  const closeEvidenceDrawer = useCallback(() => {
+    setEvidenceDrawerOpen(false);
+    window.requestAnimationFrame(() => {
+      evidenceReturnFocusTo?.focus?.({ preventScroll: true });
+    });
+  }, [evidenceReturnFocusTo]);
 
   function handleSectionChange(sectionId) {
     const matchingLens = refracturedPremiumReport.readerLenses.find((lens) => lens.section === sectionId);
@@ -45,6 +53,7 @@ function RefracturedReportPage() {
   }
 
   function openEvidenceDrawer(refs = []) {
+    setEvidenceReturnFocusTo(document.activeElement);
     setActiveEvidenceRefs(Array.isArray(refs) ? refs : []);
     setEvidenceDrawerOpen(true);
   }
@@ -105,7 +114,7 @@ function RefracturedReportPage() {
       <RefracturedEvidenceDrawer
         activeRefs={activeEvidenceRefs.length > 0 ? activeEvidenceRefs : null}
         evidence={refracturedPremiumReport.evidence}
-        onClose={() => setEvidenceDrawerOpen(false)}
+        onClose={closeEvidenceDrawer}
         open={evidenceDrawerOpen}
       />
     </RefracturedReportFrame>

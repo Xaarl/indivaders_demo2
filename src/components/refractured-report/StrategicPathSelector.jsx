@@ -16,7 +16,7 @@ function StrategicPathSelector({ onEvidenceOpen, paths }) {
         </p>
       </div>
 
-      <div className="refractured-path-grid">
+      <div className="refractured-path-grid" role="group" aria-label="Strategic paths">
         {paths.map((path) => (
           <button
             aria-pressed={path.id === activePath.id}
