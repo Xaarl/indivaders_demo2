@@ -32,6 +32,16 @@ const REQUIRED_UNIQUE_ID_ARRAYS = [
   "evidence",
 ];
 
+const REQUIRED_UNIQUE_UI_ID_ARRAYS = [
+  "readerLenses",
+  "playerSignals",
+  "rogueliteDirections",
+  "comparables",
+  "positioningAngles",
+  "strategicPaths",
+  "actionPlan",
+];
+
 const REQUIRED_THESIS_HEADLINE =
   "Refractured should sell the feeling of surviving a brutal retry loop, not the label of a 2.5D brawler.";
 
@@ -82,6 +92,31 @@ function requireUniqueIds(key, items) {
     }
     seen.add(item.id);
   });
+}
+
+function requireUniqueUiIdsAcrossSections(keys) {
+  const seen = new Map();
+
+  for (const key of keys) {
+    const items = refracturedPremiumReport[key];
+    if (!Array.isArray(items)) {
+      continue;
+    }
+
+    items.forEach((item) => {
+      if (!item || typeof item !== "object" || typeof item.id !== "string" || item.id.length === 0) {
+        return;
+      }
+
+      const previousKey = seen.get(item.id);
+      if (previousKey && previousKey !== key) {
+        fail(`ui report id "${item.id}" is reused across sections`);
+        return;
+      }
+
+      seen.set(item.id, key);
+    });
+  }
 }
 
 function collectEvidenceRefs(value, refs = []) {
@@ -135,6 +170,7 @@ for (const key of REQUIRED_EVIDENCE_REF_ARRAYS) {
 for (const key of REQUIRED_UNIQUE_ID_ARRAYS) {
   requireUniqueIds(key, refracturedPremiumReport[key]);
 }
+requireUniqueUiIdsAcrossSections(REQUIRED_UNIQUE_UI_ID_ARRAYS);
 
 const evidence = Array.isArray(refracturedPremiumReport.evidence) ? refracturedPremiumReport.evidence : [];
 const evidenceIds = new Set(
