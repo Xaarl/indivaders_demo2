@@ -1,5 +1,7 @@
 import { useState } from "react";
 import refracturedPremiumReport from "../../data/refracturedPremiumReport.js";
+import LensHub from "./LensHub.jsx";
+import OpeningThesis from "./OpeningThesis.jsx";
 import RefracturedReportFrame from "./RefracturedReportFrame.jsx";
 
 const sections = [
@@ -70,16 +72,12 @@ function RefracturedReportPage() {
     >
       {activeSection === "overview" ? (
         <>
-          <section className="refractured-module">
-            <p className="refractured-kicker">Private interactive report</p>
-            <h1>{refracturedPremiumReport.thesis.headline}</h1>
-            <p>{refracturedPremiumReport.thesis.body}</p>
-            <p className="refractured-proof-question">{refracturedPremiumReport.thesis.proofQuestion}</p>
-          </section>
-          <section className="refractured-module">
-            <p className="refractured-kicker">Implementation checkpoint</p>
-            <h2>Route is wired. Interactive modules land in the next tasks.</h2>
-          </section>
+          <OpeningThesis
+            onEvidenceOpen={openEvidenceDrawer}
+            onSectionChange={setActiveSection}
+            report={refracturedPremiumReport}
+          />
+          <LensHub lenses={refracturedPremiumReport.readerLenses} onSectionChange={setActiveSection} />
         </>
       ) : (
         <section className="refractured-module">
