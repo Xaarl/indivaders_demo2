@@ -11,6 +11,27 @@ const REQUIRED_TOP_LEVEL_ARRAYS = [
   ["evidence", 12],
 ];
 
+const REQUIRED_EVIDENCE_REF_ARRAYS = [
+  "readerLenses",
+  "playerSignals",
+  "rogueliteDirections",
+  "comparables",
+  "positioningAngles",
+  "strategicPaths",
+  "actionPlan",
+];
+
+const REQUIRED_UNIQUE_ID_ARRAYS = [
+  "readerLenses",
+  "playerSignals",
+  "rogueliteDirections",
+  "comparables",
+  "positioningAngles",
+  "strategicPaths",
+  "actionPlan",
+  "evidence",
+];
+
 const REQUIRED_THESIS_HEADLINE =
   "Refractured should sell the feeling of surviving a brutal retry loop, not the label of a 2.5D brawler.";
 
@@ -29,6 +50,38 @@ const FORBIDDEN_PRIMARY_COPY = [
 function fail(message) {
   console.error(`Refractured report check failed: ${message}`);
   process.exitCode = 1;
+}
+
+function requireEvidenceRefs(path, item) {
+  if (!Array.isArray(item?.evidenceRefs) || item.evidenceRefs.length === 0) {
+    fail(`${path} must include at least one evidenceRef`);
+    return;
+  }
+
+  item.evidenceRefs.forEach((ref, index) => {
+    if (typeof ref !== "string" || ref.length === 0) {
+      fail(`${path}.evidenceRefs[${index}] must be a non-empty string`);
+    }
+  });
+}
+
+function requireUniqueIds(key, items) {
+  if (!Array.isArray(items)) {
+    return;
+  }
+
+  const seen = new Set();
+  items.forEach((item, index) => {
+    if (!item || typeof item !== "object" || typeof item.id !== "string" || item.id.length === 0) {
+      fail(`${key}[${index}] must include a non-empty id`);
+      return;
+    }
+
+    if (seen.has(item.id)) {
+      fail(`${key} contains duplicate id "${item.id}"`);
+    }
+    seen.add(item.id);
+  });
 }
 
 function collectEvidenceRefs(value, refs = []) {
@@ -66,6 +119,21 @@ for (const [key, minimum] of REQUIRED_TOP_LEVEL_ARRAYS) {
   if (!Array.isArray(value) || value.length < minimum) {
     fail(`${key} must contain at least ${minimum} items`);
   }
+}
+
+requireEvidenceRefs("thesis", refracturedPremiumReport.thesis);
+
+for (const key of REQUIRED_EVIDENCE_REF_ARRAYS) {
+  const value = refracturedPremiumReport[key];
+  if (!Array.isArray(value)) {
+    continue;
+  }
+
+  value.forEach((item, index) => requireEvidenceRefs(`${key}[${index}]`, item));
+}
+
+for (const key of REQUIRED_UNIQUE_ID_ARRAYS) {
+  requireUniqueIds(key, refracturedPremiumReport[key]);
 }
 
 const evidence = Array.isArray(refracturedPremiumReport.evidence) ? refracturedPremiumReport.evidence : [];
