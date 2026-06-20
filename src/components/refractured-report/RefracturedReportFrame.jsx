@@ -21,6 +21,7 @@ function RefracturedReportFrame({ activeSection, children, onSectionChange, onSo
       <nav className="refractured-section-nav" aria-label="Refractured report sections">
         {sections.map((section) => (
           <button
+            aria-current={section.id === activeSection ? "page" : undefined}
             className={section.id === activeSection ? "is-active" : ""}
             key={section.id}
             type="button"
