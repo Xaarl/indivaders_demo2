@@ -163,6 +163,27 @@ try {
       assert.match(markup, /refractured-compare-dock/);
       assert.match(markup, /Add to compare/);
     }),
+    test("V5.1 workspace chrome exposes real actions instead of placeholder labels", () => {
+      const markup = renderToStaticMarkup(React.createElement(RefracturedReportPage));
+
+      assert.match(markup, /Copy link/);
+      assert.match(markup, /Export JSON/);
+      assert.match(markup, /Save view/);
+      assert.match(markup, /refractured-workspace-status/);
+      assert.doesNotMatch(markup, /Share internal/);
+    }),
+    test("V5.1 comparable explorer exposes stateful view and sort controls", () => {
+      const markup = renderToStaticMarkup(
+        React.createElement(ComparableExplorer, {
+          marketEvidence: report.marketEvidence,
+          onEvidenceOpen: noop,
+        }),
+      );
+
+      assert.match(markup, /refractured-comparable-view-switch/);
+      assert.match(markup, /aria-pressed="true"/);
+      assert.match(markup, /Sort by: Market fit/);
+    }),
   ]);
 
   const failures = results.filter((result) => !result.ok);

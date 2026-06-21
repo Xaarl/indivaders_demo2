@@ -18,6 +18,24 @@ const roleFitScores = {
   "Content pressure warning": 62,
   "Expectation ceiling": 56,
 };
+const sortOptions = [
+  { id: "market-fit", label: "Market fit", compare: (left, right) => marketFitScore(right) - marketFitScore(left) },
+  {
+    id: "reviews",
+    label: "Review volume",
+    compare: (left, right) => (right.steamSnapshot?.reviewsTotal ?? 0) - (left.steamSnapshot?.reviewsTotal ?? 0),
+  },
+  {
+    id: "players",
+    label: "Current players",
+    compare: (left, right) => (right.steamSnapshot?.currentPlayers ?? 0) - (left.steamSnapshot?.currentPlayers ?? 0),
+  },
+  {
+    id: "newest",
+    label: "Newest release",
+    compare: (left, right) => releaseTime(right) - releaseTime(left),
+  },
+];
 
 function collectFilters(comparables) {
   const tags = new Set();
@@ -41,6 +59,11 @@ function formatPlayers(value) {
   }
 
   return new Intl.NumberFormat("en-US").format(value);
+}
+
+function releaseTime(item) {
+  const timestamp = Date.parse(item.steamSnapshot?.release ?? "");
+  return Number.isFinite(timestamp) ? timestamp : 0;
 }
 
 function MetricTile({ children, icon: Icon, label, value }) {
@@ -189,17 +212,79 @@ function ComparisonDock({ comparables, selectedIds, onClear, onToggleCompare }) 
   );
 }
 
+function MarketPositionStrip({ activeComparable, sortedComparables }) {
+  return (
+    <div className="refractured-market-position-strip">
+      <section>
+        <h2>Market Position Map</h2>
+        <p>Bubble position is a planning read, not a sales forecast.</p>
+        <div className="refractured-position-map" aria-label="Market fit position map">
+          {sortedComparables.map((item, index) => (
+            <span
+              aria-label={`${item.title}: ${marketFitScore(item)} market fit`}
+              className={item.id === activeComparable.id ? "is-active" : ""}
+              key={item.id}
+              style={{
+                "--rf-x": `${16 + index * 13}%`,
+                "--rf-y": `${82 - marketFitScore(item) * 0.72}%`,
+              }}
+            >
+              {item.title}
+            </span>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h2>Selected Read</h2>
+        <p>{activeComparable.insight}</p>
+        <div className="refractured-market-metrics" aria-label={`${activeComparable.title} Steam snapshot`}>
+          <MetricTile icon={Star} label="Reviews" value={activeComparable.steamSnapshot.reviewTone}>
+            <small>
+              {activeComparable.steamSnapshot.reviews} total / {activeComparable.steamSnapshot.positiveRate}
+            </small>
+          </MetricTile>
+          <MetricTile
+            icon={Users}
+            label="Current players"
+            value={formatPlayers(activeComparable.steamSnapshot.currentPlayers)}
+          >
+            <small>{activeComparable.sourceConfidence.currentPlayers} public API pulse</small>
+          </MetricTile>
+          <MetricTile icon={DollarSign} label="Gross proxy" value={activeComparable.estimateSnapshot.grossRange}>
+            <small>{activeComparable.estimateSnapshot.unitRange}</small>
+          </MetricTile>
+          <MetricTile icon={Tags} label="Store basics" value={activeComparable.steamSnapshot.price}>
+            <small>{activeComparable.steamSnapshot.release}</small>
+          </MetricTile>
+        </div>
+      </section>
+      <section>
+        <h2>White Space Indicators</h2>
+        <ul>
+          <li>2.5D brawler plus roguelite tactical depth</li>
+          <li>Brutal contact feel with readable fairness</li>
+          <li>Run choices that change combat behavior</li>
+          <li>Steam page promise that avoids generic dark brawler framing</li>
+        </ul>
+      </section>
+    </div>
+  );
+}
+
 function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
   const comparables = marketEvidence.comparables ?? emptyComparables;
   const filters = useMemo(() => collectFilters(comparables), [comparables]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [activeComparableId, setActiveComparableId] = useState(comparables[0]?.id);
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortMode, setSortMode] = useState(sortOptions[0].id);
   const [selectedComparableIds, setSelectedComparableIds] = useState(() =>
     comparables.slice(0, 3).map((item) => item.id),
   );
+  const activeSort = sortOptions.find((option) => option.id === sortMode) ?? sortOptions[0];
   const visibleComparables =
     activeFilter === "All" ? comparables : comparables.filter((item) => item.filterTags?.includes(activeFilter));
-  const sortedComparables = [...visibleComparables].sort((left, right) => marketFitScore(right) - marketFitScore(left));
+  const sortedComparables = [...visibleComparables].sort(activeSort.compare);
   const activeComparable =
     sortedComparables.find((item) => item.id === activeComparableId) ?? sortedComparables[0] ?? comparables[0];
 
@@ -223,6 +308,12 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
 
   function clearComparison() {
     setSelectedComparableIds([]);
+  }
+
+  function cycleSortMode() {
+    const activeIndex = sortOptions.findIndex((option) => option.id === sortMode);
+    const nextSort = sortOptions[(activeIndex + 1) % sortOptions.length] ?? sortOptions[0];
+    setSortMode(nextSort.id);
   }
 
   return (
@@ -260,15 +351,33 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
       />
 
       {activeComparable ? (
-        <div className="refractured-comparable-board">
+        <div className={`refractured-comparable-board${viewMode === "map" ? " is-map-mode" : ""}`}>
           <div className="refractured-comparable-toolbar">
             <p>{sortedComparables.length} games match</p>
-            <div>
-              <button type="button">Grid</button>
-              <button type="button">Market map</button>
-              <button type="button">Sort by: Market fit</button>
+            <div className="refractured-comparable-view-switch">
+              <button
+                aria-pressed={viewMode === "grid"}
+                className={viewMode === "grid" ? "is-active" : ""}
+                type="button"
+                onClick={() => setViewMode("grid")}
+              >
+                Grid
+              </button>
+              <button
+                aria-pressed={viewMode === "map"}
+                className={viewMode === "map" ? "is-active" : ""}
+                type="button"
+                onClick={() => setViewMode("map")}
+              >
+                Market map
+              </button>
+              <button type="button" onClick={cycleSortMode}>
+                Sort by: {activeSort.label}
+              </button>
             </div>
           </div>
+
+          {viewMode === "map" ? <MarketPositionStrip activeComparable={activeComparable} sortedComparables={sortedComparables} /> : null}
 
           <div className="refractured-comparable-card-grid" aria-label="Steam comparable cards">
             {sortedComparables.map((item) => (
@@ -284,60 +393,7 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
             ))}
           </div>
 
-          <div className="refractured-market-position-strip">
-            <section>
-              <h2>Market Position Map</h2>
-              <p>Bubble position is a planning read, not a sales forecast.</p>
-              <div className="refractured-position-map" aria-label="Market fit position map">
-                {sortedComparables.map((item, index) => (
-                  <span
-                    aria-label={`${item.title}: ${marketFitScore(item)} market fit`}
-                    className={item.id === activeComparable.id ? "is-active" : ""}
-                    key={item.id}
-                    style={{
-                      "--rf-x": `${16 + index * 13}%`,
-                      "--rf-y": `${82 - marketFitScore(item) * 0.72}%`,
-                    }}
-                  >
-                    {item.title}
-                  </span>
-                ))}
-              </div>
-            </section>
-            <section>
-              <h2>Selected Read</h2>
-              <p>{activeComparable.insight}</p>
-              <div className="refractured-market-metrics" aria-label={`${activeComparable.title} Steam snapshot`}>
-                <MetricTile icon={Star} label="Reviews" value={activeComparable.steamSnapshot.reviewTone}>
-                  <small>
-                    {activeComparable.steamSnapshot.reviews} total / {activeComparable.steamSnapshot.positiveRate}
-                  </small>
-                </MetricTile>
-                <MetricTile
-                  icon={Users}
-                  label="Current players"
-                  value={formatPlayers(activeComparable.steamSnapshot.currentPlayers)}
-                >
-                  <small>{activeComparable.sourceConfidence.currentPlayers} public API pulse</small>
-                </MetricTile>
-                <MetricTile icon={DollarSign} label="Gross proxy" value={activeComparable.estimateSnapshot.grossRange}>
-                  <small>{activeComparable.estimateSnapshot.unitRange}</small>
-                </MetricTile>
-                <MetricTile icon={Tags} label="Store basics" value={activeComparable.steamSnapshot.price}>
-                  <small>{activeComparable.steamSnapshot.release}</small>
-                </MetricTile>
-              </div>
-            </section>
-            <section>
-              <h2>White Space Indicators</h2>
-              <ul>
-                <li>2.5D brawler plus roguelite tactical depth</li>
-                <li>Brutal contact feel with readable fairness</li>
-                <li>Run choices that change combat behavior</li>
-                <li>Steam page promise that avoids generic dark brawler framing</li>
-              </ul>
-            </section>
-          </div>
+          {viewMode === "grid" ? <MarketPositionStrip activeComparable={activeComparable} sortedComparables={sortedComparables} /> : null}
 
           <ComparisonDock
             comparables={comparables}

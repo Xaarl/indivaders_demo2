@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   BarChart3,
   Bookmark,
@@ -28,10 +29,10 @@ const sectionIcons = {
 };
 
 const quickViews = [
-  { label: "Wishlist Funnel", icon: LineChart },
-  { label: "Price Proxy", icon: BarChart3 },
-  { label: "Tag Performance", icon: Tag },
-  { label: "Demo Benchmarks", icon: ClipboardList },
+  { label: "Wishlist Funnel", icon: LineChart, targetSection: "steam-page-lab" },
+  { label: "Price Proxy", icon: BarChart3, targetSection: "comparable-explorer" },
+  { label: "Tag Performance", icon: Tag, targetSection: "market-map" },
+  { label: "Demo Benchmarks", icon: ClipboardList, targetSection: "action-plan" },
 ];
 
 function layerItems(module, layer) {
@@ -131,7 +132,7 @@ function WorkspaceSidebar({ activeSection, marketEvidence, onSectionChange, repo
         {quickViews.map((item) => {
           const Icon = item.icon;
           return (
-            <button key={item.label} type="button">
+            <button key={item.label} type="button" onClick={() => onSectionChange(item.targetSection)}>
               <Icon size={15} aria-hidden="true" />
               {item.label}
             </button>
@@ -159,7 +160,51 @@ function WorkspaceSidebar({ activeSection, marketEvidence, onSectionChange, repo
   );
 }
 
-function WorkspaceTopbar({ onFullEvidenceOpen, report }) {
+function WorkspaceTopbar({ activeSection, onFullEvidenceOpen, report }) {
+  const [status, setStatus] = useState("Ready");
+
+  async function copyWorkspaceLink() {
+    const fallbackUrl = `${report.meta.primaryRoute}`;
+    const href = typeof window === "undefined" ? fallbackUrl : window.location.href;
+
+    try {
+      await navigator.clipboard.writeText(href);
+      setStatus("Workspace link copied");
+    } catch {
+      setStatus("Copy unavailable; use the browser address bar");
+    }
+  }
+
+  function exportReportJson() {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      activeSection,
+      report,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `${report.meta.projectName.toLowerCase()}-market-workspace.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setStatus("JSON export downloaded");
+  }
+
+  function saveWorkspaceView() {
+    const savedView = {
+      activeSection,
+      savedAt: new Date().toISOString(),
+      reportId: report.meta.id,
+    };
+
+    localStorage.setItem("refractured-market-workspace-view", JSON.stringify(savedView));
+    setStatus("View saved in this browser");
+  }
+
   return (
     <header className="refractured-workspace-topbar">
       <div>
@@ -170,16 +215,19 @@ function WorkspaceTopbar({ onFullEvidenceOpen, report }) {
         <span>Build</span>
         <strong>V5 / {report.meta.updatedAt}</strong>
       </div>
+      <p className="refractured-workspace-status" aria-live="polite">
+        {status}
+      </p>
       <nav aria-label="Workspace actions">
-        <button type="button">
+        <button type="button" onClick={copyWorkspaceLink}>
           <Share2 size={15} aria-hidden="true" />
-          Share internal
+          Copy link
         </button>
-        <button type="button">
+        <button type="button" onClick={exportReportJson}>
           <Download size={15} aria-hidden="true" />
-          Export
+          Export JSON
         </button>
-        <button type="button">
+        <button type="button" onClick={saveWorkspaceView}>
           <Bookmark size={15} aria-hidden="true" />
           Save view
         </button>
@@ -213,7 +261,7 @@ function MarketWorkspaceShell({
         sections={sections}
       />
       <div className="refractured-workspace-main">
-        <WorkspaceTopbar onFullEvidenceOpen={onFullEvidenceOpen} report={report} />
+        <WorkspaceTopbar activeSection={activeSection} onFullEvidenceOpen={onFullEvidenceOpen} report={report} />
         {children}
       </div>
       <InsightLayerPanel activeModule={activeModule} onEvidenceOpen={onEvidenceOpen} />
