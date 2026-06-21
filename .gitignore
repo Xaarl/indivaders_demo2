@@ -18,4 +18,5 @@ qa-*.png
 qa-*.jpg
 qa-*.jpeg
 qa-*.webp
+.worktrees/
 
