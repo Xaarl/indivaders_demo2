@@ -321,3 +321,28 @@ Decision: Refractured V3 will use one private interactive client-report route, `
 Reason: The v2 report looked too much like a generic AI deep-research output. A paid Indievaders product needs guided interaction, decision modules, source drawers, and premium visual hierarchy.
 
 Impact: Implementation shifts from static report rewriting to a React report experience with local data and focused modules. Backend, auth, payments, public sharing, and live Market Watch remain out of scope.
+
+## 2026-06-21: Rebuild Refractured V4 Around Market Evidence Layers
+
+Decision: Refractured V4 should not continue polishing the current tabbed
+presentation. The next report pass should rebuild the experience around three
+explicit layers: market evidence, Indievaders interpretation, and action.
+
+Reason: User review showed that V3 still feels like a generated report split
+into clickable sections. The tabs are visually improved, but the value remains
+too textual and too repetitive. Evidence, player signals, roguelite advice,
+Steam-page suggestions, estimates, and recommendations are mixed together, which
+makes the report feel less trustworthy and less premium.
+
+Impact:
+
+- The next implementation pass should start with one strong vertical slice:
+  `Market Evidence / Comparables`.
+- Raw public facts, third-party estimates, inferred insights, and recommended
+  actions must be visibly separated.
+- Evidence should behave like a useful ledger of proof, caveats, and gaps, not
+  as decorative methodology cards.
+- Community and review listening must be either genuinely sourced or explicitly
+  marked as missing research.
+- The report preview should be tested through the local Vite URL, not treated as
+  reliable through `file://dist`.

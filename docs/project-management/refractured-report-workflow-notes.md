@@ -167,3 +167,42 @@ The v2 artifact-first pass preserved evidence, but it failed as a paid client ex
 Method lesson:
 
 Premium report value comes from guided judgment and productized interaction, not from presenting every source and matrix in the primary view.
+
+## 2026-06-21 V4 Market Intelligence Correction
+
+The V3 interactive route proved that a React report surface can exist, but user
+review showed it still behaves too much like a generated report split into tabs.
+The repeated pattern of large thesis, selector, text card, and evidence button
+does not yet feel like a premium tool.
+
+What changed in direction:
+
+- The next pass should rebuild around three layers: market evidence,
+  interpretation, and action.
+- `Comparables` should become the first vertical slice because it can show real
+  Steam images, tags, prices, review scale, current-player pulse, third-party
+  estimate caveats, and decision relevance.
+- `Player DNA` should become evidence-backed expectation clusters, not
+  fictional personas.
+- `Roguelite Loop` should compare concrete loop models with behavior change,
+  content burden, failure mode, market promise, and playtest proof.
+- `Steam Page` should become a small simulator where a positioning angle changes
+  trailer beats, tag stack, short description, capsule promise, demo CTA, and
+  creator pitch.
+- `Evidence` should become a filterable ledger of public facts, estimates, local
+  premise facts, review/community signals, inferences, and missing evidence.
+- Community listening via Reddit, Steam Discussions, YouTube, Twitch, X, or
+  Discord must be sourced or clearly marked as a gap.
+
+Method lesson:
+
+Do not ship "interactive" as a synonym for "tabs over prose." A premium
+Indievaders report needs to let the client inspect what is known, see how the
+interpretation was derived, and act on the next decision without reading a wall
+of explanation.
+
+Delivery lesson:
+
+The local `file://dist` launcher is only a fallback. For browser review, use the
+Vite dev server URL such as `http://127.0.0.1:5176/#client-report/refractured`
+so the React route and assets load consistently.
