@@ -1,57 +1,104 @@
 import { useState } from "react";
-import { Database } from "lucide-react";
+import {
+  ConfidenceTag,
+  DefinitionGrid,
+  EvidenceButton,
+  JobHeader,
+  LayerSummaryStrip,
+  SignalFlow,
+} from "./MarketIntelligencePrimitives.jsx";
 
-function RogueliteLoopLab({ directions, onEvidenceOpen }) {
+function LoopModelCard({ contentBurden, direction, isActive, onEvidenceOpen, onSelect }) {
+  return (
+    <article className={isActive ? "refractured-loop-model is-active" : "refractured-loop-model"}>
+      <button aria-pressed={isActive} type="button" onClick={() => onSelect(direction.id)}>
+        <span>{direction.label}</span>
+        <strong>{direction.promise}</strong>
+      </button>
+      <DefinitionGrid
+        items={[
+          { label: "Play change", value: direction.promise },
+          { label: "Replay reason", value: direction.bestFor },
+          { label: "Content burden", value: contentBurden },
+          { label: "Market promise", value: direction.promise },
+          { label: "Failure mode", value: direction.risk },
+          { label: "Playtest proof", value: direction.proof },
+        ]}
+      />
+      <div className="refractured-layer-item-meta">
+        <ConfidenceTag confidence={direction.confidence} />
+        <EvidenceButton
+          context={`${direction.label} loop model`}
+          evidenceRefs={direction.evidenceRefs}
+          label="Sources"
+          onEvidenceOpen={onEvidenceOpen}
+        />
+      </div>
+    </article>
+  );
+}
+
+function RogueliteLoopLab({ onEvidenceOpen, rogueliteLoopLab }) {
+  const directions = rogueliteLoopLab.directions ?? [];
   const [activeDirectionId, setActiveDirectionId] = useState(directions[0]?.id);
   const activeDirection = directions.find((direction) => direction.id === activeDirectionId) ?? directions[0];
+  const contentRisk =
+    rogueliteLoopLab.estimates.find((item) => item.id === "content-risk") ?? rogueliteLoopLab.estimates[0];
 
   return (
-    <section className="refractured-module">
-      <div className="refractured-section-heading">
-        <p className="refractured-kicker">Roguelite Loop Lab</p>
-        <h1>The roguelite layer has to change behavior, not decorate the brawler.</h1>
-        <p>
-          Refractured should test which run structure makes the combat more sellable before committing to large content
-          production.
-        </p>
-      </div>
+    <section className="refractured-module refractured-roguelite-loop-lab">
+      <JobHeader
+        eyebrow="Roguelite Loop Lab"
+        title="Compare loop models by play change, not feature count."
+        summary="The useful model is the one players can feel, replay, explain, and test before content scope expands."
+      />
 
-      <div className="refractured-choice-strip" aria-label="Roguelite directions">
+      <SignalFlow
+        signal={rogueliteLoopLab.facts[0]?.statement}
+        matter={rogueliteLoopLab.interpretation[0]?.statement}
+        action={rogueliteLoopLab.actions[0]?.recommendation}
+      />
+
+      <LayerSummaryStrip
+        ariaLabel="Roguelite Loop Lab evidence layer shortcuts"
+        context="the Roguelite Loop Lab"
+        module={rogueliteLoopLab}
+        onEvidenceOpen={onEvidenceOpen}
+      />
+
+      <div className="refractured-loop-model-grid" aria-label="Roguelite loop models">
         {directions.map((direction) => (
-          <button
-            aria-pressed={direction.id === activeDirection.id}
-            className={direction.id === activeDirection.id ? "is-active" : ""}
+          <LoopModelCard
+            contentBurden={contentRisk?.statement}
+            direction={direction}
+            isActive={direction.id === activeDirection?.id}
             key={direction.id}
-            type="button"
-            onClick={() => setActiveDirectionId(direction.id)}
-          >
-            {direction.label}
-          </button>
+            onEvidenceOpen={onEvidenceOpen}
+            onSelect={setActiveDirectionId}
+          />
         ))}
       </div>
 
-      <article className="refractured-feature-panel">
-        <span>{activeDirection.label}</span>
-        <h2>{activeDirection.promise}</h2>
-        <dl>
-          <div>
-            <dt>Best for</dt>
-            <dd>{activeDirection.bestFor}</dd>
+      {activeDirection ? (
+        <article className="refractured-feature-panel">
+          <div className="refractured-layer-item-meta">
+            <span>Selected model</span>
+            <ConfidenceTag confidence={activeDirection.confidence} />
           </div>
-          <div>
-            <dt>Risk</dt>
-            <dd>{activeDirection.risk}</dd>
-          </div>
-          <div>
-            <dt>Proof</dt>
-            <dd>{activeDirection.proof}</dd>
-          </div>
-        </dl>
-        <button type="button" onClick={() => onEvidenceOpen(activeDirection.evidenceRefs)}>
-          <Database size={16} aria-hidden="true" />
-          Evidence
-        </button>
-      </article>
+          <h2>{activeDirection.label}</h2>
+          <SignalFlow
+            signal={activeDirection.promise}
+            matter={activeDirection.bestFor}
+            action={activeDirection.proof}
+          />
+          <DefinitionGrid
+            items={[
+              { label: "Failure mode", value: activeDirection.risk },
+              { label: "Content burden", value: contentRisk?.statement },
+            ]}
+          />
+        </article>
+      ) : null}
     </section>
   );
 }

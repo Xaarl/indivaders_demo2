@@ -12,7 +12,12 @@ function RefracturedReportFrame({ activeSection, children, onSectionChange, onSo
           <span>{report.meta.stage}</span>
           <strong>{report.meta.title}</strong>
         </div>
-        <button className="refractured-source-button" type="button" onClick={() => onSourceDrawerOpen()}>
+        <button
+          aria-label="Open full evidence ledger"
+          className="refractured-source-button"
+          type="button"
+          onClick={() => onSourceDrawerOpen()}
+        >
           <Database size={17} aria-hidden="true" />
           Evidence
         </button>

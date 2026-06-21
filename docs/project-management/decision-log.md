@@ -322,27 +322,29 @@ Reason: The v2 report looked too much like a generic AI deep-research output. A 
 
 Impact: Implementation shifts from static report rewriting to a React report experience with local data and focused modules. Backend, auth, payments, public sharing, and live Market Watch remain out of scope.
 
-## 2026-06-21: Rebuild Refractured V4 Around Market Evidence Layers
+## 2026-06-21: Treat Refractured V4 As A Market Intelligence Workspace
 
-Decision: Refractured V4 should not continue polishing the current tabbed
-presentation. The next report pass should rebuild the experience around three
-explicit layers: market evidence, Indievaders interpretation, and action.
+Decision: Refractured V4 is now a market intelligence workspace, not a tabbed AI
+report. The route should organize each module around Facts / Estimates /
+Interpretation / Actions, with contextual evidence available without making the
+full ledger the primary reading path.
 
-Reason: User review showed that V3 still feels like a generated report split
-into clickable sections. The tabs are visually improved, but the value remains
-too textual and too repetitive. Evidence, player signals, roguelite advice,
-Steam-page suggestions, estimates, and recommendations are mixed together, which
-makes the report feel less trustworthy and less premium.
+Reason: User review showed that the paid-report proof needs to feel like a
+client decision tool. The valuable unit is not another prose section; it is a
+workspace where public facts, third-party estimates, Indievaders judgment,
+missing evidence, and next actions are visibly separated.
 
 Impact:
 
-- The next implementation pass should start with one strong vertical slice:
-  `Market Evidence / Comparables`.
-- Raw public facts, third-party estimates, inferred insights, and recommended
-  actions must be visibly separated.
-- Evidence should behave like a useful ledger of proof, caveats, and gaps, not
-  as decorative methodology cards.
-- Community and review listening must be either genuinely sourced or explicitly
-  marked as missing research.
-- The report preview should be tested through the local Vite URL, not treated as
-  reliable through `file://dist`.
+- `#client-report/refractured` remains the private primary route.
+- Market and comparable modules should lead with board-style workspace views,
+  not full layer stacks.
+- Evidence drawers should respect contextual refs; empty refs show an empty
+  state unless the full ledger is explicitly requested.
+- Review/community signals need a visible radar surface and clear gaps for
+  unsourced Reddit, Discord, creator, or broader social listening.
+- Standard verification includes the V4 component smoke verifier after the
+  report data verifier.
+- Headless Chrome desktop/mobile screenshots were created; the desktop cockpit
+  looked good; mobile navigation was changed to non-sticky after review.
+- Full manual browser interaction remains pending before external review.

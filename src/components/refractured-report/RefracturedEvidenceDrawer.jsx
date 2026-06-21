@@ -1,11 +1,15 @@
 import { useEffect, useRef } from "react";
+import { ConfidenceTag } from "./MarketIntelligencePrimitives.jsx";
 
-function RefracturedEvidenceDrawer({ activeRefs, evidence, onClose, open, variant = "drawer" }) {
+function RefracturedEvidenceDrawer({ activeRefs, evidence, onClose, open, showAll = false, variant = "drawer" }) {
   const closeButtonRef = useRef(null);
-  const activeSet = activeRefs ? new Set(activeRefs) : null;
-  const visibleEvidence = activeSet ? evidence.filter((item) => activeSet.has(item.id)) : evidence;
   const isPage = variant === "page";
+  const selectedRefs = Array.isArray(activeRefs) ? activeRefs : [];
+  const activeSet = new Set(selectedRefs);
+  const shouldShowAll = isPage || showAll;
+  const visibleEvidence = shouldShowAll ? evidence : evidence.filter((item) => activeSet.has(item.id));
   const titleId = isPage ? "refractured-evidence-page-title" : "refractured-evidence-drawer-title";
+  const drawerTitle = shouldShowAll ? `Evidence ledger (${visibleEvidence.length})` : `Selected evidence (${visibleEvidence.length})`;
 
   useEffect(() => {
     if (!open || isPage) {
@@ -39,7 +43,7 @@ function RefracturedEvidenceDrawer({ activeRefs, evidence, onClose, open, varian
       role={isPage ? "complementary" : "dialog"}
     >
       <header>
-        <h2 id={titleId}>{isPage ? "Evidence archive" : `Selected evidence (${visibleEvidence.length})`}</h2>
+        <h2 id={titleId}>{isPage ? "Evidence ledger" : drawerTitle}</h2>
         {!isPage ? (
           <button ref={closeButtonRef} type="button" onClick={onClose}>
             Close
@@ -50,13 +54,16 @@ function RefracturedEvidenceDrawer({ activeRefs, evidence, onClose, open, varian
         {visibleEvidence.length > 0 ? (
           visibleEvidence.map((item) => (
             <article key={item.id}>
-              <span>{item.level}</span>
+              <div className="refractured-layer-item-meta">
+                <ConfidenceTag confidence={item.confidence} level={item.level} />
+                <span>{item.source}</span>
+              </div>
               <h2>{item.label}</h2>
               <p>{item.matters}</p>
               <p>{item.unknown}</p>
-              <small>{item.source}</small>
+              <small>{item.id}</small>
               {item.href ? (
-                <a href={item.href} target="_blank" rel="noreferrer">
+                <a href={item.href} target="_blank" rel="noreferrer" aria-label={`Open source for ${item.label}`}>
                   Open source
                 </a>
               ) : null}

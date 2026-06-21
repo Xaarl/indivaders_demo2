@@ -1,33 +1,33 @@
 import { useCallback, useState } from "react";
 import refracturedPremiumReport from "../../data/refracturedPremiumReport.js";
 import ActionPlanTimeline from "./ActionPlanTimeline.jsx";
+import AudienceSignals from "./AudienceSignals.jsx";
 import ComparableExplorer from "./ComparableExplorer.jsx";
-import LensHub from "./LensHub.jsx";
-import OpeningThesis from "./OpeningThesis.jsx";
-import PlayerSignalInspector from "./PlayerSignalInspector.jsx";
+import EvidenceLedgerPage from "./EvidenceLedgerPage.jsx";
+import MarketMap from "./MarketMap.jsx";
 import RefracturedEvidenceDrawer from "./RefracturedEvidenceDrawer.jsx";
 import RefracturedReportFrame from "./RefracturedReportFrame.jsx";
+import ReviewCommunityThemes from "./ReviewCommunityThemes.jsx";
 import RogueliteLoopLab from "./RogueliteLoopLab.jsx";
 import SteamPositioningBuilder from "./SteamPositioningBuilder.jsx";
-import StrategicPathSelector from "./StrategicPathSelector.jsx";
 
 const sections = [
-  { id: "overview", label: "Thesis" },
-  { id: "player", label: "Player DNA" },
-  { id: "roguelite", label: "Roguelite loop" },
-  { id: "comparables", label: "Comparables" },
-  { id: "steam", label: "Steam page" },
-  { id: "paths", label: "Paths" },
-  { id: "actions", label: "Plan" },
-  { id: "evidence", label: "Evidence" },
+  { id: "market-map", label: "Market Map" },
+  { id: "audience-signals", label: "Audience Signals" },
+  { id: "comparable-explorer", label: "Comparable Explorer" },
+  { id: "review-community-themes", label: "Review & Community Themes" },
+  { id: "steam-page-lab", label: "Steam Page Lab" },
+  { id: "roguelite-loop-lab", label: "Roguelite Loop Lab" },
+  { id: "action-plan", label: "Action Plan" },
+  { id: "evidence-ledger", label: "Evidence Ledger" },
 ];
 
 function RefracturedReportPage() {
-  const [activeSection, setActiveSection] = useState("overview");
-  const [activeLensId, setActiveLensId] = useState(refracturedPremiumReport.readerLenses[0]?.id ?? null);
+  const [activeSection, setActiveSection] = useState("market-map");
   const [activeEvidenceRefs, setActiveEvidenceRefs] = useState([]);
   const [evidenceDrawerOpen, setEvidenceDrawerOpen] = useState(false);
   const [evidenceReturnFocusTo, setEvidenceReturnFocusTo] = useState(null);
+  const [showAllEvidence, setShowAllEvidence] = useState(false);
 
   const closeEvidenceDrawer = useCallback(() => {
     setEvidenceDrawerOpen(false);
@@ -37,24 +37,23 @@ function RefracturedReportPage() {
   }, [evidenceReturnFocusTo]);
 
   function handleSectionChange(sectionId) {
-    const matchingLens = refracturedPremiumReport.readerLenses.find((lens) => lens.section === sectionId);
-
-    setActiveLensId(matchingLens?.id ?? null);
     setActiveSection(sectionId);
     setActiveEvidenceRefs([]);
     setEvidenceDrawerOpen(false);
-  }
-
-  function handleLensSelect(lens) {
-    setActiveLensId(lens.id);
-    setActiveSection(lens.section);
-    setActiveEvidenceRefs([]);
-    setEvidenceDrawerOpen(false);
+    setShowAllEvidence(false);
   }
 
   function openEvidenceDrawer(refs = []) {
     setEvidenceReturnFocusTo(document.activeElement);
     setActiveEvidenceRefs(Array.isArray(refs) ? refs : []);
+    setShowAllEvidence(false);
+    setEvidenceDrawerOpen(true);
+  }
+
+  function openEvidenceLedger() {
+    setEvidenceReturnFocusTo(document.activeElement);
+    setActiveEvidenceRefs([]);
+    setShowAllEvidence(true);
     setEvidenceDrawerOpen(true);
   }
 
@@ -62,60 +61,63 @@ function RefracturedReportPage() {
     <RefracturedReportFrame
       activeSection={activeSection}
       onSectionChange={handleSectionChange}
-      onSourceDrawerOpen={openEvidenceDrawer}
+      onSourceDrawerOpen={openEvidenceLedger}
       report={refracturedPremiumReport}
       sections={sections}
     >
-      {activeSection === "overview" ? (
-        <>
-          <OpeningThesis
-            onEvidenceOpen={openEvidenceDrawer}
-            onSectionChange={handleSectionChange}
-            report={refracturedPremiumReport}
-          />
-          <LensHub
-            activeLensId={activeLensId}
-            activeSection={activeSection}
-            lenses={refracturedPremiumReport.readerLenses}
-            onLensSelect={handleLensSelect}
-          />
-        </>
-      ) : null}
-      {activeSection === "player" ? (
-        <PlayerSignalInspector
+      {activeSection === "market-map" ? (
+        <MarketMap
+          marketEvidence={refracturedPremiumReport.marketEvidence}
           onEvidenceOpen={openEvidenceDrawer}
-          signals={refracturedPremiumReport.playerSignals}
+          thesis={refracturedPremiumReport.thesis}
         />
       ) : null}
-      {activeSection === "roguelite" ? (
-        <RogueliteLoopLab
-          directions={refracturedPremiumReport.rogueliteDirections}
+      {activeSection === "audience-signals" ? (
+        <AudienceSignals
+          audienceSignals={refracturedPremiumReport.audienceSignals}
           onEvidenceOpen={openEvidenceDrawer}
         />
       ) : null}
-      {activeSection === "comparables" ? (
-        <ComparableExplorer comparables={refracturedPremiumReport.comparables} onEvidenceOpen={openEvidenceDrawer} />
+      {activeSection === "comparable-explorer" ? (
+        <ComparableExplorer
+          marketEvidence={refracturedPremiumReport.marketEvidence}
+          onEvidenceOpen={openEvidenceDrawer}
+        />
       ) : null}
-      {activeSection === "steam" ? (
+      {activeSection === "review-community-themes" ? (
+        <ReviewCommunityThemes
+          onEvidenceOpen={openEvidenceDrawer}
+          reviewCommunityThemes={refracturedPremiumReport.reviewCommunityThemes}
+        />
+      ) : null}
+      {activeSection === "steam-page-lab" ? (
         <SteamPositioningBuilder
           onEvidenceOpen={openEvidenceDrawer}
-          positioningAngles={refracturedPremiumReport.positioningAngles}
+          steamPageLab={refracturedPremiumReport.steamPageLab}
         />
       ) : null}
-      {activeSection === "paths" ? (
-        <StrategicPathSelector onEvidenceOpen={openEvidenceDrawer} paths={refracturedPremiumReport.strategicPaths} />
+      {activeSection === "roguelite-loop-lab" ? (
+        <RogueliteLoopLab
+          onEvidenceOpen={openEvidenceDrawer}
+          rogueliteLoopLab={refracturedPremiumReport.rogueliteLoopLab}
+        />
       ) : null}
-      {activeSection === "actions" ? (
-        <ActionPlanTimeline actions={refracturedPremiumReport.actionPlan} onEvidenceOpen={openEvidenceDrawer} />
+      {activeSection === "action-plan" ? (
+        <ActionPlanTimeline
+          actionPlan={refracturedPremiumReport.actionPlan}
+          onEvidenceOpen={openEvidenceDrawer}
+          strategicPaths={refracturedPremiumReport.strategicPaths}
+        />
       ) : null}
-      {activeSection === "evidence" ? (
-        <RefracturedEvidenceDrawer evidence={refracturedPremiumReport.evidence} open variant="page" />
+      {activeSection === "evidence-ledger" ? (
+        <EvidenceLedgerPage evidenceLedger={refracturedPremiumReport.evidenceLedger} />
       ) : null}
       <RefracturedEvidenceDrawer
-        activeRefs={activeEvidenceRefs.length > 0 ? activeEvidenceRefs : null}
-        evidence={refracturedPremiumReport.evidence}
+        activeRefs={activeEvidenceRefs}
+        evidence={refracturedPremiumReport.evidenceLedger}
         onClose={closeEvidenceDrawer}
         open={evidenceDrawerOpen}
+        showAll={showAllEvidence}
       />
     </RefracturedReportFrame>
   );

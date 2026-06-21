@@ -168,38 +168,46 @@ Method lesson:
 
 Premium report value comes from guided judgment and productized interaction, not from presenting every source and matrix in the primary view.
 
-## 2026-06-21 V4 Market Intelligence Correction
+## 2026-06-21 V4 Market Intelligence Workspace
 
-The V3 interactive route proved that a React report surface can exist, but user
-review showed it still behaves too much like a generated report split into tabs.
-The repeated pattern of large thesis, selector, text card, and evidence button
-does not yet feel like a premium tool.
+The V4 pass changed the Refractured route from an AI-report reading surface into
+a market intelligence workspace. The active structure is now Facts / Estimates /
+Interpretation / Actions across the report modules, with contextual evidence
+available when the reader needs to inspect a source.
 
-What changed in direction:
+What changed:
 
-- The next pass should rebuild around three layers: market evidence,
-  interpretation, and action.
-- `Comparables` should become the first vertical slice because it can show real
-  Steam images, tags, prices, review scale, current-player pulse, third-party
-  estimate caveats, and decision relevance.
-- `Player DNA` should become evidence-backed expectation clusters, not
-  fictional personas.
-- `Roguelite Loop` should compare concrete loop models with behavior change,
-  content burden, failure mode, market promise, and playtest proof.
-- `Steam Page` should become a small simulator where a positioning angle changes
-  trailer beats, tag stack, short description, capsule promise, demo CTA, and
-  creator pitch.
-- `Evidence` should become a filterable ledger of public facts, estimates, local
-  premise facts, review/community signals, inferences, and missing evidence.
-- Community listening via Reddit, Steam Discussions, YouTube, Twitch, X, or
-  Discord must be sourced or clearly marked as a gap.
+- `Market Map` and `Comparable Explorer` lead with the board/workspace view
+  instead of a full evidence layer stack.
+- `Audience Signals`, `Review Community Themes`, `Steam Positioning Builder`,
+  `Roguelite Loop Lab`, and `Action Plan Timeline` now separate confirmed or
+  reported facts, estimates or missing evidence, interpretation, and actions.
+- `Evidence Ledger` remains available as a filterable proof/caveat/gap surface,
+  but empty contextual evidence requests show an empty state instead of opening
+  the full ledger.
+- Comparable cards use Steam-facing images, tags, public store signals,
+  third-party estimate caveats, and decision relevance.
+- Review/community listening is represented as a review radar with sourced Steam
+  signals and clearly marked gaps for Reddit, Discord, creator, and broader
+  social listening.
+- Standard verification now includes the V4 component smoke verifier after the
+  data-shape verifier, covering empty evidence refs, board-first market modules,
+  unique layer ids, contextual evidence labels, and the review radar surface.
+
+QA status:
+
+- Headless Chrome screenshots were created for desktop and mobile review.
+- The desktop cockpit looked good in the screenshot pass.
+- Mobile navigation was changed to non-sticky after review so it does not crowd
+  the workspace while scrolling.
+- Full manual browser interaction is still pending.
 
 Method lesson:
 
-Do not ship "interactive" as a synonym for "tabs over prose." A premium
-Indievaders report needs to let the client inspect what is known, see how the
-interpretation was derived, and act on the next decision without reading a wall
-of explanation.
+A premium Indievaders report should behave like a workspace for market judgment:
+inspect facts, understand estimates, read interpretation, and choose actions.
+Interactive controls should make those layers easier to use, not just paginate a
+report.
 
 Delivery lesson:
 
