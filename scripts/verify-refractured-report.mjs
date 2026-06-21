@@ -119,6 +119,36 @@ function requireUniqueUiIdsAcrossSections(keys) {
   }
 }
 
+function requireComparableMarketData(item, index) {
+  const path = `comparables[${index}]`;
+
+  if (typeof item.appId !== "number") {
+    fail(`${path}.appId must be a Steam app id`);
+  }
+
+  for (const key of ["steamUrl", "imageUrl", "marketLane", "playerSignal", "refracturedRead"]) {
+    if (typeof item[key] !== "string" || item[key].length === 0) {
+      fail(`${path}.${key} must be a non-empty string`);
+    }
+  }
+
+  if (!Array.isArray(item.tags) || item.tags.length < 4) {
+    fail(`${path}.tags must contain at least four market tags`);
+  }
+
+  for (const key of ["release", "price", "reviews", "reviewTone", "currentPlayers", "retrievedAt"]) {
+    if (typeof item.steamSnapshot?.[key] !== "string" || item.steamSnapshot[key].length === 0) {
+      fail(`${path}.steamSnapshot.${key} must be a non-empty string`);
+    }
+  }
+
+  for (const key of ["unitRange", "grossRange", "caveat"]) {
+    if (typeof item.revenueProxy?.[key] !== "string" || item.revenueProxy[key].length === 0) {
+      fail(`${path}.revenueProxy.${key} must be a non-empty string`);
+    }
+  }
+}
+
 function collectEvidenceRefs(value, refs = []) {
   if (!value || typeof value !== "object") {
     return refs;
@@ -165,6 +195,10 @@ for (const key of REQUIRED_EVIDENCE_REF_ARRAYS) {
   }
 
   value.forEach((item, index) => requireEvidenceRefs(`${key}[${index}]`, item));
+}
+
+if (Array.isArray(refracturedPremiumReport.comparables)) {
+  refracturedPremiumReport.comparables.forEach(requireComparableMarketData);
 }
 
 for (const key of REQUIRED_UNIQUE_ID_ARRAYS) {
