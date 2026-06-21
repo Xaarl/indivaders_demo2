@@ -5,16 +5,16 @@ import AudienceSignals from "./AudienceSignals.jsx";
 import ComparableExplorer from "./ComparableExplorer.jsx";
 import EvidenceLedgerPage from "./EvidenceLedgerPage.jsx";
 import MarketMap from "./MarketMap.jsx";
+import MarketWorkspaceShell from "./MarketWorkspaceShell.jsx";
 import RefracturedEvidenceDrawer from "./RefracturedEvidenceDrawer.jsx";
-import RefracturedReportFrame from "./RefracturedReportFrame.jsx";
 import ReviewCommunityThemes from "./ReviewCommunityThemes.jsx";
 import RogueliteLoopLab from "./RogueliteLoopLab.jsx";
 import SteamPositioningBuilder from "./SteamPositioningBuilder.jsx";
 
 const sections = [
+  { id: "comparable-explorer", label: "Comparable Explorer" },
   { id: "market-map", label: "Market Map" },
   { id: "audience-signals", label: "Audience Signals" },
-  { id: "comparable-explorer", label: "Comparable Explorer" },
   { id: "review-community-themes", label: "Review & Community Themes" },
   { id: "steam-page-lab", label: "Steam Page Lab" },
   { id: "roguelite-loop-lab", label: "Roguelite Loop Lab" },
@@ -22,12 +22,25 @@ const sections = [
   { id: "evidence-ledger", label: "Evidence Ledger" },
 ];
 
+const sectionModules = {
+  "market-map": "marketEvidence",
+  "audience-signals": "audienceSignals",
+  "comparable-explorer": "marketEvidence",
+  "review-community-themes": "reviewCommunityThemes",
+  "steam-page-lab": "steamPageLab",
+  "roguelite-loop-lab": "rogueliteLoopLab",
+  "action-plan": "actionPlan",
+  "evidence-ledger": "marketEvidence",
+};
+
 function RefracturedReportPage() {
-  const [activeSection, setActiveSection] = useState("market-map");
+  const [activeSection, setActiveSection] = useState("comparable-explorer");
   const [activeEvidenceRefs, setActiveEvidenceRefs] = useState([]);
   const [evidenceDrawerOpen, setEvidenceDrawerOpen] = useState(false);
   const [evidenceReturnFocusTo, setEvidenceReturnFocusTo] = useState(null);
   const [showAllEvidence, setShowAllEvidence] = useState(false);
+  const activeModuleKey = sectionModules[activeSection] ?? "marketEvidence";
+  const activeModule = refracturedPremiumReport[activeModuleKey] ?? refracturedPremiumReport.marketEvidence;
 
   const closeEvidenceDrawer = useCallback(() => {
     setEvidenceDrawerOpen(false);
@@ -58,10 +71,13 @@ function RefracturedReportPage() {
   }
 
   return (
-    <RefracturedReportFrame
+    <MarketWorkspaceShell
+      activeModule={activeModule}
       activeSection={activeSection}
+      marketEvidence={refracturedPremiumReport.marketEvidence}
+      onEvidenceOpen={openEvidenceDrawer}
+      onFullEvidenceOpen={openEvidenceLedger}
       onSectionChange={handleSectionChange}
-      onSourceDrawerOpen={openEvidenceLedger}
       report={refracturedPremiumReport}
       sections={sections}
     >
@@ -119,7 +135,7 @@ function RefracturedReportPage() {
         open={evidenceDrawerOpen}
         showAll={showAllEvidence}
       />
-    </RefracturedReportFrame>
+    </MarketWorkspaceShell>
   );
 }
 

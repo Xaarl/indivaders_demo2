@@ -30,6 +30,9 @@ try {
   const { default: RefracturedEvidenceDrawer } = await server.ssrLoadModule(
     "/src/components/refractured-report/RefracturedEvidenceDrawer.jsx",
   );
+  const { default: RefracturedReportPage } = await server.ssrLoadModule(
+    "/src/components/refractured-report/RefracturedReportPage.jsx",
+  );
   const { default: ReviewCommunityThemes } = await server.ssrLoadModule(
     "/src/components/refractured-report/ReviewCommunityThemes.jsx",
   );
@@ -135,6 +138,30 @@ try {
 
       assert.match(markup, /refractured-review-radar/);
       assert.match(markup, /aria-label="Review radar signals and gaps"/);
+    }),
+    test("V5 report page opens as a market workspace cockpit", () => {
+      const markup = renderToStaticMarkup(React.createElement(RefracturedReportPage));
+
+      assert.match(markup, /refractured-market-workspace/);
+      assert.match(markup, /refractured-workspace-sidebar/);
+      assert.match(markup, /refractured-workspace-topbar/);
+      assert.match(markup, /refractured-insight-rail/);
+      assert.match(markup, /Market Intelligence Workspace/);
+      assert.match(markup, /Comparable Explorer/);
+      assert.doesNotMatch(markup, /Map the lane before choosing the promise/);
+    }),
+    test("V5 comparable explorer includes grid cards and a compare dock", () => {
+      const markup = renderToStaticMarkup(
+        React.createElement(ComparableExplorer, {
+          marketEvidence: report.marketEvidence,
+          onEvidenceOpen: noop,
+        }),
+      );
+
+      assert.match(markup, /refractured-comparable-card-grid/);
+      assert.match(markup, /refractured-comparable-card/);
+      assert.match(markup, /refractured-compare-dock/);
+      assert.match(markup, /Add to compare/);
     }),
   ]);
 
