@@ -214,3 +214,38 @@ Delivery lesson:
 The local `file://dist` launcher is only a fallback. For browser review, use the
 Vite dev server URL such as `http://127.0.0.1:5176/#client-report/refractured`
 so the React route and assets load consistently.
+
+## 2026-06-21 V6 Decision Workspace Correction
+
+The V5 workspace pass is not sufficient for a paid product. It made the report
+interactive, but user review showed the experience still looked like a dense
+debug panel or AI-generated research dashboard.
+
+What changes next:
+
+- Treat V5 as a rejected product direction, not as a surface to polish.
+- Rebuild the first screen as a decision workspace:
+  - short commercial verdict;
+  - central Market Lane Canvas;
+  - contextual inspector;
+  - compact Commercial Proof Path.
+- Remove the permanent evidence rail from the primary reading experience.
+- Replace raw source clicks with an evidence reader that explains source,
+  extracted fields, limits, and confidence before exposing any raw endpoint.
+- Replace `Roguelite Loop Lab` card piles with a loop diagram:
+  `fight -> reward -> mutation -> retry -> intent`.
+- Replace `Action Plan` card lists with proof gates that unlock ambition when
+  evidence appears.
+
+Method lesson:
+
+Premium report UX starts from one clear first-screen job. For Refractured, that
+job is: show where the game can compete on Steam and what proof must come next.
+Every module then expands one decision, instead of showing all evidence and all
+interpretation at once.
+
+Tooling lesson:
+
+Do not use paid or credit-consuming design generation above 100 credits without
+explicit user approval. Use local/built-in image generation for low-cost concept
+work, and prefer written design specs before any further visual generation.

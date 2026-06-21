@@ -348,3 +348,30 @@ Impact:
 - Headless Chrome desktop/mobile screenshots were created; the desktop cockpit
   looked good; mobile navigation was changed to non-sticky after review.
 - Full manual browser interaction remains pending before external review.
+
+## 2026-06-21: Reject Refractured V5 As Paid-Product UX And Move To V6 Decision Workspace
+
+Decision: V5 is not the paid-product direction. It proved the React workspace
+shell, comparables data, evidence model, and local route, but user review showed
+that it still reads as a dense AI/dashboard prototype: too many cards, too much
+text, raw API exposure, broken-looking browser states, and no strong first-screen
+"aha".
+
+Reason: A client-facing Indievaders report must orient the developer before it
+asks them to inspect data. The first screen should show where the game can
+compete, what must be proven next, and which module to open. V6 therefore pivots
+to a `Strategy Brief + Market Lane Canvas + Commercial Proof Path` opening
+experience.
+
+Impact:
+
+- The default first screen should not be the full report or a generic dashboard.
+- The central artifact is a market-lane canvas with Refractured, 5 to 6
+  comparables, a white-space zone, and layer overlays.
+- Evidence becomes a contextual reader with raw endpoints only as secondary
+  audit links.
+- `Roguelite Loop Lab` must become a loop diagram with one expanded model, not a
+  card grid.
+- `Action Plan` must become a proof path or timeline, not repeated cards.
+- Future paid/credit-consuming design tooling above 100 credits requires explicit
+  user approval.
