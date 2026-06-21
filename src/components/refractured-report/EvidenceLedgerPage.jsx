@@ -1,5 +1,5 @@
-import { ExternalLink } from "lucide-react";
-import { ConfidenceTag, JobHeader, SignalFlow } from "./MarketIntelligencePrimitives.jsx";
+import EvidenceReaderCard from "./EvidenceReaderCard.jsx";
+import { JobHeader, SignalFlow } from "./MarketIntelligencePrimitives.jsx";
 import { layerLabels, layerOrder } from "./marketIntelligenceLayers.js";
 
 const ledgerLayerMap = {
@@ -41,21 +41,7 @@ function EvidenceLedgerPage({ evidenceLedger }) {
               <h2>{layerLabels[layer]}</h2>
               <div className="refractured-evidence-list">
                 {items.map((item) => (
-                  <article key={item.id}>
-                    <div className="refractured-layer-item-meta">
-                      <ConfidenceTag confidence={item.confidence} level={item.level} />
-                      <span>{item.source}</span>
-                    </div>
-                    <h2>{item.label}</h2>
-                    <p>{item.matters}</p>
-                    <p>{item.unknown}</p>
-                    {item.href ? (
-                      <a href={item.href} target="_blank" rel="noreferrer" aria-label={`Open source for ${item.label}`}>
-                        <ExternalLink size={15} aria-hidden="true" />
-                        Open source
-                      </a>
-                    ) : null}
-                  </article>
+                  <EvidenceReaderCard item={item} key={item.id} />
                 ))}
               </div>
             </section>

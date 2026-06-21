@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ConfidenceTag } from "./MarketIntelligencePrimitives.jsx";
+import EvidenceReaderCard from "./EvidenceReaderCard.jsx";
 
 function RefracturedEvidenceDrawer({ activeRefs, evidence, onClose, open, showAll = false, variant = "drawer" }) {
   const closeButtonRef = useRef(null);
@@ -52,23 +52,7 @@ function RefracturedEvidenceDrawer({ activeRefs, evidence, onClose, open, showAl
       </header>
       <div className="refractured-evidence-list">
         {visibleEvidence.length > 0 ? (
-          visibleEvidence.map((item) => (
-            <article key={item.id}>
-              <div className="refractured-layer-item-meta">
-                <ConfidenceTag confidence={item.confidence} level={item.level} />
-                <span>{item.source}</span>
-              </div>
-              <h2>{item.label}</h2>
-              <p>{item.matters}</p>
-              <p>{item.unknown}</p>
-              <small>{item.id}</small>
-              {item.href ? (
-                <a href={item.href} target="_blank" rel="noreferrer" aria-label={`Open source for ${item.label}`}>
-                  Open source
-                </a>
-              ) : null}
-            </article>
-          ))
+          visibleEvidence.map((item) => <EvidenceReaderCard item={item} key={item.id} />)
         ) : (
           <article className="refractured-evidence-empty" role="status">
             <span>No matching records</span>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import {
   ConfidenceTag,
@@ -7,11 +8,32 @@ import {
   SignalFlow,
 } from "./MarketIntelligencePrimitives.jsx";
 
+const marketPositions = {
+  absolum: { x: 58, y: 62, lane: "closest" },
+  rotwood: { x: 74, y: 52, lane: "scope" },
+  "dead-cells": { x: 68, y: 82, lane: "loop" },
+  "hades-ii": { x: 86, y: 76, lane: "ceiling" },
+  ravenswatch: { x: 78, y: 42, lane: "scope" },
+  "curse-of-the-dead-gods": { x: 50, y: 70, lane: "identity" },
+};
+
+function reviewsSize(item) {
+  const reviews = item.steamSnapshot?.reviewsTotal ?? 0;
+  return Math.max(34, Math.min(84, 30 + Math.log10(Math.max(reviews, 10)) * 9));
+}
+
+function marketPosition(item, index) {
+  return marketPositions[item.id] ?? { x: 30 + index * 8, y: 48 + index * 5, lane: "reference" };
+}
+
 function MarketMap({ marketEvidence, onEvidenceOpen, thesis }) {
   const closest = marketEvidence.comparables.find((item) => item.id === "absolum") ?? marketEvidence.comparables[0];
   const unsafeBenchmarks = marketEvidence.comparables.filter((item) =>
     item.filterTags?.includes("Not safe as a benchmark"),
   );
+  const [activeComparableId, setActiveComparableId] = useState(closest?.id);
+  const activeComparable =
+    marketEvidence.comparables.find((item) => item.id === activeComparableId) ?? closest ?? marketEvidence.comparables[0];
 
   return (
     <section className="refractured-module refractured-market-map">
@@ -39,37 +61,77 @@ function MarketMap({ marketEvidence, onEvidenceOpen, thesis }) {
           onEvidenceOpen={onEvidenceOpen}
         />
 
-        <div className="refractured-market-map-list">
-          {marketEvidence.comparables.map((item) => (
-            <article key={item.id} className="refractured-market-map-row">
+        <div className="refractured-market-map-workspace">
+          <div className="refractured-market-bubble-map" aria-label="Comparable market position map">
+            <span className="refractured-axis refractured-axis-x">Combat focus</span>
+            <span className="refractured-axis refractured-axis-y">Roguelite depth</span>
+            {marketEvidence.comparables.map((item, index) => {
+              const position = marketPosition(item, index);
+              return (
+                <button
+                  aria-pressed={item.id === activeComparable.id}
+                  aria-label={`${item.title}: ${item.role}`}
+                  className={`refractured-market-bubble refractured-market-lane-${position.lane}${
+                    item.id === activeComparable.id ? " is-active" : ""
+                  }`}
+                  key={item.id}
+                  style={{
+                    "--rf-x": `${position.x}%`,
+                    "--rf-y": `${100 - position.y}%`,
+                    "--rf-size": `${reviewsSize(item)}px`,
+                  }}
+                  type="button"
+                  onClick={() => setActiveComparableId(item.id)}
+                >
+                  <strong>{item.title}</strong>
+                  <small>{item.steamSnapshot.positiveRate}</small>
+                </button>
+              );
+            })}
+          </div>
+
+          <article className="refractured-market-map-detail-panel">
+            <img alt="" src={activeComparable.imageUrl} />
+            <div>
+              <div className="refractured-layer-item-meta">
+                <span>{activeComparable.role}</span>
+                <ConfidenceTag confidence={activeComparable.confidence} />
+              </div>
+              <h2>{activeComparable.title}</h2>
+              <p>{activeComparable.marketLane}</p>
+            </div>
+            <dl>
               <div>
-                <span>{item.role}</span>
-                <h3>{item.title}</h3>
-                <p>{item.marketLane}</p>
+                <dt>Raw public signal</dt>
+                <dd>{activeComparable.publicSignal}</dd>
               </div>
               <div>
-                <span>Raw public signal</span>
-                <p>{item.publicSignal}</p>
+                <dt>Decision relevance</dt>
+                <dd>{activeComparable.refracturedUse}</dd>
               </div>
               <div>
-                <span>Decision relevance</span>
-                <p>{item.refracturedUse}</p>
+                <dt>Transfer risk</dt>
+                <dd>{activeComparable.avoid}</dd>
               </div>
-              <div className="refractured-row-actions">
-                <ConfidenceTag confidence={item.confidence} />
-                <a href={item.steamUrl} target="_blank" rel="noreferrer" aria-label={`Open Steam page for ${item.title}`}>
-                  <ExternalLink size={15} aria-hidden="true" />
-                  Steam
-                </a>
-                <EvidenceButton
-                  context={`${item.title} comparable`}
-                  evidenceRefs={item.evidenceRefs}
-                  label="Sources"
-                  onEvidenceOpen={onEvidenceOpen}
-                />
-              </div>
-            </article>
-          ))}
+            </dl>
+            <div className="refractured-row-actions">
+              <a
+                href={activeComparable.steamUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Open Steam page for ${activeComparable.title}`}
+              >
+                <ExternalLink size={15} aria-hidden="true" />
+                Steam
+              </a>
+              <EvidenceButton
+                context={`${activeComparable.title} comparable`}
+                evidenceRefs={activeComparable.evidenceRefs}
+                label="Sources"
+                onEvidenceOpen={onEvidenceOpen}
+              />
+            </div>
+          </article>
         </div>
       </section>
 

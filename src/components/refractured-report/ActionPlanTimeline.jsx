@@ -1,6 +1,5 @@
 import {
   ConfidenceTag,
-  DefinitionGrid,
   EvidenceButton,
   JobHeader,
   LayerSummaryStrip,
@@ -20,6 +19,52 @@ function groupByPeriod(actions) {
   }, []);
 }
 
+function periodLabel(period) {
+  if (period === "0-30 days") {
+    return "Now";
+  }
+
+  if (period === "30-90 days") {
+    return "Next";
+  }
+
+  return "Scale decision";
+}
+
+function ProofGateCard({ action, index, onEvidenceOpen }) {
+  return (
+    <article className="refractured-proof-gate-card">
+      <div className="refractured-proof-gate-index">{String(index + 1).padStart(2, "0")}</div>
+      <div className="refractured-proof-gate-body">
+        <div className="refractured-layer-item-meta">
+          <span>Proof gate</span>
+          <ConfidenceTag confidence={action.confidence} />
+        </div>
+        <h3>{action.title}</h3>
+        <dl className="refractured-proof-gate-metrics">
+          <div>
+            <dt>Artifact</dt>
+            <dd>{action.artifact}</dd>
+          </div>
+          <div>
+            <dt>Success signal</dt>
+            <dd>{action.signal}</dd>
+          </div>
+          <div>
+            <dt>Decision</dt>
+            <dd>{action.outcome}</dd>
+          </div>
+        </dl>
+      </div>
+      <EvidenceButton
+        context={`${action.title} proof gate`}
+        evidenceRefs={action.evidenceRefs}
+        onEvidenceOpen={onEvidenceOpen}
+      />
+    </article>
+  );
+}
+
 function ActionPlanTimeline({ actionPlan, onEvidenceOpen, strategicPaths = [] }) {
   return (
     <section className="refractured-module refractured-action-plan">
@@ -35,41 +80,29 @@ function ActionPlanTimeline({ actionPlan, onEvidenceOpen, strategicPaths = [] })
         action={actionPlan.actions[0]?.recommendation}
       />
 
-      <div className="refractured-timeline">
+      <div className="refractured-proof-gate-shell">
         <LayerSummaryStrip
           ariaLabel="Action Plan evidence layer shortcuts"
           context="the Action Plan"
           module={actionPlan}
           onEvidenceOpen={onEvidenceOpen}
         />
-        {groupByPeriod(actionPlan.timeline ?? []).map((group) => (
-          <section key={group.period}>
-            <h2>{group.period}</h2>
-            <div className="refractured-action-list">
-              {group.actions.map((action) => (
-                <article key={action.id}>
-                  <div className="refractured-layer-item-meta">
-                    <span>{action.title}</span>
-                    <ConfidenceTag confidence={action.confidence} />
-                  </div>
-                  <p>{action.outcome}</p>
-                  <DefinitionGrid
-                    items={[
-                      { label: "Artifact", value: action.artifact },
-                      { label: "Decision signal", value: action.signal },
-                      { label: "What to do next", value: action.outcome },
-                    ]}
-                  />
-                  <EvidenceButton
-                    context={`${action.title} action`}
-                    evidenceRefs={action.evidenceRefs}
-                    onEvidenceOpen={onEvidenceOpen}
-                  />
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
+        <div className="refractured-proof-gate-timeline" aria-label="Proof-gate timeline">
+          {groupByPeriod(actionPlan.timeline ?? []).map((group) => (
+            <section className="refractured-proof-gate-period" key={group.period}>
+              <header>
+                <span>{periodLabel(group.period)}</span>
+                <h2>{group.period}</h2>
+                <p>{group.actions.length} decision gate{group.actions.length === 1 ? "" : "s"}</p>
+              </header>
+              <div className="refractured-proof-gate-track">
+                {group.actions.map((action, index) => (
+                  <ProofGateCard action={action} index={index} key={action.id} onEvidenceOpen={onEvidenceOpen} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
 
       <section className="refractured-path-gates" aria-labelledby="path-gates-title">
@@ -77,7 +110,7 @@ function ActionPlanTimeline({ actionPlan, onEvidenceOpen, strategicPaths = [] })
           <h2 id="path-gates-title">Path gates</h2>
           <p>Strategic ambition is earned by behavior signals, not by the first scope wish.</p>
         </div>
-        <div className="refractured-path-grid" role="group" aria-label="Strategic path gates">
+        <div className="refractured-path-decision-ladder" role="group" aria-label="Strategic path gates">
           {strategicPaths.map((path) => (
             <article key={path.id} className="refractured-path-card">
               <div className="refractured-layer-item-meta">
@@ -85,13 +118,20 @@ function ActionPlanTimeline({ actionPlan, onEvidenceOpen, strategicPaths = [] })
                 <ConfidenceTag confidence={path.confidence} />
               </div>
               <h2>{path.passSignal}</h2>
-              <DefinitionGrid
-                items={[
-                  { label: "When", value: path.when },
-                  { label: "Commercial upside", value: path.buys },
-                  { label: "Risk", value: path.risks },
-                ]}
-              />
+              <dl className="refractured-proof-gate-metrics">
+                <div>
+                  <dt>When</dt>
+                  <dd>{path.when}</dd>
+                </div>
+                <div>
+                  <dt>Commercial upside</dt>
+                  <dd>{path.buys}</dd>
+                </div>
+                <div>
+                  <dt>Risk</dt>
+                  <dd>{path.risks}</dd>
+                </div>
+              </dl>
               <EvidenceButton
                 context={`${path.label} path gate`}
                 evidenceRefs={path.evidenceRefs}

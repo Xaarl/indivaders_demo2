@@ -23,9 +23,15 @@ const server = await createServer({
 });
 
 try {
+  const { default: ActionPlanTimeline } = await server.ssrLoadModule(
+    "/src/components/refractured-report/ActionPlanTimeline.jsx",
+  );
   const { default: MarketMap } = await server.ssrLoadModule("/src/components/refractured-report/MarketMap.jsx");
   const { default: ComparableExplorer } = await server.ssrLoadModule(
     "/src/components/refractured-report/ComparableExplorer.jsx",
+  );
+  const { default: EvidenceLedgerPage } = await server.ssrLoadModule(
+    "/src/components/refractured-report/EvidenceLedgerPage.jsx",
   );
   const { default: RefracturedEvidenceDrawer } = await server.ssrLoadModule(
     "/src/components/refractured-report/RefracturedEvidenceDrawer.jsx",
@@ -183,6 +189,46 @@ try {
       assert.match(markup, /refractured-comparable-view-switch/);
       assert.match(markup, /aria-pressed="true"/);
       assert.match(markup, /Sort by: Market fit/);
+    }),
+    test("V5.2 Evidence Ledger renders a client evidence reader before raw links", () => {
+      const markup = renderToStaticMarkup(
+        React.createElement(EvidenceLedgerPage, {
+          evidenceLedger: report.evidenceLedger,
+        }),
+      );
+
+      assert.match(markup, /refractured-evidence-reader/);
+      assert.match(markup, /Inspect evidence/);
+      assert.match(markup, /Open raw source/);
+      assert.doesNotMatch(markup, />Open source</);
+    }),
+    test("V5.2 Action Plan renders proof-gate timeline instead of repeated action cards", () => {
+      const markup = renderToStaticMarkup(
+        React.createElement(ActionPlanTimeline, {
+          actionPlan: report.actionPlan,
+          onEvidenceOpen: noop,
+          strategicPaths: report.strategicPaths,
+        }),
+      );
+
+      assert.match(markup, /refractured-proof-gate-timeline/);
+      assert.match(markup, /refractured-proof-gate-card/);
+      assert.match(markup, /Proof gate/);
+      assert.doesNotMatch(markup, /refractured-action-list/);
+    }),
+    test("V5.2 Market Map renders visual bubble map with a detail panel", () => {
+      const markup = renderToStaticMarkup(
+        React.createElement(MarketMap, {
+          marketEvidence: report.marketEvidence,
+          onEvidenceOpen: noop,
+          thesis: report.thesis,
+        }),
+      );
+
+      assert.match(markup, /refractured-market-bubble-map/);
+      assert.match(markup, /refractured-market-bubble/);
+      assert.match(markup, /refractured-market-map-detail-panel/);
+      assert.doesNotMatch(markup, /refractured-market-map-list/);
     }),
   ]);
 
