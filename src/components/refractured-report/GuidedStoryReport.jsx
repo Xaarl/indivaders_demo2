@@ -1181,7 +1181,7 @@ function colorInputValue(color, fallback = "#ffffff") {
 }
 
 // ----------------- MAIN REPORT COMPONENT -----------------
-export default function GuidedStoryReport({ report = refracturedPremiumReport }) {
+export default function GuidedStoryReport({ report = refracturedPremiumReport, forceDemoMode = false }) {
   const rootRef = useRef(null);
   const sectionRefs = useRef([]);
   const canvasRef = useRef(null);
@@ -1206,9 +1206,14 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
   // Advanced Visual Customizer States
   const [selectedTextId, setSelectedTextId] = useState(null);
   const isDemoMode = useMemo(() => {
+    if (forceDemoMode) return true;
     if (typeof window === "undefined") return false;
-    return window.location.search.includes("demo=true") || window.location.hash.includes("demo=true");
-  }, []);
+    return (
+      window.location.hostname.includes("indievaders-demo")
+      || window.location.search.includes("demo=true")
+      || window.location.hash.includes("demo=true")
+    );
+  }, [forceDemoMode]);
 
   const handleSelectText = (id) => {
     if (isDemoMode) return;
@@ -1770,6 +1775,8 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
   const feedComboRef = useRef(1);
   const lastFeedTimeRef = useRef(0);
   const lastBurstSfxTimeRef = useRef(0);
+  const passiveFeedComboRef = useRef(0);
+  const lastPassiveFeedSfxTimeRef = useRef(0);
 
   // Deep dive drawer state
   const [activeDrawerSection, setActiveDrawerSection] = useState(null); // null, "Market Map", "Player DNA", "Rival Stories", "Promise Builder", "Evidence Vault"
@@ -2581,8 +2588,10 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
             Math.max(320, 260 + sing.mass * 2.8),
           );
 
-          // Consume check: tighter event horizon
-          if (motionEnabled && dist < ehRadius + 1.0) {
+          const consumeRadius = ehRadius + (star.layer === 0 ? 1.5 : 3.2);
+
+          // Consume check: passive feed and cursor feed share the same event horizon.
+          if (motionEnabled && dist < consumeRadius) {
             star.consumed = true;
             star.recycleTimer = 0;
 
@@ -2595,7 +2604,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
               if (playCustomSfxRef.current) {
                 playCustomSfxRef.current('burst'); // sound indicator when fed
               }
-              // trigger a small feed shockwave
               waves.push({
                 x: star.x,
                 pageY: currentY + currentScrollY * 0.05,
@@ -2604,7 +2612,27 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
                 alpha: 0.8
               });
             } else {
-              sing.mass += liveStarSettings.blackHoleGrowthRate * 0.02; // passive float-in doesn't grow it fast
+              const passiveGrowthMultiplier = star.layer === 0 ? 0.035 : star.layer === 1 ? 0.18 : 0.28;
+              sing.mass += liveStarSettings.blackHoleGrowthRate * passiveGrowthMultiplier;
+
+              if (star.layer > 0 && playCustomSfxRef.current) {
+                passiveFeedComboRef.current += 1;
+                const now = performance.now();
+                const shouldPing = passiveFeedComboRef.current >= 3 || now - lastPassiveFeedSfxTimeRef.current > 260;
+
+                if (shouldPing) {
+                  lastPassiveFeedSfxTimeRef.current = now;
+                  passiveFeedComboRef.current = 0;
+                  playCustomSfxRef.current('burst');
+                  waves.push({
+                    x: star.x,
+                    pageY: currentY + currentScrollY * 0.05,
+                    radius: 3,
+                    maxRadius: 72,
+                    alpha: 0.42
+                  });
+                }
+              }
             }
             continue;
           }
@@ -2623,17 +2651,19 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
               speedFallFactor = 0.92;
               speedSwirlFactor = 0.035;
             } else {
-              // Passive field response: stars keep the same sky drift, then gently bend toward the hole.
-              force = ((sing.mass * (0.75 + liveStarSettings.baseDriftSpeed)) / (dist + 80)) * influence;
-              speedFallFactor = 0.08;
-              speedSwirlFactor = 0.02;
+              // Passive field response: stars keep the same sky drift, then bend toward the hole as mass grows.
+              const layerWeight = 0.55 + star.layer * 0.32;
+              const gravityCurve = 0.22 + Math.pow(influence, 1.8) * 2.4;
+              force = ((sing.mass * (1.5 + liveStarSettings.baseDriftSpeed) * layerWeight) / (dist + 90)) * gravityCurve;
+              speedFallFactor = 0.24 + star.layer * 0.08;
+              speedSwirlFactor = 0.014;
             }
 
             const angle = Math.atan2(singScreenY - currentY, sing.x - star.x);
             const orbitAngle = angle + Math.PI / 2;
 
-            const closeFactor = dist < ehRadius + 30 ? (ehRadius + 30 - dist) / 10 : 0;
-            const speedFall = force * (speedFallFactor + closeFactor * 0.6);
+            const closeFactor = dist < ehRadius + 72 ? (ehRadius + 72 - dist) / 14 : 0;
+            const speedFall = Math.min(8, force * (speedFallFactor + closeFactor * 0.45));
             const speedSwirl = force * speedSwirlFactor;
 
             star.x += Math.cos(angle) * speedFall + Math.cos(orbitAngle) * speedSwirl;

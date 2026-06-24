@@ -41,19 +41,42 @@ function getRouteFromHash() {
   return { name: 'landing' };
 }
 
+function isPublicDemoRuntime() {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  return (
+    window.location.hostname.includes('indievaders-demo')
+    || window.location.search.includes('demo=true')
+    || window.location.hash.includes('demo=true')
+  );
+}
+
 function App() {
-  const [route, setRoute] = useState(getRouteFromHash);
+  const publicDemoMode = isPublicDemoRuntime();
+  const [route, setRoute] = useState(() => (
+    publicDemoMode ? { name: 'client-report' } : getRouteFromHash()
+  ));
 
   useEffect(() => {
+    if (publicDemoMode) {
+      return undefined;
+    }
+
     const handleHashChange = () => setRoute(getRouteFromHash());
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [publicDemoMode]);
 
-  const showNavbar = ['landing', 'sample-report', 'client-report'].includes(route.name);
+  const showNavbar = !publicDemoMode && ['landing', 'sample-report', 'client-report'].includes(route.name);
 
   const renderPage = () => {
+    if (publicDemoMode) {
+      return <GuidedStoryReport forceDemoMode />;
+    }
+
     if (route.name === 'sample-report') {
       return <InteractiveReportPage />;
     }
