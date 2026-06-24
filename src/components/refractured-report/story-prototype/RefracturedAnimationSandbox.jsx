@@ -204,7 +204,7 @@ export default function RefracturedAnimationSandbox() {
     const ctx = canvas.getContext('2d');
 
     let rafId = null;
-    const starCount = 350;
+    const starCount = 680;
     let stars = [];
     let waves = [];
 
@@ -252,6 +252,24 @@ export default function RefracturedAnimationSandbox() {
 
       // Play implosion audio mix
       try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          const context = new AudioContext();
+          const now = context.currentTime;
+          const osc = context.createOscillator();
+          const gain = context.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(72, now);
+          osc.frequency.exponentialRampToValueAtTime(32, now + 0.24);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(0.22, now + 0.008);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.connect(gain);
+          gain.connect(context.destination);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        }
+
         const sfxList = [
           '/sfx/DSGNBoom_BOOM-Distant_Ocular_Foundation.wav',
           '/sfx/DSGNBoom_BOOM-Quake_Ocular_Foundation.wav',

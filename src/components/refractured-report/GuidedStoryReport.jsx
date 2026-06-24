@@ -211,6 +211,34 @@ const defaultLayoutSettings = {
   monoScale: 1.04,
 };
 
+const defaultStarSettings = {
+  layer0Count: 340,
+  layer1Count: 230,
+  layer2Count: 120,
+  cursorGravity: 0.38,
+  baseDriftSpeed: 0.15,
+  twinkleSpeed: 0.3,
+  blackHoleGrowthRate: 2.5,
+};
+
+const legacySparseStarDefaults = {
+  layer0Count: 150,
+  layer1Count: 100,
+  layer2Count: 50,
+};
+
+function normalizeStarSettings(savedSettings = {}) {
+  const next = { ...defaultStarSettings, ...savedSettings };
+  const wasSparseDefault =
+    Number(savedSettings.layer0Count) === legacySparseStarDefaults.layer0Count
+    && Number(savedSettings.layer1Count) === legacySparseStarDefaults.layer1Count
+    && Number(savedSettings.layer2Count) === legacySparseStarDefaults.layer2Count;
+
+  return wasSparseDefault
+    ? { ...next, ...defaultStarSettings }
+    : next;
+}
+
 function normalizeThemeColors(savedColors = {}) {
   const next = { ...defaultThemeColors, ...savedColors };
   const legacyAccentValues = new Set(["#38bdf8", "#00f2fe", "#8fd8ff"]);
@@ -1365,24 +1393,15 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
   }, [currentLocalPath, isDemoMode]);
 
   const [starSettings, setStarSettings] = useState(() => {
-    const defaults = {
-      layer0Count: 150,
-      layer1Count: 100,
-      layer2Count: 50,
-      cursorGravity: 0.38,
-      baseDriftSpeed: 0.15,
-      twinkleSpeed: 0.3,
-      blackHoleGrowthRate: 2.5,
-    };
     try {
       const saved = localStorage.getItem("indievaders_star_settings");
       if (saved) {
-        return { ...defaults, ...JSON.parse(saved) };
+        return normalizeStarSettings(JSON.parse(saved));
       }
     } catch {
       /* ignore */
     }
-    return defaults;
+    return defaultStarSettings;
   });
 
   const [soundLibrary, setSoundLibrary] = useState(() => {
@@ -1848,6 +1867,34 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
         gain.connect(context.destination);
         osc.start(now);
         osc.stop(now + 0.22);
+      } else if (name === 'collapse') {
+        const sub = context.createOscillator();
+        const subGain = context.createGain();
+        const crack = context.createOscillator();
+        const crackGain = context.createGain();
+
+        sub.type = 'sine';
+        sub.frequency.setValueAtTime(72, now);
+        sub.frequency.exponentialRampToValueAtTime(32, now + 0.24);
+        subGain.gain.setValueAtTime(0.001, now);
+        subGain.gain.exponentialRampToValueAtTime(0.42 * vol, now + 0.008);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        crack.type = 'triangle';
+        crack.frequency.setValueAtTime(190, now);
+        crack.frequency.exponentialRampToValueAtTime(75, now + 0.1);
+        crackGain.gain.setValueAtTime(0.001, now);
+        crackGain.gain.exponentialRampToValueAtTime(0.12 * vol, now + 0.004);
+        crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        sub.connect(subGain);
+        crack.connect(crackGain);
+        subGain.connect(context.destination);
+        crackGain.connect(context.destination);
+        sub.start(now);
+        crack.start(now);
+        sub.stop(now + 0.3);
+        crack.stop(now + 0.14);
       } else if (name === 'unlock') {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(320, now);
@@ -1932,6 +1979,44 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
     console.warn("Custom audio play failed:", err);
   }, []);
 
+  const rawAudioPoolRef = useRef(new Map());
+  const primeRawAudio = useCallback((url) => {
+    if (!url || rawAudioPoolRef.current.has(url)) return;
+
+    try {
+      const audio = new Audio(url);
+      audio.preload = "auto";
+      audio.load();
+      rawAudioPoolRef.current.set(url, audio);
+    } catch (err) {
+      warnCustomAudioFailure(err);
+    }
+  }, [warnCustomAudioFailure]);
+
+  const playRawAudio = useCallback((url, volume = 1, playbackRate = 1) => {
+    if (!soundEnabled || !url) return false;
+
+    try {
+      primeRawAudio(url);
+      const pooled = rawAudioPoolRef.current.get(url);
+      const audio = pooled?.paused ? pooled : pooled?.cloneNode(true) ?? new Audio(url);
+
+      audio.currentTime = 0;
+      audio.volume = Math.max(0, Math.min(1, volume));
+      audio.playbackRate = playbackRate;
+      audio.play().catch(warnCustomAudioFailure);
+      return true;
+    } catch (err) {
+      warnCustomAudioFailure(err);
+      return false;
+    }
+  }, [primeRawAudio, soundEnabled, warnCustomAudioFailure]);
+
+  useEffect(() => {
+    primeRawAudio("/sfx/DSGNBoom_BOOM-Distant_Ocular_Foundation.wav");
+    primeRawAudio("/sfx/DSGNBoom_BOOM-Quake_Ocular_Foundation.wav");
+  }, [primeRawAudio]);
+
   // playCustomSfx maps report events to the page sound library.
   const playCustomSfx = useCallback((eventName) => {
     if (!soundEnabled) return;
@@ -1976,11 +2061,16 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
         audio.playbackRate = 0.95 + Math.random() * 0.1;
       }
 
+      if ((eventName === "unlock" || eventName === "impact") && sound.url.includes("DSGNBoom_BOOM")) {
+        playRawAudio(sound.url, audio.volume, audio.playbackRate);
+        return;
+      }
+
       audio.play().catch(warnCustomAudioFailure);
     } catch (err) {
       warnCustomAudioFailure(err);
     }
-  }, [soundEnabled, sfxSettings, soundLibrary, playSfx, warnCustomAudioFailure]);
+  }, [soundEnabled, sfxSettings, soundLibrary, playSfx, playRawAudio, warnCustomAudioFailure]);
 
   const previewSound = useCallback((url, volume = 1) => {
     if (!url) return;
@@ -2174,6 +2264,11 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
     };
   }, [musicEnabled, startAmbientLayer, stopAmbientLayer]);
 
+  const playSfxRef = useRef(playSfx);
+  useEffect(() => {
+    playSfxRef.current = playSfx;
+  }, [playSfx]);
+
   // Keep playCustomSfx mutable reference to avoid tearing down canvas useEffect
   const playCustomSfxRef = useRef(playCustomSfx);
   useEffect(() => {
@@ -2296,10 +2391,11 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
       }, 1000);
 
       if (playCustomSfxRef.current) {
+        playSfxRef.current?.('collapse');
         playCustomSfxRef.current('unlock');
         window.setTimeout(() => {
           playCustomSfxRef.current?.('impact');
-        }, 120);
+        }, 70);
       }
 
       waves.push({
@@ -3082,9 +3178,9 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport })
               <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)" }}>Starfield & Physics:</span>
               
               {[
-                ["layer0Count", "Background dust (Layer 0)", 500],
-                ["layer1Count", "Mid stars (Layer 1)", 350],
-                ["layer2Count", "Bright feed stars (Layer 2)", 220],
+                ["layer0Count", "Background dust (Layer 0)", 900],
+                ["layer1Count", "Mid stars (Layer 1)", 620],
+                ["layer2Count", "Bright feed stars (Layer 2)", 360],
               ].map(([key, label, max]) => (
                 <div key={key} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
