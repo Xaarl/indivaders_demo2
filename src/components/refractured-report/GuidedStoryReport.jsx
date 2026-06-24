@@ -1933,6 +1933,33 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     }
   }, [soundEnabled]);
 
+  useEffect(() => {
+    if (!soundEnabled) return undefined;
+
+    const armAudio = () => {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!audioContextRef.current) {
+          audioContextRef.current = new AudioContext();
+        }
+        if (audioContextRef.current.state === 'suspended') {
+          audioContextRef.current.resume().catch(() => {});
+        }
+      } catch {
+        // Audio may remain blocked until the next trusted user gesture.
+      }
+    };
+
+    window.addEventListener("pointerdown", armAudio, { passive: true });
+    window.addEventListener("keydown", armAudio);
+
+    return () => {
+      window.removeEventListener("pointerdown", armAudio);
+      window.removeEventListener("keydown", armAudio);
+    };
+  }, [soundEnabled]);
+
   // Keep singularityColors mutable reference to avoid tearing down the canvas useEffect on color shifts
   const singularityColorsRef = useRef(singularityColors);
   useEffect(() => {
@@ -2035,7 +2062,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
     const now = performance.now();
     if (eventName === "burst") {
-      if (now - lastBurstSfxTimeRef.current < 85) return;
+      if (now - lastBurstSfxTimeRef.current < 180) return;
       lastBurstSfxTimeRef.current = now;
       feedComboRef.current = now - lastFeedTimeRef.current < 800 ? Math.min(feedComboRef.current + 1, 12) : 1;
       lastFeedTimeRef.current = now;
@@ -2397,13 +2424,8 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
         justCollapsedRef.current = false;
       }, 1000);
 
-      if (playCustomSfxRef.current) {
-        playSfxRef.current?.('collapse');
-        playCustomSfxRef.current('unlock');
-        window.setTimeout(() => {
-          playCustomSfxRef.current?.('impact');
-        }, 70);
-      }
+      playSfxRef.current?.('collapse');
+      playSfxRef.current?.('unlock');
 
       waves.push({
         x,
@@ -2584,8 +2606,8 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
           const dist = Math.hypot(sing.x - star.x, singScreenY - currentY);
           const ehRadius = sing.mass * 0.4;
           const influenceRadius = Math.min(
-            Math.max(canvas.width, canvas.height) * 1.15,
-            Math.max(320, 260 + sing.mass * 2.8),
+            760,
+            Math.max(340, 320 + sing.mass * 1.9),
           );
 
           const consumeRadius = ehRadius + (star.layer === 0 ? 1.5 : 3.2);
@@ -2601,24 +2623,24 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
             if (isBeingFed && star.layer > 0) {
               sing.mass += liveStarSettings.blackHoleGrowthRate; // active player feeding grows singularity significantly
-              if (playCustomSfxRef.current) {
+              if (star.layer === 2 && playCustomSfxRef.current) {
                 playCustomSfxRef.current('burst'); // sound indicator when fed
+                waves.push({
+                  x: star.x,
+                  pageY: currentY + currentScrollY * 0.05,
+                  radius: 4,
+                  maxRadius: 100,
+                  alpha: 0.8
+                });
               }
-              waves.push({
-                x: star.x,
-                pageY: currentY + currentScrollY * 0.05,
-                radius: 4,
-                maxRadius: 100,
-                alpha: 0.8
-              });
             } else {
               const passiveGrowthMultiplier = star.layer === 0 ? 0.035 : star.layer === 1 ? 0.18 : 0.28;
               sing.mass += liveStarSettings.blackHoleGrowthRate * passiveGrowthMultiplier;
 
-              if (star.layer > 0 && playCustomSfxRef.current) {
+              if (star.layer === 2 && playCustomSfxRef.current) {
                 passiveFeedComboRef.current += 1;
                 const now = performance.now();
-                const shouldPing = passiveFeedComboRef.current >= 3 || now - lastPassiveFeedSfxTimeRef.current > 260;
+                const shouldPing = passiveFeedComboRef.current >= 4 || now - lastPassiveFeedSfxTimeRef.current > 380;
 
                 if (shouldPing) {
                   lastPassiveFeedSfxTimeRef.current = now;
@@ -2647,24 +2669,23 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
             if (isBeingFed && star.layer > 0) {
               // Active player feed: pulled strongly into singularity
-              force = (sing.mass * 5.0) / (dist + 35);
-              speedFallFactor = 0.92;
-              speedSwirlFactor = 0.035;
+              force = (sing.mass * 4.8) / (dist + 35);
+              speedFallFactor = 0.88;
+              speedSwirlFactor = 0.06;
             } else {
-              // Passive field response: stars keep the same sky drift, then bend toward the hole as mass grows.
-              const layerWeight = 0.55 + star.layer * 0.32;
-              const gravityCurve = 0.22 + Math.pow(influence, 1.8) * 2.4;
-              force = ((sing.mass * (1.5 + liveStarSettings.baseDriftSpeed) * layerWeight) / (dist + 90)) * gravityCurve;
-              speedFallFactor = 0.24 + star.layer * 0.08;
-              speedSwirlFactor = 0.014;
+              // Passive field response: keep natural drift, then bend into an orbital vortex near the hole.
+              const layerWeight = 0.55 + star.layer * 0.28;
+              force = ((sing.mass * 4.1 * layerWeight) / (dist + 45)) * Math.max(0.18, influence);
+              speedFallFactor = 0.28 + star.layer * 0.04;
+              speedSwirlFactor = 0.52;
             }
 
             const angle = Math.atan2(singScreenY - currentY, sing.x - star.x);
             const orbitAngle = angle + Math.PI / 2;
 
-            const closeFactor = dist < ehRadius + 72 ? (ehRadius + 72 - dist) / 14 : 0;
-            const speedFall = Math.min(8, force * (speedFallFactor + closeFactor * 0.45));
-            const speedSwirl = force * speedSwirlFactor;
+            const closeFactor = dist < ehRadius + 34 ? (ehRadius + 34 - dist) / 11 : 0;
+            const speedFall = Math.min(5.5, force * (speedFallFactor + closeFactor * 0.45));
+            const speedSwirl = Math.min(4.5, force * speedSwirlFactor);
 
             star.x += Math.cos(angle) * speedFall + Math.cos(orbitAngle) * speedSwirl;
             star.y += Math.sin(angle) * speedFall + Math.sin(orbitAngle) * speedSwirl;
@@ -2687,8 +2708,8 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
               const singScreenY = sing.pageY - currentScrollY * 0.05;
               const distToSing = Math.hypot(sing.x - star.x, singScreenY - currentY);
               const influenceRadius = Math.min(
-                Math.max(canvas.width, canvas.height) * 1.15,
-                Math.max(320, 260 + sing.mass * 2.8),
+                760,
+                Math.max(340, 320 + sing.mass * 1.9),
               );
               if (distToSing < influenceRadius) {
                 shouldPull = distToSing > Math.max(150, sing.mass * 0.75);
