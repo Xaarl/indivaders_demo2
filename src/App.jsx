@@ -47,7 +47,8 @@ function isPublicDemoRuntime() {
   }
 
   return (
-    window.location.hostname.includes('indievaders-demo')
+    import.meta.env.VITE_PUBLIC_DEMO === 'true'
+    || window.location.hostname.includes('indievaders-demo')
     || window.location.search.includes('demo=true')
     || window.location.hash.includes('demo=true')
   );
