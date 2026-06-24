@@ -8,7 +8,7 @@ import OfferSection from './OfferSection.jsx';
 function LandingPage() {
   return (
     <main className="site-shell">
-      <Hero copy={productCopy.hero} brand={productCopy.brand} />
+      <Hero copy={productCopy.hero} />
 
       <section className="visual-scan-strip" aria-label="Steam positioning scan">
         {productCopy.trustStrip.items.map((item) => (

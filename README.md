@@ -35,6 +35,7 @@ Do not treat old external workspaces, generated output, or any unrelated folder 
 - [PM workspace](docs/project-management/README.md)
 - [Design direction](docs/design/00-design-index.md)
 - [GitHub setup](docs/repository/github-setup.md)
+- [Architecture v7 Unified Experience](docs/refractured-v7-architecture.md)
 
 ## Safety Boundary
 

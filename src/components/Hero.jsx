@@ -140,7 +140,7 @@ function PixelAlien({ form }) {
   );
 }
 
-function Hero({ copy, brand }) {
+function Hero({ copy }) {
   const [signals, setSignals] = useState(createInitialSignals);
   const [drag, setDrag] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -502,23 +502,6 @@ function Hero({ copy, brand }) {
       onPointerUp={handlePointerUp}
       onPointerCancel={() => setDrag(null)}
     >
-      <nav className="top-nav" aria-label="Primary navigation">
-        <a className="brand-lockup" href="#">
-          <span className="brand-mark">IV</span>
-          <span>
-            <strong>{brand.name}</strong>
-            <small>{brand.descriptor}</small>
-          </span>
-        </a>
-        <div className="nav-actions">
-          <a href="#sample-report">Interactive sample report</a>
-          <a href="#report">Report</a>
-          <a href="#early-report">Pricing</a>
-          <a className="nav-button" href="#order-report">
-            Request report
-          </a>
-        </div>
-      </nav>
 
       <div className="hero-starfield" aria-hidden="true" />
       <div className="hero-flashlight" aria-hidden="true" />

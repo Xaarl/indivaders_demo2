@@ -319,7 +319,7 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
   return (
     <section className="refractured-module refractured-comparable-explorer">
       <JobHeader
-        eyebrow="Comparable Explorer"
+        eyebrow="Comparable Market Board"
         title="Start with the market board, then decide what Refractured should prove."
         summary="Use Steam-facing facts, rough estimates, interpretation, and actions as separate layers. The goal is not to copy any one game; it is to see which proof would make Refractured more sellable."
       />
@@ -344,8 +344,8 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
         ))}
       </div>
       <LayerSummaryStrip
-        ariaLabel="Comparable Explorer evidence layer shortcuts"
-        context="the Comparable Explorer"
+        ariaLabel="Comparable Market Board evidence layer shortcuts"
+        context="the Comparable Market Board"
         module={marketEvidence}
         onEvidenceOpen={onEvidenceOpen}
       />

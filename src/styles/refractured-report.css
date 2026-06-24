@@ -1,28 +1,28 @@
 .refractured-report-shell {
-  --rf-bg: #070909;
-  --rf-bg-2: #0d1010;
-  --rf-panel: #111514;
-  --rf-panel-2: #171c1a;
-  --rf-panel-3: #1b201e;
+  --rf-bg: #000000;
+  --rf-bg-2: #04060a;
+  --rf-panel: rgba(226, 232, 240, 0.055);
+  --rf-panel-2: rgba(226, 232, 240, 0.075);
+  --rf-panel-3: rgba(226, 232, 240, 0.095);
   --rf-ink: #050606;
-  --rf-text: #f1eadc;
-  --rf-soft: rgba(241, 234, 220, 0.76);
-  --rf-muted: rgba(241, 234, 220, 0.56);
-  --rf-faint: rgba(241, 234, 220, 0.12);
-  --rf-line: rgba(214, 168, 91, 0.24);
-  --rf-line-strong: rgba(214, 168, 91, 0.52);
-  --rf-amber: #d6a85b;
-  --rf-amber-soft: rgba(214, 168, 91, 0.12);
-  --rf-teal: #62b8a6;
-  --rf-teal-soft: rgba(98, 184, 166, 0.12);
-  --rf-red: #d56f61;
-  --rf-red-soft: rgba(213, 111, 97, 0.12);
-  --rf-green: #8fbc73;
+  --rf-text: #e2e8f0;
+  --rf-soft: rgba(226, 232, 240, 0.72);
+  --rf-muted: rgba(226, 232, 240, 0.52);
+  --rf-faint: rgba(226, 232, 240, 0.12);
+  --rf-line: rgba(115, 228, 206, 0.12);
+  --rf-line-strong: rgba(115, 228, 206, 0.32);
+  --rf-amber: #73e4ce;
+  --rf-amber-soft: rgba(115, 228, 206, 0.09);
+  --rf-teal: #73e4ce;
+  --rf-teal-soft: rgba(115, 228, 206, 0.09);
+  --rf-red: rgba(226, 232, 240, 0.72);
+  --rf-red-soft: rgba(226, 232, 240, 0.08);
+  --rf-green: #73e4ce;
   --rf-radius: 8px;
   min-height: 100vh;
   padding: 18px clamp(14px, 3vw, 40px) 56px;
   background:
-    linear-gradient(180deg, #0c0f0f 0%, var(--rf-bg) 42%, #050606 100%);
+    linear-gradient(180deg, #03050a 0%, var(--rf-bg) 42%, #000000 100%);
   color: var(--rf-text);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -1401,14 +1401,24 @@
 
 .refractured-evidence-drawer {
   position: fixed;
-  inset: 0 0 0 auto;
-  z-index: 50;
-  width: min(520px, 100%);
+  inset: 50% auto auto 50%;
+  z-index: 3200;
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
   overflow: auto;
   padding: 18px;
-  border-left: 1px solid var(--rf-line);
-  background: rgba(8, 10, 10, 0.98);
-  box-shadow: -28px 0 70px rgba(0, 0, 0, 0.42);
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(226, 232, 240, 0.18);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(143, 216, 255, 0.08), transparent 34%),
+    rgba(4, 7, 13, 0.96);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.72),
+    0 0 0 9999px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .refractured-evidence-page {
@@ -2495,6 +2505,8 @@
   }
 
   .refractured-evidence-drawer {
+    width: min(100vw - 20px, 760px);
+    max-height: calc(100vh - 20px);
     padding: 14px 10px;
   }
 }
