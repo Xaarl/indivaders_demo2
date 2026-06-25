@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import GlobalNavbar from './components/GlobalNavbar.jsx';
 import LandingPage from './components/LandingPage.jsx';
+import LandingPageV2 from './components/LandingPageV2.jsx';
 import EarlyReportIntakePage from './components/report-workspace/EarlyReportIntakePage.jsx';
 import ProjectWorkspacePage from './components/report-workspace/ProjectWorkspacePage.jsx';
 import InteractiveReportPage from './components/interactive-report/InteractiveReportPage.jsx';
@@ -38,6 +39,10 @@ function getRouteFromHash() {
     return { name: 'animation-sandbox' };
   }
 
+  if (hash === '#prototype/landing-v2') {
+    return { name: 'landing-v2' };
+  }
+
   return { name: 'landing' };
 }
 
@@ -71,7 +76,7 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [publicDemoMode]);
 
-  const showNavbar = !publicDemoMode && ['landing', 'sample-report', 'client-report'].includes(route.name);
+  const showNavbar = !publicDemoMode && ['landing', 'landing-v2', 'sample-report', 'client-report'].includes(route.name);
 
   const renderPage = () => {
     if (publicDemoMode) {
@@ -96,6 +101,10 @@ function App() {
 
     if (route.name === 'animation-sandbox') {
       return <RefracturedAnimationSandbox />;
+    }
+
+    if (route.name === 'landing-v2') {
+      return <LandingPageV2 />;
     }
 
     return <LandingPage />;

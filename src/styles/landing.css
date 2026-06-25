@@ -2792,3 +2792,328 @@ button {
   margin-top: 8px;
 }
 
+/* ==========================================================================
+   LANDING PAGE V2 (DARK SPACE THEME & GLASSMORPHISM)
+   ========================================================================== */
+.landing-page-v2 {
+  --landing-bg: #03050c;
+  --landing-ink: #e2e8f0;
+  --landing-muted: rgba(226, 232, 240, 0.68);
+  --landing-soft: rgba(226, 232, 240, 0.45);
+  --landing-gold: #73e4ce; /* Teal/Gold accent matching the report */
+  --landing-panel: rgba(4, 6, 10, 0.65);
+  --landing-card-border: rgba(255, 255, 255, 0.08);
+  --landing-card-glow: rgba(255, 255, 255, 0.04);
+  
+  position: relative;
+  background: var(--landing-bg);
+  color: var(--landing-ink);
+  min-height: 100vh;
+  z-index: 1;
+}
+
+/* Background Starfield */
+.landing-page-v2 .landing-space {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  background: #000000;
+  pointer-events: none;
+}
+
+.landing-page-v2 .landing-space .landing-stars {
+  position: absolute;
+  inset: -12%;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.15) 0 1px, transparent 1.5px);
+  background-position: 0 0, 38px 74px;
+  background-size: 180px 180px, 260px 260px;
+  animation: landing-stars-drift-v2 180s linear infinite;
+}
+
+@keyframes landing-stars-drift-v2 {
+  from { transform: translateY(0); }
+  to { transform: translateY(-120px); }
+}
+
+/* Brand Mark and Lockup */
+.landing-page-v2 .brand-mark {
+  background: transparent !important;
+  border: 1px solid var(--landing-gold) !important;
+  color: var(--landing-gold) !important;
+  box-shadow: 0 0 12px rgba(115, 228, 206, 0.2);
+}
+
+.landing-page-v2 .brand-lockup small {
+  color: var(--landing-muted) !important;
+}
+
+/* Typography and Section Heading Kicker */
+.landing-page-v2 h1,
+.landing-page-v2 h2,
+.landing-page-v2 h3,
+.landing-page-v2 h4 {
+  color: #ffffff !important;
+}
+
+.landing-page-v2 .section-kicker,
+.landing-page-v2 .hero-eyebrow,
+.landing-page-v2 .panel-label {
+  color: var(--landing-gold) !important;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Primary Button Override */
+.landing-page-v2 .button-primary {
+  background: var(--landing-gold) !important;
+  color: #03050c !important;
+  border: 1px solid var(--landing-gold) !important;
+  font-weight: 800;
+  box-shadow: 0 0 20px rgba(115, 228, 206, 0.25);
+  transition: all 0.2s ease;
+}
+
+.landing-page-v2 .button-primary:hover {
+  background: transparent !important;
+  color: var(--landing-gold) !important;
+  box-shadow: 0 0 28px rgba(115, 228, 206, 0.4);
+}
+
+/* Secondary/Ghost Button Override */
+.landing-page-v2 .button-secondary,
+.landing-page-v2 .button-ghost,
+.landing-page-v2 .nav-button {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--landing-card-border) !important;
+  color: var(--landing-ink) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.landing-page-v2 .button-secondary:hover,
+.landing-page-v2 .button-ghost:hover,
+.landing-page-v2 .nav-button:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #fff !important;
+}
+
+/* Alien signals / Invaders */
+.landing-page-v2 .alien-signal {
+  color: var(--landing-gold) !important;
+  filter: drop-shadow(0 0 8px rgba(115, 228, 206, 0.5)) !important;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.landing-page-v2 .alien-signal:hover,
+.landing-page-v2 .alien-signal.is-dragging {
+  opacity: 1;
+  filter: drop-shadow(0 0 16px var(--landing-gold)) !important;
+}
+
+/* Make pixel aliens monochromatic (shades of teal) */
+.landing-page-v2 .pixel-alien i {
+  background: var(--landing-gold) !important;
+}
+
+/* Black Hole */
+.landing-page-v2 .black-hole {
+  background: #000000 !important;
+  border: 1px solid rgba(115, 228, 206, 0.2) !important;
+  box-shadow: 
+    0 0 60px rgba(115, 228, 206, 0.15),
+    inset 0 0 30px rgba(115, 228, 206, 0.1) !important;
+}
+
+.landing-page-v2 .black-hole span {
+  border-color: var(--landing-gold) !important;
+  opacity: 0.25 !important;
+}
+
+/* Control Panel */
+.landing-page-v2 .hero-control-panel {
+  background: var(--landing-panel) !important;
+  border: 1px solid var(--landing-card-border) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5) !important;
+}
+
+.landing-page-v2 .hero-control-panel button {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--landing-card-border) !important;
+  color: var(--landing-ink) !important;
+}
+
+.landing-page-v2 .hero-control-panel button:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  color: #fff !important;
+}
+
+/* Visual scan strip */
+.landing-page-v2 .visual-scan-strip {
+  background: rgba(4, 6, 10, 0.4) !important;
+  border-top: 1px solid var(--landing-card-border) !important;
+  border-bottom: 1px solid var(--landing-card-border) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.landing-page-v2 .visual-scan-strip span {
+  color: var(--landing-gold) !important;
+}
+
+/* Case study cards */
+.landing-page-v2 .case-card {
+  background: var(--landing-panel) !important;
+  border: 1px solid var(--landing-card-border) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.25s ease;
+}
+
+.landing-page-v2 .case-card:hover,
+.landing-page-v2 .case-card.is-active {
+  border-color: rgba(115, 228, 206, 0.35) !important;
+  box-shadow: 
+    0 0 20px rgba(115, 228, 206, 0.12),
+    0 15px 35px rgba(0, 0, 0, 0.5) !important;
+}
+
+.landing-page-v2 .case-card strong {
+  color: #ffffff !important;
+}
+
+.landing-page-v2 .case-card-art img {
+  filter: grayscale(40%) contrast(110%);
+}
+
+.landing-page-v2 .case-card-contrast span {
+  color: var(--landing-muted) !important;
+}
+
+/* Case Lesson Panel */
+.landing-page-v2 .lesson-panel {
+  background: rgba(4, 6, 10, 0.85) !important;
+  border: 1px solid rgba(115, 228, 206, 0.2) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 
+    0 0 40px rgba(115, 228, 206, 0.08),
+    0 30px 80px rgba(0, 0, 0, 0.7) !important;
+}
+
+.landing-page-v2 .lesson-panel h3 {
+  color: #ffffff !important;
+}
+
+.landing-page-v2 .lesson-list div {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.landing-page-v2 .lesson-list dt {
+  color: var(--landing-gold) !important;
+}
+
+.landing-page-v2 .lesson-list dd {
+  color: var(--landing-ink) !important;
+}
+
+.landing-page-v2 .evidence-chip {
+  background: rgba(115, 228, 206, 0.05) !important;
+  border: 1px solid rgba(115, 228, 206, 0.16) !important;
+  color: var(--landing-gold) !important;
+}
+
+.landing-page-v2 .evidence-chip:hover {
+  background: rgba(115, 228, 206, 0.12) !important;
+  border-color: var(--landing-gold) !important;
+}
+
+.landing-page-v2 .panel-cta {
+  background: var(--landing-gold) !important;
+  color: #03050c !important;
+  border: 1px solid var(--landing-gold) !important;
+  box-shadow: 0 0 16px rgba(115, 228, 206, 0.25);
+  font-weight: 800;
+}
+
+.landing-page-v2 .panel-cta:hover {
+  background: transparent !important;
+  color: var(--landing-gold) !important;
+  box-shadow: 0 0 24px rgba(115, 228, 206, 0.4);
+}
+
+/* Deliverables Grid cards */
+.landing-page-v2 .deliverable-card,
+.landing-page-v2 .deliverable-hero {
+  background: var(--landing-panel) !important;
+  border: 1px solid var(--landing-card-border) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4) !important;
+}
+
+.landing-page-v2 .deliverable-card:hover {
+  border-color: rgba(115, 228, 206, 0.25) !important;
+}
+
+.landing-page-v2 .deliverable-card svg,
+.landing-page-v2 .deliverable-hero svg {
+  color: var(--landing-gold) !important;
+}
+
+/* Offer Section and intake panels */
+.landing-page-v2 .early-report-panel,
+.landing-page-v2 .sample-form-panel {
+  background: var(--landing-panel) !important;
+  border: 1px solid var(--landing-card-border) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+.landing-page-v2 .sample-form-panel input,
+.landing-page-v2 .sample-form-panel textarea,
+.landing-page-v2 .sample-form-panel select {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid var(--landing-card-border) !important;
+  color: #fff !important;
+}
+
+.landing-page-v2 .sample-form-panel input:focus,
+.landing-page-v2 .sample-form-panel textarea:focus,
+.landing-page-v2 .sample-form-panel select:focus {
+  border-color: var(--landing-gold) !important;
+  outline: none;
+  box-shadow: 0 0 12px rgba(115, 228, 206, 0.2) !important;
+}
+
+/* Footer styling */
+.landing-page-v2 .site-footer {
+  border-top: 1px solid var(--landing-card-border) !important;
+  padding-top: 32px;
+}
+
+.landing-page-v2 .site-footer p {
+  color: var(--landing-soft) !important;
+}
+
+.landing-page-v2 .site-footer nav a {
+  color: var(--landing-muted) !important;
+}
+
+.landing-page-v2 .site-footer nav a:hover {
+  color: #ffffff !important;
+}
+
