@@ -215,10 +215,11 @@ const defaultStarSettings = {
   layer0Count: 340,
   layer1Count: 230,
   layer2Count: 120,
-  cursorGravity: 0.38,
+  cursorGravity: 0.22,
   baseDriftSpeed: 0.15,
   twinkleSpeed: 0.3,
   blackHoleGrowthRate: 2.5,
+  blackHoleGravity: 0.45,
 };
 
 const legacySparseStarDefaults = {
@@ -2365,10 +2366,13 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     window.addEventListener("resize", resizeCanvas, { passive: true });
 
     // Initialize Stars based on starSettings layers
+    const isMobileDevice = window.innerWidth < 768;
+    const starCountMultiplier = isMobileDevice ? 0.25 : 1.0;
+
     const layers = [
-      { id: 0, count: starSettings.layer0Count, sizeRange: [0.15, 0.6], opacityRange: [0.15, 0.4], factor: 0.005, pullFactor: 0.05 },
-      { id: 1, count: starSettings.layer1Count, sizeRange: [0.55, 1.25], opacityRange: [0.3, 0.65], factor: 0.016, pullFactor: 0.8 },
-      { id: 2, count: starSettings.layer2Count, sizeRange: [1.2, 2.2], opacityRange: [0.55, 0.9], factor: 0.035, pullFactor: 1.5 },
+      { id: 0, count: Math.round(starSettings.layer0Count * starCountMultiplier), sizeRange: [0.15, 0.6], opacityRange: [0.15, 0.4], factor: 0.005, pullFactor: 0.05 },
+      { id: 1, count: Math.round(starSettings.layer1Count * starCountMultiplier), sizeRange: [0.55, 1.25], opacityRange: [0.3, 0.65], factor: 0.016, pullFactor: 0.8 },
+      { id: 2, count: Math.round(starSettings.layer2Count * starCountMultiplier), sizeRange: [1.2, 2.2], opacityRange: [0.55, 0.9], factor: 0.035, pullFactor: 1.5 },
     ];
     const baseDrift = { x: 0.22, y: -1 };
     const baseDriftLength = Math.hypot(baseDrift.x, baseDrift.y);
@@ -2470,7 +2474,8 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
         const screenY = sing.pageY - currentScrollY * 0.05;
 
         if (screenY >= -150 && screenY <= canvas.height + 150) {
-          const ehRadius = sing.mass * 0.4;
+          const isMobile = canvas.width < 768;
+          const ehRadius = sing.mass * 0.4 * (isMobile ? 0.55 : 1.0);
           if (motionEnabled) {
             sing.pulse += 0.0035;
           }
@@ -2610,13 +2615,13 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
         if (sing) {
           const singScreenY = sing.pageY - currentScrollY * 0.05;
           const dist = Math.hypot(sing.x - star.x, singScreenY - currentY);
-          const ehRadius = sing.mass * 0.4;
-          const influenceRadius = Math.min(
-            760,
-            Math.max(340, 320 + sing.mass * 1.9),
-          );
+          const isMobile = canvas.width < 768;
+          const ehRadius = sing.mass * 0.4 * (isMobile ? 0.55 : 1.0);
+          const influenceRadius = isMobile
+            ? Math.min(240, Math.max(120, 110 + sing.mass * 0.8))
+            : Math.min(760, Math.max(340, 320 + sing.mass * 1.9));
 
-          const consumeRadius = ehRadius + (star.layer === 0 ? 1.5 : 3.2);
+          const consumeRadius = ehRadius + (star.layer === 0 ? 1.0 : 2.5);
 
           // Consume check: passive feed and cursor feed share the same event horizon.
           if (motionEnabled && dist < consumeRadius) {
@@ -2625,7 +2630,9 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
             const distMouseSing = mouse.x !== null ? Math.hypot(sing.x - mouse.x, singScreenY - mouse.y) : 9999;
             const distStarMouse = mouse.x !== null ? Math.hypot(mouse.x - star.x, mouse.y - currentY) : 9999;
-            const isBeingFed = distMouseSing < 220 && distStarMouse < 200;
+            const activeFeedSingDist = isMobile ? 110 : 220;
+            const activeFeedStarDist = isMobile ? 100 : 200;
+            const isBeingFed = distMouseSing < activeFeedSingDist && distStarMouse < activeFeedStarDist;
 
             if (isBeingFed && star.layer > 0) {
               sing.mass += liveStarSettings.blackHoleGrowthRate; // active player feeding grows singularity significantly
@@ -2668,20 +2675,23 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
           if (motionEnabled && dist < influenceRadius) {
             const distMouseSing = mouse.x !== null ? Math.hypot(sing.x - mouse.x, singScreenY - mouse.y) : 9999;
             const distStarMouse = mouse.x !== null ? Math.hypot(mouse.x - star.x, mouse.y - currentY) : 9999;
-            const isBeingFed = distMouseSing < 220 && distStarMouse < 200;
+            const activeFeedSingDist = isMobile ? 110 : 220;
+            const activeFeedStarDist = isMobile ? 100 : 200;
+            const isBeingFed = distMouseSing < activeFeedSingDist && distStarMouse < activeFeedStarDist;
             const influence = Math.max(0.05, (influenceRadius - dist) / influenceRadius);
 
             let force, speedFallFactor, speedSwirlFactor;
+            const gravityStrength = (liveStarSettings.blackHoleGravity !== undefined ? liveStarSettings.blackHoleGravity : 0.45) * (isMobile ? 0.65 : 1.0);
 
             if (isBeingFed && star.layer > 0) {
               // Active player feed: pulled strongly into singularity
-              force = (sing.mass * 4.8) / (dist + 35);
+              force = ((sing.mass * 4.8) / (dist + 35)) * gravityStrength;
               speedFallFactor = 0.88;
               speedSwirlFactor = 0.06;
             } else {
               // Passive field response: keep natural drift, then bend into an orbital vortex near the hole.
               const layerWeight = 0.55 + star.layer * 0.28;
-              force = ((sing.mass * 4.1 * layerWeight) / (dist + 45)) * Math.max(0.18, influence);
+              force = (((sing.mass * 4.1 * layerWeight) / (dist + 45)) * Math.max(0.18, influence)) * gravityStrength;
               speedFallFactor = 0.28 + star.layer * 0.04;
               speedSwirlFactor = 0.52;
             }
@@ -2770,39 +2780,65 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
       }
 
       // Check collapse trigger (Only interacts with player-gathered stars)
-      if (motionEnabled && starsNearCursorCount >= 24 && mouse.x !== null) {
+      const isMobile = canvas.width < 768;
+      const collapseThreshold = isMobile ? 8 : 24;
+      if (motionEnabled && starsNearCursorCount >= collapseThreshold && mouse.x !== null) {
         triggerCollapse(mouse.x, mouse.y);
       }
+ 
+       rafId = requestAnimationFrame(drawStarfield);
+     };
+ 
+     rafId = requestAnimationFrame(drawStarfield);
+ 
+     const handleWindowMouseMove = (e) => {
+       const rect = canvas.getBoundingClientRect();
+       const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
+       const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
+       canvasMouseRef.current = {
+         x: (e.clientX - rect.left) * scaleX,
+         y: (e.clientY - rect.top) * scaleY
+       };
+     };
+ 
+     const handleWindowMouseLeave = () => {
+       canvasMouseRef.current = { x: null, y: null };
+     };
 
-      rafId = requestAnimationFrame(drawStarfield);
-    };
+     const handleWindowTouchStartMove = (e) => {
+       if (e.touches.length === 0) return;
+       const touch = e.touches[0];
+       const rect = canvas.getBoundingClientRect();
+       const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
+       const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
+       canvasMouseRef.current = {
+         x: (touch.clientX - rect.left) * scaleX,
+         y: (touch.clientY - rect.top) * scaleY
+       };
+     };
 
-    rafId = requestAnimationFrame(drawStarfield);
-
-    const handleWindowMouseMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
-      const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
-      canvasMouseRef.current = {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
-      };
-    };
-
-    const handleWindowMouseLeave = () => {
-      canvasMouseRef.current = { x: null, y: null };
-    };
-
-    window.addEventListener("mousemove", handleWindowMouseMove, { passive: true });
-    window.addEventListener("mouseleave", handleWindowMouseLeave, { passive: true });
-
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      window.removeEventListener("mousemove", handleWindowMouseMove);
-      window.removeEventListener("mouseleave", handleWindowMouseLeave);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [starSettings.layer0Count, starSettings.layer1Count, starSettings.layer2Count]);
+     const handleWindowTouchEnd = () => {
+       canvasMouseRef.current = { x: null, y: null };
+     };
+ 
+     window.addEventListener("mousemove", handleWindowMouseMove, { passive: true });
+     window.addEventListener("mouseleave", handleWindowMouseLeave, { passive: true });
+     window.addEventListener("touchstart", handleWindowTouchStartMove, { passive: true });
+     window.addEventListener("touchmove", handleWindowTouchStartMove, { passive: true });
+     window.addEventListener("touchend", handleWindowTouchEnd, { passive: true });
+     window.addEventListener("touchcancel", handleWindowTouchEnd, { passive: true });
+ 
+     return () => {
+       window.removeEventListener("resize", resizeCanvas);
+       window.removeEventListener("mousemove", handleWindowMouseMove);
+       window.removeEventListener("mouseleave", handleWindowMouseLeave);
+       window.removeEventListener("touchstart", handleWindowTouchStartMove);
+       window.removeEventListener("touchmove", handleWindowTouchStartMove);
+       window.removeEventListener("touchend", handleWindowTouchEnd);
+       window.removeEventListener("touchcancel", handleWindowTouchEnd);
+       if (rafId) cancelAnimationFrame(rafId);
+     };
+   }, [starSettings.layer0Count, starSettings.layer1Count, starSettings.layer2Count]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -3319,6 +3355,22 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
                   step="0.1"
                   value={starSettings.blackHoleGrowthRate}
                   onChange={(e) => updateStarSetting("blackHoleGrowthRate", parseFloat(e.target.value))}
+                  style={{ width: "100%", accentColor: activeThemeColors.gold }}
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Black Hole Gravity Pull:</span>
+                  <span style={{ fontSize: "0.7rem", color: "#fff" }}>{starSettings.blackHoleGravity !== undefined ? starSettings.blackHoleGravity : 0.45}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.05"
+                  max="1.5"
+                  step="0.05"
+                  value={starSettings.blackHoleGravity !== undefined ? starSettings.blackHoleGravity : 0.45}
+                  onChange={(e) => updateStarSetting("blackHoleGravity", parseFloat(e.target.value))}
                   style={{ width: "100%", accentColor: activeThemeColors.gold }}
                 />
               </div>

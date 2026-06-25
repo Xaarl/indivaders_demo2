@@ -146,7 +146,7 @@
 
 .story-progress {
   position: fixed;
-  left: clamp(18px, calc((100vw - var(--story-content-max)) / 2 + 10px), 96px);
+  left: calc((100vw - var(--story-content-max)) / 2 + 12px);
   top: 22vh;
   display: grid;
   grid-template-columns: 3px 1fr;
@@ -222,6 +222,21 @@
   min-height: calc(100vh - 54px);
   margin: 0 auto;
   padding: clamp(44px, 8vw, 98px) 0;
+}
+
+@media (min-width: 1501px) {
+  .story-hero,
+  .story-thread {
+    padding-left: calc(var(--story-rail-width) + 32px);
+  }
+
+  .story-rival-stories,
+  .story-promise-builder,
+  .story-proof-board,
+  .story-deep-dives {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .story-hero h1,
