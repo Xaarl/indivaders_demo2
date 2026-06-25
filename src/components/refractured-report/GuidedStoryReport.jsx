@@ -2300,6 +2300,53 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     };
   }, [musicEnabled, startAmbientLayer, stopAmbientLayer]);
 
+  useEffect(() => {
+    let unblocked = false;
+
+    const resumeAudio = () => {
+      if (unblocked) return;
+      unblocked = true;
+
+      // Resume context if suspended
+      if (audioContextRef.current) {
+        const context = audioContextRef.current;
+        if (context.state === "suspended") {
+          context.resume().catch(() => {});
+        }
+      }
+
+      // Re-trigger ambient layers if music is enabled
+      if (musicEnabled) {
+        startAmbientLayer();
+      }
+
+      // Play a short silent buffer to unlock the HTML5 Audio engine
+      try {
+        const silent = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA");
+        silent.volume = 0.001;
+        silent.play().catch(() => {});
+      } catch {
+        // ignore
+      }
+
+      cleanup();
+    };
+
+    const cleanup = () => {
+      window.removeEventListener("click", resumeAudio);
+      window.removeEventListener("keydown", resumeAudio);
+      window.removeEventListener("touchstart", resumeAudio);
+      window.removeEventListener("focus", resumeAudio);
+    };
+
+    window.addEventListener("click", resumeAudio, { passive: true });
+    window.addEventListener("keydown", resumeAudio, { passive: true });
+    window.addEventListener("touchstart", resumeAudio, { passive: true });
+    window.addEventListener("focus", resumeAudio, { passive: true });
+
+    return cleanup;
+  }, [musicEnabled, startAmbientLayer]);
+
   const playSfxRef = useRef(playSfx);
   useEffect(() => {
     playSfxRef.current = playSfx;

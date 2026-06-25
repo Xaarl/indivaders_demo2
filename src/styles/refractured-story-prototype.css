@@ -146,7 +146,7 @@
 
 .story-progress {
   position: fixed;
-  left: calc((100vw - var(--story-content-max)) / 2 + 12px);
+  left: clamp(16px, 2vw, 32px);
   top: 22vh;
   display: grid;
   grid-template-columns: 3px 1fr;
@@ -226,16 +226,12 @@
 
 @media (min-width: 1501px) {
   .story-hero,
-  .story-thread {
-    padding-left: calc(var(--story-rail-width) + 32px);
-  }
-
+  .story-thread,
   .story-rival-stories,
   .story-promise-builder,
   .story-proof-board,
   .story-deep-dives {
-    width: 100%;
-    margin: 0;
+    padding-left: calc(var(--story-rail-width) + 32px);
   }
 }
 
