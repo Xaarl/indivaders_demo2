@@ -2426,7 +2426,12 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
       }, 1000);
 
       playSfxRef.current?.('collapse');
-      playSfxRef.current?.('unlock');
+      if (playCustomSfxRef.current) {
+        playCustomSfxRef.current('unlock');
+        window.setTimeout(() => {
+          playCustomSfxRef.current?.('impact');
+        }, 120);
+      }
 
       waves.push({
         x,
