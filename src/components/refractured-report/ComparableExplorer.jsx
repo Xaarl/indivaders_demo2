@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { DollarSign, ExternalLink, Star, Tags, Users } from "lucide-react";
+import { DollarSign, ExternalLink, Sliders, Star, Tags, Users } from "lucide-react";
 import {
   ChipRow,
   ConfidenceTag,
@@ -44,6 +44,9 @@ function collectFilters(comparables) {
 }
 
 function marketFitScore(item) {
+  if (item && typeof item.simulatedMarketFitScore === "number") {
+    return item.simulatedMarketFitScore;
+  }
   if (roleFitScores[item.role]) {
     return roleFitScores[item.role];
   }
@@ -281,19 +284,77 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
   const [selectedComparableIds, setSelectedComparableIds] = useState(() =>
     comparables.slice(0, 3).map((item) => item.id),
   );
+
+  // What-If Sandbox local states
+  const [minCcu, setMinCcu] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(60);
+  const [positiveWeight, setPositiveWeight] = useState(0.34);
+  const [baseOffset, setBaseOffset] = useState(42);
+  const [reviewsWeight, setReviewsWeight] = useState(1.0);
+
+  function resetSandbox() {
+    setMinCcu(0);
+    setMaxPrice(60);
+    setPositiveWeight(0.34);
+    setBaseOffset(42);
+    setReviewsWeight(1.0);
+  }
+
+  const simulatedComparables = useMemo(() => {
+    return comparables.map((item) => {
+      const baseScore = roleFitScores[item.role]
+        ? roleFitScores[item.role]
+        : Math.round(
+            42 +
+              (Number.parseInt(item.steamSnapshot?.positiveRate, 10) || 70) * positiveWeight +
+              Math.min(Number(item.steamSnapshot?.reviewsTotal ?? 0) / 5000, 12) * reviewsWeight,
+          );
+      const score = Math.max(0, Math.min(100, baseScore + (baseOffset - 42)));
+      return {
+        ...item,
+        simulatedMarketFitScore: score,
+      };
+    });
+  }, [comparables, positiveWeight, baseOffset, reviewsWeight]);
+
+  const visibleComparables = useMemo(() => {
+    let filtered = activeFilter === "All"
+      ? simulatedComparables
+      : simulatedComparables.filter((item) => item.filterTags?.includes(activeFilter));
+
+    // CCU filter
+    if (minCcu > 0) {
+      filtered = filtered.filter(
+        (item) => (item.steamSnapshot?.currentPlayers ?? 0) >= minCcu
+      );
+    }
+
+    // Price filter
+    filtered = filtered.filter((item) => {
+      const priceStr = item.steamSnapshot?.price ?? "$0.00";
+      if (/free/i.test(priceStr)) return true;
+      const num = parseFloat(priceStr.replace(/[^0-9.]/g, ""));
+      return isNaN(num) || num <= maxPrice;
+    });
+
+    return filtered;
+  }, [simulatedComparables, activeFilter, minCcu, maxPrice]);
+
   const activeSort = sortOptions.find((option) => option.id === sortMode) ?? sortOptions[0];
-  const visibleComparables =
-    activeFilter === "All" ? comparables : comparables.filter((item) => item.filterTags?.includes(activeFilter));
-  const sortedComparables = [...visibleComparables].sort(activeSort.compare);
-  const activeComparable =
-    sortedComparables.find((item) => item.id === activeComparableId) ?? sortedComparables[0] ?? comparables[0];
+  const sortedComparables = useMemo(() => {
+    return [...visibleComparables].sort(activeSort.compare);
+  }, [visibleComparables, activeSort]);
+
+  const activeComparable = useMemo(() => {
+    return sortedComparables.find((item) => item.id === activeComparableId) ?? sortedComparables[0] ?? simulatedComparables[0];
+  }, [sortedComparables, activeComparableId, simulatedComparables]);
 
   function handleFilterChange(filter) {
     const nextComparables =
-      filter === "All" ? comparables : comparables.filter((item) => item.filterTags?.includes(filter));
+      filter === "All" ? simulatedComparables : simulatedComparables.filter((item) => item.filterTags?.includes(filter));
 
     setActiveFilter(filter);
-    setActiveComparableId(nextComparables[0]?.id ?? comparables[0]?.id);
+    setActiveComparableId(nextComparables[0]?.id ?? simulatedComparables[0]?.id);
   }
 
   function toggleCompare(comparableId) {
@@ -329,6 +390,91 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
         matter={marketEvidence.interpretation[1]?.statement}
         action={marketEvidence.actions[1]?.recommendation}
       />
+
+      {/* What-If Simulation Sandbox Panel */}
+      <div className="refractured-what-if-sandbox">
+        <div className="sandbox-header">
+          <Sliders size={18} />
+          <h3>What-If Simulation Sandbox</h3>
+          <p className="sandbox-tagline">Adjust weights & thresholds locally to model different market hypotheses</p>
+        </div>
+        
+        <div className="sandbox-controls">
+          <div className="control-group">
+            <label>
+              <span>Min CCU (Current Players): <strong>{minCcu === 0 ? "Any" : `${minCcu}+`}</strong></span>
+              <input 
+                type="range" 
+                min="0" 
+                max="10000" 
+                step="500" 
+                value={minCcu} 
+                onChange={(e) => setMinCcu(Number(e.target.value))} 
+              />
+            </label>
+          </div>
+          
+          <div className="control-group">
+            <label>
+              <span>Max Price: <strong>${maxPrice}</strong></span>
+              <input 
+                type="range" 
+                min="0" 
+                max="60" 
+                step="5" 
+                value={maxPrice} 
+                onChange={(e) => setMaxPrice(Number(e.target.value))} 
+              />
+            </label>
+          </div>
+
+          <div className="control-group">
+            <label>
+              <span>Positive Review Weight: <strong>{positiveWeight.toFixed(2)}</strong></span>
+              <input 
+                type="range" 
+                min="0.1" 
+                max="1.0" 
+                step="0.05" 
+                value={positiveWeight} 
+                onChange={(e) => setPositiveWeight(Number(e.target.value))} 
+              />
+            </label>
+          </div>
+
+          <div className="control-group">
+            <label>
+              <span>Review Vol Importance: <strong>{reviewsWeight.toFixed(1)}x</strong></span>
+              <input 
+                type="range" 
+                min="0.2" 
+                max="2.5" 
+                step="0.1" 
+                value={reviewsWeight} 
+                onChange={(e) => setReviewsWeight(Number(e.target.value))} 
+              />
+            </label>
+          </div>
+
+          <div className="control-group">
+            <label>
+              <span>Base Offset: <strong>{baseOffset}</strong></span>
+              <input 
+                type="range" 
+                min="20" 
+                max="60" 
+                step="1" 
+                value={baseOffset} 
+                onChange={(e) => setBaseOffset(Number(e.target.value))} 
+              />
+            </label>
+          </div>
+        </div>
+        
+        <button className="sandbox-reset-btn" type="button" onClick={resetSandbox}>
+          Reset Parameters
+        </button>
+      </div>
 
       <div className="refractured-choice-strip" aria-label="Comparable filters">
         {filters.map((filter) => (
@@ -396,7 +542,7 @@ function ComparableExplorer({ marketEvidence, onEvidenceOpen }) {
           {viewMode === "grid" ? <MarketPositionStrip activeComparable={activeComparable} sortedComparables={sortedComparables} /> : null}
 
           <ComparisonDock
-            comparables={comparables}
+            comparables={simulatedComparables}
             onClear={clearComparison}
             onToggleCompare={toggleCompare}
             selectedIds={selectedComparableIds}

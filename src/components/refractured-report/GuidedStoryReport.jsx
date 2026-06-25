@@ -580,10 +580,10 @@ function SignalCard({
 }
 
 // ----------------- CHAPTER SECTION -----------------
-function ChapterSection({ chapter, index, onSetRef, onOpenExplorer, editMode, onSaveText, onSaveBodyLine, textStyles, onFocusText, selectedTextId, onStyleChange, onHoverSfx }) {
+function ChapterSection({ chapter, index, onSetRef, onOpenExplorer, editMode, onSaveText, onSaveBodyLine, textStyles, onFocusText, selectedTextId, onStyleChange, onHoverSfx, isActive }) {
   return (
     <section
-      className="story-chapter"
+      className={`story-chapter ${isActive ? "is-active" : "is-inactive"}`}
       data-chapter={chapter.id}
       id={`story-${chapter.id}`}
       ref={(node) => {
@@ -4341,6 +4341,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
             selectedTextId={selectedTextId}
             onStyleChange={handleTextStyleChange}
             onHoverSfx={() => playCustomSfx('hover')}
+            isActive={chapter.id === activeChapterId}
           />
         ))}
       </div>

@@ -351,9 +351,18 @@
   grid-template-columns: minmax(0, 1.08fr) minmax(300px, 390px);
   gap: clamp(28px, 5vw, var(--story-chapter-gap));
   align-items: center;
-  min-height: 92vh;
-  padding: clamp(54px, 10vw, 116px) 0;
+  min-height: 120vh;
+  padding: clamp(80px, 15vh, 180px) 0;
   border-top: 1px solid var(--story-card-border);
+  transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.story-chapter.is-inactive {
+  opacity: 0.25;
+}
+
+.story-chapter.is-active {
+  opacity: 1;
 }
 
 .story-index {
