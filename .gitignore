@@ -19,4 +19,6 @@ qa-*.jpg
 qa-*.jpeg
 qa-*.webp
 .worktrees/
+.superpowers/
+public/__mockups/
 

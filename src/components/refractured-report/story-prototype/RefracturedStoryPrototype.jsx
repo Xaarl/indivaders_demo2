@@ -461,7 +461,16 @@ function RefracturedStoryPrototype() {
           This prototype replaces mission rails and duplicate unlock panels with a guided report rhythm: one idea at a
           time, stronger visual moments, then optional deep dives for players who want to explore the evidence.
         </p>
-        <a className="story-primary-link" href="#story-read">
+        <a
+          className="story-primary-link"
+          href="#story-read"
+          onClick={(event) => {
+            const target = document.getElementById("story-read");
+            if (!target) return;
+            event.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+        >
           Start the report <ArrowRight aria-hidden="true" size={18} />
         </a>
       </section>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 
 export function GlobalNavbar() {
@@ -16,14 +16,15 @@ export function GlobalNavbar() {
 
   const navLinks = [
     { label: "Strona Główna", hash: "" },
-    { label: "Przykładowy Raport", hash: "#client-report/refractured" },
+    { label: "Raport Premium", hash: "#client-report/refractured" },
   ];
 
   const isActive = (hash) => {
+    const currentHashStr = currentHash || "";
     if (hash === "") {
-      return currentHash === "" || currentHash === "#";
+      return currentHashStr === "" || currentHashStr === "#";
     }
-    return currentHash.startsWith(hash);
+    return currentHashStr.startsWith(hash);
   };
 
   return (
@@ -34,7 +35,6 @@ export function GlobalNavbar() {
           <span>STEAM POSITIONING</span>
         </a>
 
-        {/* Desktop nav */}
         <nav className="navbar-links" aria-label="Main menu">
           {navLinks.map((link) => (
             <a
@@ -51,7 +51,6 @@ export function GlobalNavbar() {
           </a>
         </nav>
 
-        {/* Mobile menu toggle */}
         <button
           className="navbar-mobile-toggle"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -62,7 +61,6 @@ export function GlobalNavbar() {
         </button>
       </div>
 
-      {/* Mobile drawer */}
       {mobileMenuOpen && (
         <nav className="navbar-mobile-drawer" aria-label="Mobile menu">
           {navLinks.map((link) => (

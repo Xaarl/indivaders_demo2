@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/immutability */
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { ArrowRight, Database, ExternalLink, LineChart, MousePointer2, Play, Sparkles, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Database, ExternalLink, LineChart, MousePointer2, Sparkles, Volume2, VolumeX } from "lucide-react";
 import "../../styles/refractured-animation-sandbox.css";
 import "../../styles/refractured-story-prototype.css";
 import refracturedPremiumReport from "../../data/refracturedPremiumReport.js";
@@ -162,18 +162,20 @@ const defaultSoundLibrary = [
   { name: "pixel-unlock.wav", url: "/sfx/pixel-unlock.wav" },
   { name: "DSGNBoom_BOOM-Distant_Ocular_Foundation.wav", url: "/sfx/DSGNBoom_BOOM-Distant_Ocular_Foundation.wav" },
   { name: "DSGNBoom_BOOM-Quake_Ocular_Foundation.wav", url: "/sfx/DSGNBoom_BOOM-Quake_Ocular_Foundation.wav" },
-  {
-    name: "MUSCKeyd_NATURAL-Natural Single Piano Note Ping A 07_Ocular_Felt.wav",
-    url: "/sfx/MUSCKeyd_NATURAL-Natural Single Piano Note Ping A 07_Ocular_Felt.wav",
-  },
+  { name: "DSGNWhsh_WHOOSH-Two Steps_Ocular_Foundation.wav", url: "/sfx/DSGNWhsh_WHOOSH-Two Steps_Ocular_Foundation.wav" },
+  { name: "DSGNImpt_IMPACT-Time for Change_Ocular_Foundation.wav", url: "/sfx/DSGNImpt_IMPACT-Time for Change_Ocular_Foundation.wav" },
+  { name: "DSGNImpt_IMPACT-Not What You Think_Ocular_Foundation.wav", url: "/sfx/DSGNImpt_IMPACT-Not What You Think_Ocular_Foundation.wav" },
 ];
 
 const defaultSfxSettings = {
   select: { soundName: "pixel-select.wav", volume: 0.8 },
-  burst: { soundName: "__piano_cascade", volume: 0.82 },
+  burst: { soundName: "pixel-burst.wav", volume: 0.72 },
   unlock: { soundName: "DSGNBoom_BOOM-Distant_Ocular_Foundation.wav", volume: 0.62 },
   impact: { soundName: "DSGNBoom_BOOM-Quake_Ocular_Foundation.wav", volume: 0.72 },
   hover: { soundName: "pixel-select.wav", volume: 0.2 },
+  mergerWhoosh: { soundName: "DSGNWhsh_WHOOSH-Two Steps_Ocular_Foundation.wav", volume: 0.95 },
+  mergerImpact: { soundName: "DSGNImpt_IMPACT-Time for Change_Ocular_Foundation.wav", volume: 0.95 },
+  mergerImpactExtra: { soundName: "DSGNImpt_IMPACT-Not What You Think_Ocular_Foundation.wav", volume: 0.95 },
 };
 
 const defaultThemeColors = {
@@ -184,23 +186,68 @@ const defaultThemeColors = {
   teal: "#73e4ce",
   focus: "#73e4ce",
   cardBg: "#04060a",
-  cardBorder: "#ffffff",
-  cardGlow: "#ffffff",
+  cardBorder: "#73e4ce",
+  cardGlow: "#73e4ce",
+};
+
+const themePresets = [
+  {
+    id: "solar-gold",
+    label: "Solar Gold",
+    colors: {
+      bg: "#000000",
+      ink: "#e8edf2",
+      gold: "#f0c982",
+      cardBg: "#050505",
+    },
+  },
+  {
+    id: "signal-teal",
+    label: "Signal Teal",
+    colors: {
+      bg: "#000000",
+      ink: "#e2e8f0",
+      gold: "#73e4ce",
+      cardBg: "#04060a",
+    },
+  },
+  {
+    id: "mono-white",
+    label: "Mono White",
+    colors: {
+      bg: "#000000",
+      ink: "#f1f5f9",
+      gold: "#f8fafc",
+      cardBg: "#030303",
+    },
+  },
+  {
+    id: "red-shift",
+    label: "Red Shift",
+    colors: {
+      bg: "#030101",
+      ink: "#f1e9e4",
+      gold: "#ff9b73",
+      cardBg: "#070302",
+    },
+  },
+];
+
+const defaultVisualSettings = {
+  addOns: "off",
 };
 
 const defaultSingularityColors = {
   accretionRing: "#ffffff",
   glowInner: "#ffffff",
   glowOuter: "#ffffff",
-  lensingRing: "#ffffff",
 };
 
 const defaultSingularityStyle = {
   accretionWidth: 2.5,
-  accretionSoftness: 1,
-  lensingWidth: 1,
-  lensingIntensity: 1,
   glowIntensity: 1,
+  pulseIntensity: 0.5,
+  nebulaIntensity: 1.0,
 };
 
 const defaultLayoutSettings = {
@@ -218,8 +265,17 @@ const defaultStarSettings = {
   cursorGravity: 0.22,
   baseDriftSpeed: 0.15,
   twinkleSpeed: 0.3,
+  firstCollapseStars: 28,
+  secondCollapseStars: 32,
   blackHoleGrowthRate: 2.5,
   blackHoleGravity: 0.45,
+  blackHoleGravityReach: 0.74,
+  mergerPace: 0.82,
+  mergerPull: 1.08,
+  mergerNearMisses: 0,
+  finalGalaxySeedCount: 420,
+  finalGalaxyReach: 1.35,
+  finalGalaxyWarmth: 0.76,
 };
 
 const legacySparseStarDefaults = {
@@ -230,6 +286,19 @@ const legacySparseStarDefaults = {
 
 function normalizeStarSettings(savedSettings = {}) {
   const next = { ...defaultStarSettings, ...savedSettings };
+  const hadSlowPrototypeMergerDefaults =
+    Number(savedSettings.mergerPace) === 0.55
+    && Number(savedSettings.mergerNearMisses) === 2
+    && savedSettings.mergerPull === undefined;
+  if (hadSlowPrototypeMergerDefaults) {
+    next.mergerPace = defaultStarSettings.mergerPace;
+    next.mergerPull = defaultStarSettings.mergerPull;
+    next.mergerNearMisses = defaultStarSettings.mergerNearMisses;
+  }
+  if (Number(savedSettings.mergerNearMisses) !== 0) {
+    next.mergerNearMisses = 0;
+  }
+
   const wasSparseDefault =
     Number(savedSettings.layer0Count) === legacySparseStarDefaults.layer0Count
     && Number(savedSettings.layer1Count) === legacySparseStarDefaults.layer1Count
@@ -240,8 +309,23 @@ function normalizeStarSettings(savedSettings = {}) {
     : next;
 }
 
+function deriveThemeColors(colors = {}) {
+  const raw = { ...defaultThemeColors, ...colors };
+  const primary = raw.gold || defaultThemeColors.gold;
+
+  return {
+    ...raw,
+    gold: primary,
+    blue: primary,
+    teal: primary,
+    focus: primary,
+    cardBorder: primary,
+    cardGlow: primary,
+  };
+}
+
 function normalizeThemeColors(savedColors = {}) {
-  const next = { ...defaultThemeColors, ...savedColors };
+  const next = deriveThemeColors(savedColors);
   const legacyAccentValues = new Set(["#38bdf8", "#00f2fe", "#8fd8ff"]);
 
   if (!savedColors.blue || legacyAccentValues.has(String(savedColors.blue).toLowerCase())) {
@@ -254,65 +338,7 @@ function normalizeThemeColors(savedColors = {}) {
     next.focus = next.gold;
   }
 
-  return next;
-}
-
-function normalizeSfxSetting(setting, fallback) {
-  if (!setting) return fallback;
-  if (Object.prototype.hasOwnProperty.call(setting, "soundName")) {
-    return {
-      soundName: setting.soundName,
-      volume: setting.volume ?? fallback.volume,
-    };
-  }
-
-  const legacyValue = setting.value;
-  const legacyName =
-    legacyValue === "pixel-select"
-      ? "pixel-select.wav"
-      : legacyValue === "pixel-burst"
-        ? "pixel-burst.wav"
-        : legacyValue === "pixel-unlock"
-          ? "pixel-unlock.wav"
-          : legacyValue;
-
-  return {
-    soundName: legacyName || fallback.soundName,
-    volume: setting.volume ?? fallback.volume,
-  };
-}
-
-function normalizeSfxSettings(savedSettings) {
-  const normalized = Object.fromEntries(
-    Object.entries(defaultSfxSettings).map(([key, fallback]) => [
-      key,
-      normalizeSfxSetting(savedSettings?.[key], fallback),
-    ]),
-  );
-
-  if (normalized.unlock?.soundName === "pixel-unlock.wav") {
-    normalized.unlock = defaultSfxSettings.unlock;
-  }
-
-  return normalized;
-}
-
-function mergeDefaultSoundLibrary(savedLibrary = []) {
-  const soundsByName = new Map();
-
-  defaultSoundLibrary.forEach((sound) => {
-    soundsByName.set(sound.name, sound);
-  });
-
-  if (Array.isArray(savedLibrary)) {
-    savedLibrary.forEach((sound) => {
-      if (sound?.name && sound?.url) {
-        soundsByName.set(sound.name, sound);
-      }
-    });
-  }
-
-  return Array.from(soundsByName.values());
+  return deriveThemeColors(next);
 }
 
 function compactNumber(value) {
@@ -1203,6 +1229,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
   const [editMode, setEditMode] = useState(false);
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [textEditorOpen, setTextEditorOpen] = useState(false);
+  const [visualEditorTab, setVisualEditorTab] = useState("web");
 
   // Advanced Visual Customizer States
   const [selectedTextId, setSelectedTextId] = useState(null);
@@ -1360,45 +1387,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     }
   }, [ambientLayer]);
 
-  const [currentLocalPath, setCurrentLocalPath] = useState("");
-  const [selectedLocalSound, setSelectedLocalSound] = useState("");
-  const [soundDropActive, setSoundDropActive] = useState(false);
-  const [pianoImporting, setPianoImporting] = useState(false);
-  const [soundLibraryNotice, setSoundLibraryNotice] = useState("");
-  const [localDirEntries, setLocalDirEntries] = useState([]);
-  const [localBrowsingLoading, setLocalBrowsingLoading] = useState(false);
-  const [localBrowsingError, setLocalBrowsingError] = useState("");
-
-  useEffect(() => {
-    if (isDemoMode) return undefined;
-
-    let active = true;
-    const fetchLocalDir = async () => {
-      setLocalBrowsingLoading(true);
-      setLocalBrowsingError("");
-      try {
-        const response = await fetch(`/api/sfx-browse?dir=${encodeURIComponent(currentLocalPath)}`);
-        if (!response.ok) throw new Error("Failed to load local directory");
-        const data = await response.json();
-        if (active) {
-          setLocalDirEntries(data);
-        }
-      } catch (err) {
-        if (active) {
-          setLocalBrowsingError(err.message);
-        }
-      } finally {
-        if (active) {
-          setLocalBrowsingLoading(false);
-        }
-      }
-    };
-    fetchLocalDir();
-    return () => {
-      active = false;
-    };
-  }, [currentLocalPath, isDemoMode]);
-
   const [starSettings, setStarSettings] = useState(() => {
     try {
       const saved = localStorage.getItem("indievaders_star_settings");
@@ -1411,35 +1399,8 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     return defaultStarSettings;
   });
 
-  const [soundLibrary, setSoundLibrary] = useState(() => {
-    try {
-      const saved = localStorage.getItem("indievaders_sound_library");
-      if (saved) return mergeDefaultSoundLibrary(JSON.parse(saved));
-    } catch {
-      // ignore
-    }
-    return defaultSoundLibrary;
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("indievaders_sound_library", JSON.stringify(soundLibrary));
-    } catch {
-      // ignore
-    }
-  }, [soundLibrary]);
-
-  const [sfxSettings, setSfxSettings] = useState(() => {
-    try {
-      const saved = localStorage.getItem("indievaders_sfx_settings");
-      if (saved) {
-        return normalizeSfxSettings(JSON.parse(saved));
-      }
-    } catch {
-      // ignore
-    }
-    return defaultSfxSettings;
-  });
+  const soundLibrary = defaultSoundLibrary;
+  const sfxSettings = defaultSfxSettings;
 
   const [rivalsText, setRivalsText] = useState(() => {
     const defaults = {
@@ -1693,8 +1654,18 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     return defaultThemeColors;
   });
 
+  const [visualSettings, setVisualSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem("indievaders_visual_settings");
+      if (saved) return { ...defaultVisualSettings, ...JSON.parse(saved) };
+    } catch {
+      /* ignore */
+    }
+    return defaultVisualSettings;
+  });
+
   useEffect(() => {
-    const liveTheme = { ...defaultThemeColors, ...themeColors };
+    const liveTheme = deriveThemeColors(themeColors);
     const setStoryVar = (key, value) => {
       document.documentElement.style.setProperty(key, value);
       document.querySelectorAll(".story-prototype").forEach((node) => {
@@ -1720,8 +1691,26 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
   }, [themeColors]);
 
   const updateThemeColor = useCallback((key, value) => {
-    setThemeColors(prev => ({ ...defaultThemeColors, ...prev, [key]: value }));
+    setThemeColors(prev => deriveThemeColors({ ...prev, [key]: value }));
   }, [setThemeColors]);
+
+  const applyThemePreset = useCallback((presetId) => {
+    const preset = themePresets.find((item) => item.id === presetId);
+    if (!preset) return;
+    setThemeColors(deriveThemeColors(preset.colors));
+  }, [setThemeColors]);
+
+  const updateVisualSetting = useCallback((key, value) => {
+    setVisualSettings(prev => ({ ...defaultVisualSettings, ...prev, [key]: value }));
+  }, [setVisualSettings]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("indievaders_visual_settings", JSON.stringify({ ...defaultVisualSettings, ...visualSettings }));
+    } catch {
+      /* ignore */
+    }
+  }, [visualSettings]);
 
   const [layoutSettings, setLayoutSettings] = useState(() => {
     try {
@@ -1777,9 +1766,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
   const feedComboRef = useRef(1);
   const lastFeedTimeRef = useRef(0);
   const lastBurstSfxTimeRef = useRef(0);
-  const passiveFeedComboRef = useRef(0);
-  const lastPassiveFeedSfxTimeRef = useRef(0);
-
   // Deep dive drawer state
   const [activeDrawerSection, setActiveDrawerSection] = useState(null); // null, "Market Map", "Player DNA", "Rival Stories", "Promise Builder", "Evidence Vault"
 
@@ -1818,7 +1804,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setSoundLibrary]);
+  }, []);
 
   // Scroll logic
   const { activeChapterId, progress } = useScrollState(sectionRefs);
@@ -2048,11 +2034,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
     }
   }, [primeRawAudio, soundEnabled, warnCustomAudioFailure]);
 
-  useEffect(() => {
-    primeRawAudio("/sfx/DSGNBoom_BOOM-Distant_Ocular_Foundation.wav");
-    primeRawAudio("/sfx/DSGNBoom_BOOM-Quake_Ocular_Foundation.wav");
-  }, [primeRawAudio]);
-
   // playCustomSfx maps report events to the page sound library.
   const playCustomSfx = useCallback((eventName) => {
     if (!soundEnabled) return;
@@ -2070,15 +2051,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
       lastFeedTimeRef.current = now;
     }
 
-    const pianoCascadeSounds = soundLibrary
-      .filter((item) => /piano|keyd|note|ping/i.test(item.name))
-      .sort((left, right) => left.name.localeCompare(right.name, undefined, { numeric: true }));
-    const usePianoCascade = eventName === "burst" && setting.soundName === "__piano_cascade";
-    const sound = usePianoCascade
-      ? pianoCascadeSounds[Math.min(feedComboRef.current - 1, pianoCascadeSounds.length - 1)]
-        ?? soundLibrary.find((item) => item.name === "MUSCKeyd_NATURAL-Natural Single Piano Note Ping A 07_Ocular_Felt.wav")
-        ?? soundLibrary.find((item) => item.name === "pixel-burst.wav")
-      : soundLibrary.find((item) => item.name === setting.soundName);
+    const sound = soundLibrary.find((item) => item.name === setting.soundName);
     if (!sound?.url) {
       playSfx(eventName);
       return;
@@ -2089,13 +2062,9 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
       const eventVolume = Number.isFinite(setting.volume) ? setting.volume : 1;
       audio.volume = Math.max(0, Math.min(1, eventVolume * sfxVolumeRef.current));
 
-      if (eventName === "burst") {
-        audio.playbackRate = usePianoCascade
-          ? Math.min(1.72, 1 + (feedComboRef.current - 1) * (pianoCascadeSounds.length > 1 ? 0.035 : 0.075))
-          : Math.min(1.4, 1 + (feedComboRef.current - 1) * 0.06 + Math.random() * 0.035);
-      } else {
-        audio.playbackRate = 0.95 + Math.random() * 0.1;
-      }
+      audio.playbackRate = eventName === "burst"
+        ? Math.min(1.35, 1 + (feedComboRef.current - 1) * 0.035 + Math.random() * 0.025)
+        : 0.95 + Math.random() * 0.1;
 
       if ((eventName === "unlock" || eventName === "impact") && sound.url.includes("DSGNBoom_BOOM")) {
         playRawAudio(sound.url, audio.volume, audio.playbackRate);
@@ -2107,82 +2076,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
       warnCustomAudioFailure(err);
     }
   }, [soundEnabled, sfxSettings, soundLibrary, playSfx, playRawAudio, warnCustomAudioFailure]);
-
-  const previewSound = useCallback((url, volume = 1) => {
-    if (!url) return;
-
-    try {
-      const audio = new Audio(url);
-      audio.volume = Math.max(0, Math.min(1, volume * sfxVolumeRef.current));
-      audio.play().catch(warnCustomAudioFailure);
-    } catch (err) {
-      warnCustomAudioFailure(err);
-    }
-  }, [warnCustomAudioFailure]);
-
-  const addSoundFilesToLibrary = useCallback((fileList) => {
-    const files = Array.from(fileList || []).filter((file) =>
-      file.type.startsWith("audio/") || /\.(wav|mp3|ogg|m4a|aac|flac)$/i.test(file.name),
-    );
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const url = event.target.result;
-        setSoundLibrary((prev) => (
-          prev.some((sound) => sound.name === file.name)
-            ? prev.map((sound) => (sound.name === file.name ? { ...sound, url } : sound))
-            : [...prev, { name: file.name, url }]
-        ));
-      };
-      reader.readAsDataURL(file);
-    });
-  }, [setSoundLibrary]);
-
-  const importPianoSeries = async () => {
-    setPianoImporting(true);
-    setSoundLibraryNotice("");
-    try {
-      const folder = "Na Stronkę Indievaders/Piano";
-      const response = await fetch(`/api/sfx-browse?dir=${encodeURIComponent(folder)}`);
-      if (!response.ok) throw new Error("Piano folder not found");
-      const entries = await response.json();
-      const audioEntries = entries.filter((entry) => !entry.isDir && /\.(wav|mp3)$/i.test(entry.name));
-      const copied = await Promise.all(audioEntries.map(async (entry) => {
-        const filePath = `${folder}/${entry.name}`;
-        const copyResponse = await fetch(`/api/sfx-copy?file=${encodeURIComponent(filePath)}`);
-        if (!copyResponse.ok) return null;
-        return copyResponse.json();
-      }));
-
-      const imported = copied.filter(Boolean);
-      setSoundLibrary((prev) => {
-        const next = [...prev];
-        imported.forEach((sound) => {
-          if (!next.some((item) => item.name === sound.name)) {
-            next.push({ name: sound.name, url: sound.url });
-          }
-        });
-        return next;
-      });
-      setSfxSettings((prev) => {
-        const next = {
-          ...prev,
-          burst: {
-            ...(prev.burst ?? defaultSfxSettings.burst),
-            soundName: "__piano_cascade",
-          },
-        };
-        localStorage.setItem("indievaders_sfx_settings", JSON.stringify(next));
-        return next;
-      });
-      setSoundLibraryNotice(`Imported ${imported.length} piano sounds. Star feed uses rising tones.`);
-    } catch (err) {
-      setSoundLibraryNotice(`Piano import failed: ${err.message}`);
-    } finally {
-      setPianoImporting(false);
-    }
-  };
 
   // Procedural Deep Space ambient generator
 
@@ -2382,7 +2275,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
   // Singularity state and mouse reference
   const singularityRef = useRef(null);
   const canvasMouseRef = useRef({ x: null, y: null });
-  const wavesRef = useRef([]);
+  const forceFinalStageRef = useRef(null);
 
   // Canvas starfield + warped grid lines loop
   useEffect(() => {
@@ -2392,8 +2285,8 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
     let rafId = null;
     let animationClock = performance.now();
+    let previousFrameTime = animationClock;
     let stars = [];
-    const waves = wavesRef.current;
 
     const resizeCanvas = () => {
       const oldWidth = canvas.width;
@@ -2431,45 +2324,211 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
       star.driftY = (baseDrift.y / baseDriftLength) * speed;
     };
 
+    const createStar = (layerConfig, overrides = {}) => {
+      const size = overrides.size ?? (Math.random() * (layerConfig.sizeRange[1] - layerConfig.sizeRange[0]) + layerConfig.sizeRange[0]);
+      const baseOpacity = overrides.baseOpacity ?? (Math.random() * (layerConfig.opacityRange[1] - layerConfig.opacityRange[0]) + layerConfig.opacityRange[0]);
+      const isWarm = overrides.warm ?? Math.random() > 0.75;
+      const colorBase = overrides.colorBase ?? (isWarm ? "255, 240, 215" : "255, 255, 255");
+      const star = {
+        x: overrides.x ?? Math.random() * canvas.width,
+        y: overrides.y ?? Math.random() * canvas.height,
+        size,
+        colorBase,
+        baseOpacity,
+        twinkleOffset: overrides.twinkleOffset ?? Math.random() * Math.PI * 2,
+        pullFactor: layerConfig.pullFactor,
+        layer: layerConfig.id,
+        factor: layerConfig.factor,
+        driftX: 0,
+        driftY: 0,
+        consumed: false,
+        recycleTimer: 0,
+      };
+
+      assignNaturalDrift(star, layerConfig.id);
+      return star;
+    };
+
     layers.forEach(l => {
       for (let i = 0; i < l.count; i++) {
-        const size = Math.random() * (l.sizeRange[1] - l.sizeRange[0]) + l.sizeRange[0];
-        const baseOpacity = Math.random() * (l.opacityRange[1] - l.opacityRange[0]) + l.opacityRange[0];
-        const isWarm = Math.random() > 0.75;
-        const colorBase = isWarm ? "255, 240, 215" : "255, 255, 255";
-        const star = {
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size,
-          colorBase,
-          baseOpacity,
-          twinkleOffset: Math.random() * Math.PI * 2,
-          pullFactor: l.pullFactor,
-          layer: l.id,
-          factor: l.factor,
-          driftX: 0,
-          driftY: 0,
-          consumed: false,
-          recycleTimer: 0
-        };
-
-        assignNaturalDrift(star, l.id);
-        stars.push(star);
+        stars.push(createStar(l));
       }
     });
 
-    const triggerCollapse = (x, y) => {
-      if (singularityRef.current) return;
+    const createSingularityBody = (x, pageY, mass = 54, pulse = 0) => ({
+      x,
+      pageY,
+      mass,
+      targetMass: mass,
+      pulse,
+    });
 
+    const seedFinalOrbitStars = (body, binaryAngle = 0) => {
+      if (!body || body.finalOrbitSeeded) return;
+
+      body.finalOrbitSeeded = true;
+      const currentScrollY = window.scrollY;
+      const sourceY = body.pageY - currentScrollY * 0.05;
+      // Bug 7: use targetMass so explosion radius is based on final size, not starting size
+      const radiusBase = Math.max(34, (body.targetMass ?? body.mass) * 0.52);
+      const finalEhRadius = (body.targetMass ?? body.mass) * 0.5;
+      const liveStarSettings = starSettingsRef.current || defaultStarSettings;
+      const seededCount = Math.round(
+        canvas.width < 768
+          ? Math.min(190, (liveStarSettings.finalGalaxySeedCount ?? defaultStarSettings.finalGalaxySeedCount) * 0.52)
+          : (liveStarSettings.finalGalaxySeedCount ?? defaultStarSettings.finalGalaxySeedCount),
+      );
+      const warmth = liveStarSettings.finalGalaxyWarmth ?? 0.76;
+      const baseStarBudget = layers.reduce((sum, layer) => sum + layer.count, 0);
+      const extraFinalStars = Math.min(
+        canvas.width < 768 ? 70 : 180,
+        Math.max(0, Math.round(seededCount * (canvas.width < 768 ? 0.16 : 0.24))),
+        Math.max(0, baseStarBudget + (canvas.width < 768 ? 90 : 240) - stars.length),
+      );
+      for (let i = 0; i < extraFinalStars; i++) {
+        const layerConfig = Math.random() < 0.68 ? layers[1] : layers[2];
+        const colorSeed = Math.random();
+        const isWarm = colorSeed < warmth;
+        const colorBase = isWarm
+          ? (Math.random() < 0.5 ? "255, 202, 128" : "255, 246, 224")
+          : (Math.random() < 0.5 ? "180, 215, 255" : "255, 255, 255");
+        const star = createStar(layerConfig, {
+          x: body.x,
+          y: sourceY,
+          warm: isWarm,
+          colorSeed,
+          colorBase,
+          baseOpacity: 0.56 + Math.random() * 0.38,
+        });
+        // Bug 3: match BH parallax factor for extra stars
+        star.originalFactor = star.factor;
+        star.factor = 0.05;
+        star.y = sourceY + currentScrollY * 0.05;
+        stars.push(star);
+      }
+
+      // Bug 6: Include ALL stars in the supernova explosion (but only a fraction of existing ones to keep the cosmos full)
+      const originalStarsLength = stars.length - extraFinalStars;
+      const spin = body.finalSpinDirection ?? 1;
+      const armCount = 3;
+      stars.forEach((star, index) => {
+        const isExtra = index >= originalStarsLength;
+        const shouldExplode = isExtra || star.consumed || Math.random() < 0.50;
+
+        if (shouldExplode) {
+          const band = index / Math.max(1, stars.length - 1);
+          const arm = index % armCount;
+          const spiralBand = Math.pow(band, 0.76);
+          const armPhase = (arm / armCount) * Math.PI * 2;
+          const angle = binaryAngle + armPhase + spin * (spiralBand * Math.PI * 2.25 + index * 0.043 + (Math.random() - 0.5) * 0.12);
+          const armWave = Math.sin(spiralBand * Math.PI * 5.6 + armPhase) * 0.2;
+          const radius = radiusBase * (1.1 + spiralBand * 4.5 + armWave + Math.random() * 0.2 + star.layer * 0.15);
+          // Improvement 3: per-star disk inclination for visual volume
+          const diskYScale = 0.22 + Math.random() * 0.14;
+          // Bug 4: explosion ejecta radius (stars will animate outward to this)
+          const ejectaRadius = radiusBase * (2.8 + Math.random() * 5.2);
+
+          star.consumed = false;
+          star.recycleTimer = 0;
+          // Save start position for the implosion phase
+          star.implodeStartX = star.x;
+          star.implodeStartY = star.y;
+          // Bug 3: align parallax factor with BH
+          star.originalFactor = star.factor;
+          star.factor = 0.05;
+          star.finalOrbitOwner = body;
+          star.finalOrbitSeeded = true;
+          star.finalOrbitTargetRadius = radius * (0.94 + Math.random() * 0.08);
+          // Bug 8: per-star minimum orbit radius to maintain disk width
+          star.finalOrbitMinRadius = finalEhRadius * (1.2 + Math.random() * 2.8);
+          star.finalOrbitDiskScale = diskYScale;
+          star.finalOrbitBand = spiralBand;
+          star.finalOrbitFront = Math.sin(angle) > 0;
+          star.finalOrbitTangentX = -Math.sin(angle) * spin;
+          star.finalOrbitTangentY = Math.cos(angle) * diskYScale * spin;
+          star.finalOrbitCapture = 0.82 + Math.random() * 0.18;
+          // Implosion & Slower Explosion animation properties
+          star.implosionTimer = 0;
+          star.implosionDuration = 20 + Math.random() * 8; // ~0.3-0.45s (snappier)
+          star.explosionTimer = 0;
+          star.explosionDuration = 75 + Math.random() * 45; // Slower explosion (1.2-2.0s)
+          star.explosionAngle = angle;
+          star.explosionRadius = ejectaRadius;
+          star.explosionDiskYScale = diskYScale;
+          // Improvement 1: temperature-based color by orbital radius
+          const radiusRatio = star.finalOrbitTargetRadius / radiusBase;
+          const colorSeed = Math.random();
+          star.colorSeed = colorSeed;
+          const isWarm = colorSeed < warmth;
+          if (radiusRatio < 2) {
+            star.colorBase = isWarm ? "245, 245, 255" : "210, 230, 255";
+          } else if (radiusRatio < 4) {
+            star.colorBase = isWarm
+              ? ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "255, 240, 200" : "255, 246, 224")
+              : ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "225, 240, 255" : "255, 255, 255");
+          } else {
+            star.colorBase = isWarm
+              ? ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "255, 170, 75" : "255, 202, 128")
+              : ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "160, 200, 255" : "215, 235, 255");
+          }
+          star.baseOpacity = Math.max(star.baseOpacity, 0.5 + Math.random() * 0.4);
+          star.lastRenderX = null;
+          star.lastRenderY = null;
+        } else {
+          // Reset finalOrbit properties so it drifts normally in the background
+          star.finalOrbitOwner = null;
+          star.finalOrbitSeeded = false;
+          star.explosionTimer = undefined;
+          if (star.originalFactor !== undefined) {
+            star.factor = star.originalFactor;
+            star.originalFactor = undefined;
+          }
+        }
+      });
+    };
+
+    const triggerCollapse = (x, y) => {
       const currentScrollY = window.scrollY;
       const targetPageY = y + currentScrollY * 0.05;
+      const currentSingularity = singularityRef.current;
 
-      singularityRef.current = {
-        x,
-        pageY: targetPageY,
-        mass: 10,
-        pulse: 0
-      };
+      if (currentSingularity?.finalMerged || currentSingularity?.companion || currentSingularity?.binary?.state === "ringdown") return;
+
+      if (currentSingularity) {
+        const companionMass = 54;
+        const dx = x - currentSingularity.x;
+        const dy = targetPageY - currentSingularity.pageY;
+        const distance = Math.hypot(dx, dy);
+        const minimumBinaryDistance = Math.max(
+          160,
+          currentSingularity.mass * 0.46 + companionMass * 0.46 + 112,
+        );
+        if (distance < minimumBinaryDistance) return;
+
+        currentSingularity.companion = {
+          ...createSingularityBody(x, targetPageY, companionMass, -0.8),
+        };
+        currentSingularity.binary = {
+          state: "inspiral",
+          progress: 0,
+          warmup: 0,
+          angle: Math.atan2(dy, dx),
+          initialDistance: distance,
+          distance,
+          primaryOrbitMass: currentSingularity.mass,
+          secondaryOrbitMass: companionMass,
+          centerX: (currentSingularity.x * currentSingularity.mass + x * companionMass) / (currentSingularity.mass + companionMass),
+          centerPageY: (currentSingularity.pageY * currentSingularity.mass + targetPageY * companionMass) / (currentSingularity.mass + companionMass),
+          spinDirection: dx >= 0 ? 1 : -1,
+          startPrimaryX: currentSingularity.x,
+          startPrimaryPageY: currentSingularity.pageY,
+          startCompanionX: x,
+          startCompanionPageY: targetPageY,
+          waveTimer: 0,
+        };
+      } else {
+        singularityRef.current = createSingularityBody(x, targetPageY, 54, 0);
+      }
 
       justCollapsedRef.current = true;
       window.setTimeout(() => {
@@ -2483,135 +2542,753 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
           playCustomSfxRef.current?.('impact');
         }, 120);
       }
+    };
 
-      waves.push({
-        x,
-        pageY: targetPageY,
-        radius: 6,
-        maxRadius: 240,
-        alpha: 1.0
+    forceFinalStageRef.current = () => {
+      const currentScrollY = window.scrollY;
+      const finalMass = canvas.width < 768 ? 122 : 168;
+      const x = canvas.width * 0.47;
+      const screenY = canvas.height * 0.52;
+      const pageY = screenY + currentScrollY * 0.05;
+      const body = createSingularityBody(x, pageY, 18, 0);
+
+      stars.forEach((star) => {
+        star.consumed = false;
+        star.recycleTimer = 0;
+        star.finalOrbitOwner = null;
+        star.finalOrbitSeeded = false;
       });
+
+      body.targetMass = finalMass;
+      body.finalMerged = true;
+      body.finalSpinDirection = 1;
+      body.binary = {
+        state: "ringdown",
+        progress: 0,
+        angle: -0.18,
+        spinDirection: 1,
+        waveTimer: 0,
+      };
+      singularityRef.current = body;
+      seedFinalOrbitStars(body, -0.18);
+      if (playCustomSfxRef.current) {
+        playCustomSfxRef.current('mergerWhoosh');
+        window.setTimeout(() => {
+          playCustomSfxRef.current?.('mergerImpact');
+          playCustomSfxRef.current?.('impact');
+          playCustomSfxRef.current?.('mergerImpactExtra');
+        }, 400);
+      }
+    };
+
+    const glowSpriteCanvas = document.createElement("canvas");
+    const glowSpriteCtx = glowSpriteCanvas.getContext("2d");
+    const glowSpriteCache = {
+      key: "",
+      size: 0,
+    };
+
+    const getSingularityGlowSprite = (ehRadius, colors, visuals, isMobile) => {
+      const bucketRadius = Math.max(8, Math.round(ehRadius / 8) * 8);
+      const key = [
+        bucketRadius,
+        colors.glowInner,
+        colors.glowOuter,
+        visuals.glowIntensity,
+        isMobile ? "m" : "d",
+      ].join("|");
+
+      if (glowSpriteCache.key === key) {
+        return glowSpriteCache;
+      }
+
+      const maxSpriteSize = isMobile ? 760 : 1500;
+      const size = Math.min(maxSpriteSize, Math.ceil(bucketRadius * 8 + 40));
+      const center = size / 2;
+      const glowRadius = Math.max(bucketRadius * 1.35, Math.min(size / 2 - 4, bucketRadius * 3.8));
+
+      glowSpriteCanvas.width = size;
+      glowSpriteCanvas.height = size;
+      glowSpriteCtx.clearRect(0, 0, size, size);
+
+      const glowGrad = glowSpriteCtx.createRadialGradient(center, center, bucketRadius, center, center, glowRadius);
+      glowGrad.addColorStop(0, hexToRgba(colors.glowInner, 0.3 * visuals.glowIntensity));
+      glowGrad.addColorStop(0.2, hexToRgba(colors.glowInner, 0.13 * visuals.glowIntensity));
+      glowGrad.addColorStop(0.55, hexToRgba(colors.glowOuter, 0.035 * visuals.glowIntensity));
+      glowGrad.addColorStop(0.84, hexToRgba(colors.glowOuter, 0.01 * visuals.glowIntensity));
+      glowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      glowSpriteCtx.fillStyle = glowGrad;
+      glowSpriteCtx.beginPath();
+      glowSpriteCtx.arc(center, center, glowRadius, 0, Math.PI * 2);
+      glowSpriteCtx.fill();
+
+      glowSpriteCache.key = key;
+      glowSpriteCache.size = size;
+      return glowSpriteCache;
+    };
+
+    const drawStarDot = (x, y, size, colorBase, alpha) => {
+      if (alpha <= 0.02) return;
+
+      ctx.fillStyle = `rgba(${colorBase}, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    const drawOrbitStar = (starRender, isFront = false) => {
+      if (!starRender || starRender.alpha <= 0.015) return;
+
+      const {
+        x,
+        y,
+        prevX,
+        prevY,
+        size,
+        colorBase,
+        alpha,
+        captureProgress,
+        tangentX,
+        tangentY,
+      } = starRender;
+      ctx.save();
+      if (isFront) {
+        ctx.globalCompositeOperation = "source-over";
+      } else {
+        ctx.globalCompositeOperation = "screen";
+      }
+      ctx.lineCap = "round";
+
+      const motionDx = Number.isFinite(prevX) ? x - prevX : tangentX;
+      const motionDy = Number.isFinite(prevY) ? y - prevY : tangentY;
+      const motionLength = Math.hypot(motionDx, motionDy);
+      if (captureProgress > 0.34 && motionLength > 0.12 && motionLength < 28) {
+        const trailScale = Math.min(1, captureProgress * 1.2);
+        ctx.strokeStyle = `rgba(${colorBase}, ${alpha * 0.12 * trailScale})`;
+        ctx.lineWidth = Math.max(0.18, size * 0.28);
+        ctx.beginPath();
+        ctx.moveTo(x - motionDx * 0.9, y - motionDy * 0.9);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+
+      const headAlpha = alpha * (0.78 + Math.min(0.18, captureProgress * 0.28));
+      const headSize = Math.max(0.22, size * (0.88 + captureProgress * 0.08));
+      if (isFront) {
+        ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+        ctx.shadowBlur = 3;
+      }
+      ctx.fillStyle = `rgba(${colorBase}, ${headAlpha})`;
+      ctx.beginPath();
+      ctx.arc(x, y, headSize, 0, Math.PI * 2);
+      ctx.fill();
+      if (isFront) {
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = "transparent";
+      }
+      ctx.restore();
+    };
+
+    const clamp01 = (value) => Math.max(0, Math.min(1, value));
+    const smoothStep = (value) => {
+      const t = clamp01(value);
+      return t * t * (3 - 2 * t);
+    };
+    const getBinaryVisualState = (sing, frameDelta, motionEnabled) => {
+      const binary = sing?.binary;
+      if (!sing || !binary) return null;
+
+      if (!sing.companion) {
+        if (binary.state !== "ringdown") return null;
+        if (motionEnabled) {
+          binary.progress = clamp01((binary.progress ?? 0) + 0.0032 * frameDelta);
+          binary.angle += 0.0038 * frameDelta;
+          if (binary.waveTimer > 0) {
+            binary.waveTimer -= frameDelta;
+          } else if (binary.progress < 0.72) {
+            binary.waveTimer = 34;
+          }
+          if (binary.progress >= 1) {
+            sing.binary = null;
+          }
+        }
+
+        const ringdownStrength = Math.max(0, 1 - (binary.progress ?? 0));
+        return {
+          state: "ringdown",
+          angle: binary.angle ?? 0,
+          centerX: sing.x,
+          centerPageY: sing.pageY,
+          distance: 0,
+          strain: ringdownStrength * 0.72,
+          bridgeAlpha: 0,
+          ringdownStrength,
+          plungeProgress: 1,
+          mergeAlpha: 0,
+        };
+      }
+
+      const companion = sing.companion;
+      const primaryOrbitMass = binary.primaryOrbitMass ?? sing.mass;
+      const secondaryOrbitMass = binary.secondaryOrbitMass ?? companion.mass;
+      const totalMass = Math.max(1, primaryOrbitMass + secondaryOrbitMass);
+      const currentCenterX = (sing.x * primaryOrbitMass + companion.x * secondaryOrbitMass) / totalMass;
+      const currentCenterPageY = (sing.pageY * primaryOrbitMass + companion.pageY * secondaryOrbitMass) / totalMass;
+      binary.centerX = binary.centerX === undefined ? currentCenterX : binary.centerX + (currentCenterX - binary.centerX) * 0.025 * frameDelta;
+      binary.centerPageY = binary.centerPageY === undefined ? currentCenterPageY : binary.centerPageY + (currentCenterPageY - binary.centerPageY) * 0.025 * frameDelta;
+
+      const primaryRadius = sing.mass * 0.46;
+      const secondaryRadius = companion.mass * 0.46;
+      const startDistance = binary.initialDistance ?? Math.max(180, primaryRadius + secondaryRadius + 120);
+      const contactDistance = Math.max(28, (primaryRadius + secondaryRadius) * 1.04);
+      const warmup = binary.warmup ?? 0;
+      const activation = smoothStep(warmup);
+      const binaryStarSettings = starSettingsRef.current || defaultStarSettings;
+      const mergerPace = Math.max(0.2, binaryStarSettings.mergerPace ?? defaultStarSettings.mergerPace);
+      const mergerPull = Math.max(0.35, binaryStarSettings.mergerPull ?? defaultStarSettings.mergerPull);
+      const nearMisses = 0;
+
+      if (motionEnabled) {
+        binary.warmup = clamp01((binary.warmup ?? 0) + 0.0024 * frameDelta * Math.max(0.8, mergerPace) * Math.min(1.35, mergerPull));
+
+        if (binary.state === "inspiral") {
+          const passIndex = binary.passIndex ?? 0;
+          const isNearMissPass = passIndex < nearMisses;
+          binary.progress = clamp01((binary.progress ?? 0) + 0.00036 * frameDelta * Math.max(0.28, activation) * mergerPace * mergerPull);
+          const passProgress = binary.progress ?? 0;
+          const passWave = Math.sin(passProgress * Math.PI);
+          const passEase = smoothStep(isNearMissPass ? Math.pow(passWave, 0.82) : passProgress);
+          const outerDistance = Math.max(contactDistance * 2.18, startDistance * (1 - Math.min(0.46, passIndex * 0.16)));
+          const nearMissTightness = nearMisses <= 0 ? 1 : passIndex / Math.max(1, nearMisses);
+          const nearMissDistance = contactDistance * (2.26 - nearMissTightness * 0.62);
+          const targetDistance = isNearMissPass ? nearMissDistance : contactDistance;
+          binary.angle += (0.0005 + passEase * 0.00165) * frameDelta * Math.max(0.35, activation) * mergerPace;
+          binary.distance = outerDistance * (1 - passEase) + targetDistance * passEase;
+
+          if (binary.progress >= 1) {
+            if (isNearMissPass) {
+              binary.passIndex = passIndex + 1;
+              binary.progress = 0;
+              binary.waveTimer = 0;
+            } else {
+              binary.state = "plunge";
+              binary.progress = 0;
+              binary.plungeStartDistance = binary.distance;
+            }
+          }
+        } else if (binary.state === "plunge") {
+          binary.progress = clamp01((binary.progress ?? 0) + 0.00118 * frameDelta * mergerPace * mergerPull);
+          const plungeCutover = 0.82;
+          const plungeProgress = clamp01(binary.progress / plungeCutover);
+          const eased = smoothStep(plungeProgress);
+          binary.angle += (0.00135 + eased * 0.0031) * frameDelta * mergerPace;
+          binary.distance = (binary.plungeStartDistance ?? contactDistance) * (1 - eased);
+
+          if (binary.waveTimer > 0) {
+            binary.waveTimer -= frameDelta;
+          } else {
+            binary.waveTimer = 26;
+          }
+
+          if (binary.progress >= plungeCutover) {
+            const primaryMass = sing.targetMass ?? sing.mass;
+            const secondaryMass = companion.targetMass ?? companion.mass;
+            const mergedMass = Math.max(
+              Math.sqrt(primaryMass * primaryMass + secondaryMass * secondaryMass) * 1.28,
+              (primaryMass + secondaryMass) * 0.72,
+            );
+            const finalMassFloor = canvas.width < 768 ? 112 : 138;
+            const finalMass = Math.min(235, Math.max(mergedMass * 1.12, primaryMass, secondaryMass, finalMassFloor));
+            sing.x = binary.centerX;
+            sing.pageY = binary.centerPageY;
+            sing.mass = 18;
+            sing.targetMass = finalMass;
+            sing.pulse = 0;
+            sing.finalMerged = true;
+            sing.finalSpinDirection = binary.spinDirection ?? 1;
+            sing.companion = null;
+            seedFinalOrbitStars(sing, binary.angle);
+            sing.binary = {
+              state: "ringdown",
+              progress: 0,
+              angle: binary.angle,
+              spinDirection: binary.spinDirection ?? 1,
+              waveTimer: 0,
+            };
+            if (playCustomSfxRef.current) {
+              playCustomSfxRef.current('mergerWhoosh');
+              window.setTimeout(() => {
+                playCustomSfxRef.current?.('mergerImpact');
+                playCustomSfxRef.current?.('impact');
+                playCustomSfxRef.current?.('mergerImpactExtra');
+              }, 400);
+            }
+            return {
+              state: "ringdown",
+              angle: binary.angle,
+              centerX: sing.x,
+              centerPageY: sing.pageY,
+              distance: 0,
+              strain: 0.72,
+              bridgeAlpha: 0,
+              ringdownStrength: 1,
+              mergeAlpha: 0,
+            };
+          }
+        }
+      }
+
+      const distance = binary.distance ?? startDistance;
+      const angle = binary.angle ?? Math.atan2(companion.pageY - sing.pageY, companion.x - sing.x);
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance;
+      const solvedPrimaryX = binary.centerX - dx * (secondaryOrbitMass / totalMass);
+      const solvedPrimaryPageY = binary.centerPageY - dy * (secondaryOrbitMass / totalMass);
+      const solvedCompanionX = binary.centerX + dx * (primaryOrbitMass / totalMass);
+      const solvedCompanionPageY = binary.centerPageY + dy * (primaryOrbitMass / totalMass);
+      const settle = binary.state === "plunge" ? 1 : smoothStep((binary.warmup ?? 0) * 1.35);
+
+      if (settle < 1 && binary.startPrimaryX !== undefined) {
+        sing.x = binary.startPrimaryX + (solvedPrimaryX - binary.startPrimaryX) * settle;
+        sing.pageY = binary.startPrimaryPageY + (solvedPrimaryPageY - binary.startPrimaryPageY) * settle;
+        companion.x = binary.startCompanionX + (solvedCompanionX - binary.startCompanionX) * settle;
+        companion.pageY = binary.startCompanionPageY + (solvedCompanionPageY - binary.startCompanionPageY) * settle;
+      } else {
+        sing.x = solvedPrimaryX;
+        sing.pageY = solvedPrimaryPageY;
+        companion.x = solvedCompanionX;
+        companion.pageY = solvedCompanionPageY;
+      }
+
+      const inspiralProgress = binary.state === "plunge" ? 1 : clamp01(binary.progress ?? 0);
+      const plungeProgress = binary.state === "plunge" ? clamp01(binary.progress ?? 0) : 0;
+      const strainActivation = binary.state === "plunge" ? 1 : activation;
+
+      return {
+        state: binary.state,
+        angle,
+        spinDirection: binary.spinDirection ?? 1,
+        centerX: binary.centerX,
+        centerPageY: binary.centerPageY,
+        distance,
+        strain: (0.12 + smoothStep(inspiralProgress) * 0.46 + plungeProgress * 0.46) * strainActivation,
+        bridgeAlpha: 0,
+        ringdownStrength: 0,
+        plungeProgress,
+        mergeAlpha: binary.state === "plunge" ? smoothStep((plungeProgress - 0.66) / 0.26) : 0,
+      };
+    };
+
+    const getSingularityDistortion = (body, role, sing, binaryVisual) => {
+      if (body?.finalMerged) return { axis: 0, amount: 0 };
+      if (!binaryVisual) return { axis: 0, amount: 0 };
+
+      if (binaryVisual.state === "ringdown" && body === sing) {
+        const wobble = Math.abs(Math.sin(animationClock * 0.009)) * binaryVisual.ringdownStrength;
+        return {
+          axis: binaryVisual.angle + Math.sin(animationClock * 0.0025) * 0.32,
+          amount: wobble * 0.36,
+        };
+      }
+
+      if (!sing?.companion) return { axis: 0, amount: 0 };
+      const other = role === "secondary" ? sing : sing.companion;
+      if (!other) return { axis: 0, amount: 0 };
+
+      const distance = Math.hypot(other.x - body.x, other.pageY - body.pageY);
+      const initialDistance = Math.max(sing.binary?.initialDistance ?? distance, 1);
+      const closeness = clamp01(1 - distance / initialDistance);
+      const lateCloseness = smoothStep((closeness - 0.92) / 0.08);
+      const plungeBoost = binaryVisual.state === "plunge" ? smoothStep(((binaryVisual.plungeProgress ?? 0) - 0.58) / 0.32) * 0.18 : 0;
+
+      return {
+        axis: Math.atan2(other.pageY - body.pageY, other.x - body.x),
+        amount: clamp01(lateCloseness * 0.24 + plungeBoost),
+      };
+    };
+
+    const drawSingularitySilhouette = (render) => {
+      const distortion = render.distortion ?? { axis: 0, amount: 0 };
+      const stretch = 1 + distortion.amount * 0.26;
+      const squash = Math.max(0.76, 1 - distortion.amount * 0.13);
+
+      const ringAlpha = render.ringAlpha ?? 1;
+
+      ctx.save();
+      ctx.translate(render.x, render.y);
+      ctx.rotate(distortion.axis);
+      ctx.scale(stretch, squash);
+
+      if (render.sing.finalMerged) {
+        // -------------------------------------------------------------
+        // FINAL MERGED BLACK HOLE: Volumetric 3D Einstein Glow (Soft Light-Wrap)
+        // -------------------------------------------------------------
+        const pIntensity = render.singularityVisuals.pulseIntensity ?? 0.5;
+        const kickScale = 1.0 + (render.sing.massKick ?? 0) * 0.08 * pIntensity;
+        const ehRadius = render.ehRadius * kickScale;
+
+        // Draw solid black Event Horizon shadow
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.arc(0, 0, ehRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw Volumetric Einstein Ring Light-Wrap (Soft gradient overlapping the EH edge)
+        // Slightly offset the center to simulate relativistic Doppler beaming
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        
+        const time = animationClock * 0.001;
+        const pulse = kickScale * (1.0 + Math.sin(time * 2.0) * 0.012 * pIntensity);
+        const shiftX = Math.cos(time * 0.72) * 1.2 - 1.0;
+        const shiftY = Math.sin(time * 0.55) * 0.8;
+        const rimGrad = ctx.createRadialGradient(
+          shiftX, shiftY, ehRadius * 0.84 * pulse,
+          shiftX * 0.5, shiftY * 0.5, ehRadius * 1.36 * pulse
+        );
+        rimGrad.addColorStop(0.0, "rgba(0, 0, 0, 0)");
+        rimGrad.addColorStop(0.18, `rgba(240, 185, 95, ${0.45 * ringAlpha})`); // soft gold bleed over EH edge
+        rimGrad.addColorStop(0.32, `rgba(255, 255, 255, ${0.96 * ringAlpha})`); // silver-white bright peak
+        rimGrad.addColorStop(0.48, `rgba(230, 235, 245, ${0.55 * ringAlpha})`); // silver-blue glow
+        rimGrad.addColorStop(0.72, `rgba(240, 195, 110, ${0.22 * ringAlpha})`); // warm gold outer rim
+        rimGrad.addColorStop(1.0, "rgba(0, 0, 0, 0)");
+
+        ctx.fillStyle = rimGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, ehRadius * 1.36 * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      } else {
+        // -------------------------------------------------------------
+        // FIRST & SECOND BLACK HOLES: Simple Classic Silhouette & Flat Accretion Stroke
+        // -------------------------------------------------------------
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.arc(0, 0, render.ehRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (ringAlpha > 0.04 && isVisibleColor(render.colors.accretionRing) && render.singularityVisuals.accretionWidth > 0) {
+          ctx.strokeStyle = hexToRgba(render.colors.accretionRing, 0.82 * ringAlpha);
+          ctx.shadowColor = hexToRgba(render.colors.glowInner, 0.28 * ringAlpha);
+          ctx.shadowBlur = 7;
+          ctx.lineWidth = Math.max(1, render.singularityVisuals.accretionWidth * 0.74);
+          ctx.beginPath();
+          ctx.arc(0, 0, render.ehRadius + 1.4, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      ctx.restore();
+    };
+
+    const drawBinarySpaceWarp = (visual) => {
+      if (!visual || visual.strain <= 0) return;
+      const screenY = visual.centerPageY - window.scrollY * 0.05;
+      const radius = Math.min(980, Math.max(320, visual.distance * 1.65 + 280));
+
+      ctx.save();
+      ctx.translate(visual.centerX, screenY);
+      ctx.rotate(visual.angle);
+      ctx.scale(1 + visual.strain * 0.65, Math.max(0.48, 1 - visual.strain * 0.38));
+
+      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+      gradient.addColorStop(0, `rgba(255,255,255,${0.11 * visual.strain})`);
+      gradient.addColorStop(0.35, `rgba(255,255,255,${0.047 * visual.strain})`);
+      gradient.addColorStop(0.72, `rgba(255,255,255,${0.016 * visual.strain})`);
+      gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const applyBinaryRenderWarp = (x, y, visual) => {
+      if (!visual || visual.strain <= 0) return { x, y };
+      const centerY = visual.centerPageY - window.scrollY * 0.05;
+      const reach = Math.min(980, Math.max(360, visual.distance * 2 + 260));
+      const dx = x - visual.centerX;
+      const dy = y - centerY;
+      const dist = Math.hypot(dx, dy);
+      if (dist >= reach) return { x, y };
+
+      const falloff = Math.pow(1 - dist / reach, 1.55) * visual.strain;
+      const cos = Math.cos(visual.angle);
+      const sin = Math.sin(visual.angle);
+      const along = dx * cos + dy * sin;
+      const across = -dx * sin + dy * cos;
+      const squeezedAcross = across * (1 - falloff * 0.52);
+      const stretchedAlong = along * (1 + falloff * 0.26);
+      const spinDirection = visual.spinDirection ?? 1;
+      const twist = spinDirection * falloff * (visual.state === "plunge" ? 0.68 : 0.34);
+      const twistCos = Math.cos(twist);
+      const twistSin = Math.sin(twist);
+      const warpedAlong = stretchedAlong * twistCos - squeezedAcross * twistSin;
+      const warpedAcross = stretchedAlong * twistSin + squeezedAcross * twistCos;
+
+      return {
+        x: visual.centerX + warpedAlong * cos - warpedAcross * sin,
+        y: centerY + warpedAlong * sin + warpedAcross * cos,
+      };
+    };
+
+    const drawBinaryBridge = (visual, renders) => {
+      if (!visual || visual.bridgeAlpha <= 0 || renders.length < 2) return;
+      const [first, second] = renders;
+      const midX = (first.x + second.x) / 2;
+      const midY = (first.y + second.y) / 2;
+      const distance = Math.hypot(second.x - first.x, second.y - first.y);
+      const radius = Math.max(first.ehRadius, second.ehRadius);
+
+      ctx.save();
+      ctx.translate(midX, midY);
+      ctx.rotate(Math.atan2(second.y - first.y, second.x - first.x));
+      const bridgeAlpha = Math.min(0.92, visual.bridgeAlpha);
+      const halfDistance = distance / 2;
+      const neck = radius * (0.36 + bridgeAlpha * 0.24);
+      const shoulder = radius * (0.9 + bridgeAlpha * 0.5);
+
+      ctx.fillStyle = `rgba(0,0,0,${bridgeAlpha})`;
+      ctx.beginPath();
+      ctx.moveTo(-halfDistance, -neck);
+      ctx.bezierCurveTo(-halfDistance * 0.52, -shoulder, halfDistance * 0.52, -shoulder, halfDistance, -neck);
+      ctx.bezierCurveTo(halfDistance * 0.62, neck * 1.12, -halfDistance * 0.62, neck * 1.12, -halfDistance, -neck);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+    };
+
+    const drawBinaryMergedHorizon = (visual, renders) => {
+      const mergeAlpha = visual?.mergeAlpha ?? 0;
+      if (!visual || mergeAlpha <= 0.02 || renders.length < 2) return false;
+
+      const [first, second] = renders;
+      const midX = (first.x + second.x) / 2;
+      const midY = (first.y + second.y) / 2;
+      const angle = Math.atan2(second.y - first.y, second.x - first.x);
+      const distance = Math.hypot(second.x - first.x, second.y - first.y);
+      const radius = Math.max(first.ehRadius, second.ehRadius);
+      const halfDistance = distance / 2;
+
+      ctx.save();
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "#000000";
+      for (const render of renders) {
+        ctx.beginPath();
+        ctx.arc(render.x, render.y, render.ehRadius * (1 + mergeAlpha * 0.035), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.translate(midX, midY);
+      ctx.rotate(angle);
+      const neck = radius * (0.52 + mergeAlpha * 0.34);
+      const shoulder = radius * (0.96 + mergeAlpha * 0.48);
+      ctx.beginPath();
+      ctx.moveTo(-halfDistance, -neck);
+      ctx.bezierCurveTo(-halfDistance * 0.56, -shoulder, halfDistance * 0.56, -shoulder, halfDistance, -neck);
+      ctx.bezierCurveTo(halfDistance * 0.56, shoulder, -halfDistance * 0.56, shoulder, -halfDistance, neck);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+
+      return mergeAlpha > 0.05;
     };
 
     const drawStarfield = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const singularityVisuals = singularityStyleRef.current || defaultSingularityStyle;
+      const nebMult = singularityVisuals.nebulaIntensity ?? 1.0;
+      
+      // Draw slow-breathing cosmic space clouds/nebula backdrops
+      ctx.save();
+      ctx.globalCompositeOperation = "source-over";
+      const nebTime = animationClock * 0.00008;
+      
+      // Nebula 1: Warm Gold Dust at top-left
+      const neb1X = canvas.width * (0.28 + Math.sin(nebTime) * 0.12);
+      const neb1Y = canvas.height * (0.22 + Math.cos(nebTime * 0.8) * 0.08);
+      const neb1Radius = Math.max(canvas.width, canvas.height) * 0.72;
+      const neb1Grad = ctx.createRadialGradient(neb1X, neb1Y, 0, neb1X, neb1Y, neb1Radius);
+      neb1Grad.addColorStop(0, `rgba(235, 140, 45, ${0.18 * nebMult})`);
+      neb1Grad.addColorStop(0.4, `rgba(235, 140, 45, ${0.05 * nebMult})`);
+      neb1Grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = neb1Grad;
+      ctx.beginPath();
+      ctx.arc(neb1X, neb1Y, neb1Radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Nebula 2: Silver/Teal Cosmic Dust at bottom-right
+      const neb2X = canvas.width * (0.72 + Math.cos(nebTime * 0.9) * 0.1);
+      const neb2Y = canvas.height * (0.78 + Math.sin(nebTime * 1.1) * 0.1);
+      const neb2Radius = Math.max(canvas.width, canvas.height) * 0.8;
+      const neb2Grad = ctx.createRadialGradient(neb2X, neb2Y, 0, neb2X, neb2Y, neb2Radius);
+      neb2Grad.addColorStop(0, `rgba(90, 190, 225, ${0.15 * nebMult})`);
+      neb2Grad.addColorStop(0.42, `rgba(90, 190, 225, ${0.04 * nebMult})`);
+      neb2Grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = neb2Grad;
+      ctx.beginPath();
+      ctx.arc(neb2X, neb2Y, neb2Radius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+
       const sing = singularityRef.current;
       const mouse = canvasMouseRef.current;
       const motionEnabled = animationsEnabledRef.current;
+      const now = performance.now();
+      const frameDelta = motionEnabled ? Math.min(2.2, Math.max(0.35, (now - previousFrameTime) / 16.67)) : 0;
       if (motionEnabled) {
-        animationClock = performance.now();
+        previousFrameTime = now;
+        animationClock = now;
       }
       const currentScrollY = motionEnabled ? window.scrollY : (frozenScrollYRef.current ?? window.scrollY);
       const colors = singularityColorsRef.current || {
         accretionRing: "#ffffff",
         glowInner: "#ffffff",
         glowOuter: "#ffffff",
-        lensingRing: "#ffffff",
       };
-      const singularityVisuals = singularityStyleRef.current || defaultSingularityStyle;
 
       const liveStarSettings = starSettingsRef.current || {
         cursorGravity: 0.38,
         baseDriftSpeed: 0.15,
         twinkleSpeed: 0.3
       };
+      const isMobileFrame = canvas.width < 768;
+      const singularityRenders = [];
+      const gravitySources = [];
+      const maxFeedingMass = isMobileFrame ? 120 : 180;
+      const easeSingularityMass = (body) => {
+        if (!body || !motionEnabled) return;
+        const bodyMaxMass = body.finalMerged ? (isMobileFrame ? 150 : 235) : maxFeedingMass;
+        body.targetMass = Math.min(bodyMaxMass, Math.max(body.mass, body.targetMass ?? body.mass));
+        const diff = body.targetMass - body.mass;
+        if (Math.abs(diff) > 0.005) {
+          const ease = 1 - Math.pow(0.94, frameDelta);
+          body.mass += diff * ease;
+        } else {
+          body.mass = body.targetMass;
+        }
+        body.massKick = Math.max(0, (body.massKick ?? 0) - 0.035 * frameDelta);
+      };
+      const addSingularityMass = (body, amount) => {
+        if (!body || body.finalMerged || amount <= 0) return;
+        const baseMass = body.targetMass ?? body.mass;
+        const remainingMass = Math.max(0, maxFeedingMass - baseMass);
+        if (remainingMass <= 0) return;
+        const growthDamping = 0.18 + 0.82 * clamp01(remainingMass / maxFeedingMass);
+        const controlledGrowth = amount * growthDamping * (sing?.companion ? 0.42 : 0.48);
+        body.targetMass = Math.min(maxFeedingMass, baseMass + controlledGrowth);
+        body.massKick = Math.min(1, (body.massKick ?? 0) + amount * 0.012);
+      };
+
+      if (sing) {
+        easeSingularityMass(sing);
+        if (sing.companion) {
+          easeSingularityMass(sing.companion);
+        }
+      }
+
+      const binaryVisual = getBinaryVisualState(sing, frameDelta, motionEnabled);
+
+      const addSingularityRender = (body, role) => {
+        const screenY = body.pageY - currentScrollY * 0.05;
+        if (screenY < -150 || screenY > canvas.height + 150) return null;
+
+        const bodyScale = body.finalMerged ? 0.5 : 0.48;
+        const ehRadius = body.mass * bodyScale;
+        if (motionEnabled) {
+          body.pulse += 0.0035;
+        }
+
+        const plungeFade = !body.finalMerged && binaryVisual?.state === "plunge"
+          ? 1 - smoothStep(((binaryVisual.plungeProgress ?? 0) - 0.36) / 0.36)
+          : 1;
+        const ringAlpha = body.finalMerged ? 1 : Math.max(0, plungeFade);
+        const glowAlpha = body.finalMerged ? 0 : Math.max(0.22, 0.28 + plungeFade * 0.72);
+        const renderColors = colors;
+
+        const finalReach = liveStarSettings.finalGalaxyReach ?? 1.35;
+        const preMergeReach = liveStarSettings.blackHoleGravityReach ?? defaultStarSettings.blackHoleGravityReach;
+        const influenceRadius = body.finalMerged
+          ? (isMobileFrame
+            ? Math.min(460, Math.max(220, (170 + body.mass * 1.15) * finalReach))
+            : Math.min(1320, Math.max(620, (480 + body.mass * 2.65) * finalReach)))
+          : (isMobileFrame
+            ? Math.min(190, Math.max(92, (92 + body.mass * 0.48) * preMergeReach))
+            : Math.min(520, Math.max(240, (245 + body.mass * 1.18) * preMergeReach)));
+
+        const render = {
+          x: body.x,
+          y: screenY,
+          ehRadius,
+          colors: renderColors,
+          singularityVisuals,
+          sing: body,
+          role,
+          influenceRadius,
+          ringAlpha,
+          glowAlpha,
+          distortion: getSingularityDistortion(body, role, sing, binaryVisual),
+        };
+        singularityRenders.push(render);
+        gravitySources.push({
+          body,
+          role,
+          x: body.x,
+          y: screenY,
+          ehRadius,
+          influenceRadius,
+          activeFeedSingDist: isMobileFrame ? 112 : 220,
+          activeFeedStarDist: isMobileFrame ? 96 : 170,
+          terminal: Boolean(body.finalMerged),
+        });
+
+        if (glowAlpha > 0.01) {
+          const sprite = getSingularityGlowSprite(ehRadius, renderColors, singularityVisuals, isMobileFrame);
+          ctx.save();
+          ctx.globalAlpha = glowAlpha;
+          ctx.drawImage(
+            glowSpriteCanvas,
+            body.x - sprite.size / 2,
+            screenY - sprite.size / 2,
+          );
+          ctx.restore();
+        }
+
+        return render;
+      };
 
       // 2. Draw and grow singularity (with custom/live colors)
       if (sing) {
-        const screenY = sing.pageY - currentScrollY * 0.05;
-
-        if (screenY >= -150 && screenY <= canvas.height + 150) {
-          const isMobile = canvas.width < 768;
-          const ehRadius = sing.mass * 0.4 * (isMobile ? 0.55 : 1.0);
-          if (motionEnabled) {
-            sing.pulse += 0.0035;
-          }
-
-          // Radial glow
-          const glowGrad = ctx.createRadialGradient(sing.x, screenY, ehRadius, sing.x, screenY, ehRadius * 5.0);
-          glowGrad.addColorStop(0, hexToRgba(colors.glowInner, 0.35 * singularityVisuals.glowIntensity));
-          glowGrad.addColorStop(0.2, hexToRgba(colors.glowInner, 0.18 * singularityVisuals.glowIntensity));
-          glowGrad.addColorStop(0.5, hexToRgba(colors.glowOuter, 0.06 * singularityVisuals.glowIntensity));
-          glowGrad.addColorStop(0.8, hexToRgba(colors.glowOuter, 0.02 * singularityVisuals.glowIntensity));
-          glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = glowGrad;
-          ctx.beginPath();
-          ctx.arc(sing.x, screenY, ehRadius * 5.0, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Accretion boundary ring
-          if (isVisibleColor(colors.accretionRing) && singularityVisuals.accretionWidth > 0) {
-            const ringRadius = ehRadius + 1.5 + Math.sin(sing.pulse * 5) * 0.18;
-            const softWidth = singularityVisuals.accretionWidth + singularityVisuals.accretionSoftness * 7;
-            ctx.strokeStyle = hexToRgba(colors.accretionRing, 0.16 * singularityVisuals.accretionSoftness);
-            ctx.shadowColor = hexToRgba(colors.glowInner, 0.32 * singularityVisuals.accretionSoftness);
-            ctx.shadowBlur = 12 * singularityVisuals.accretionSoftness;
-            ctx.lineWidth = softWidth;
-            ctx.beginPath();
-            ctx.arc(sing.x, screenY, ringRadius, 0, Math.PI * 2);
-            ctx.stroke();
-
-            ctx.strokeStyle = hexToRgba(colors.accretionRing, 0.92);
-            ctx.shadowColor = hexToRgba(colors.glowInner, 0.42);
-            ctx.shadowBlur = 7 * singularityVisuals.accretionSoftness;
-            ctx.lineWidth = singularityVisuals.accretionWidth;
-            ctx.beginPath();
-            ctx.arc(sing.x, screenY, ringRadius, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-          }
-
-          // Lensing rings
-          if (isVisibleColor(colors.lensingRing) && singularityVisuals.lensingIntensity > 0) {
-            ctx.strokeStyle = hexToRgba(colors.lensingRing, 0.12 * singularityVisuals.lensingIntensity);
-            ctx.lineWidth = singularityVisuals.lensingWidth;
-            ctx.beginPath();
-            ctx.arc(sing.x, screenY, ehRadius * 1.6, 0, Math.PI * 2);
-            ctx.stroke();
-
-            ctx.strokeStyle = hexToRgba(colors.lensingRing, 0.06 * singularityVisuals.lensingIntensity);
-            ctx.lineWidth = Math.max(0.5, singularityVisuals.lensingWidth * 0.75);
-            ctx.beginPath();
-            ctx.arc(sing.x, screenY, ehRadius * 2.8, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-
-          // Event Horizon
-          ctx.fillStyle = '#000000';
-          ctx.beginPath();
-          ctx.arc(sing.x, screenY, ehRadius, 0, Math.PI * 2);
-          ctx.fill();
+        addSingularityRender(sing, "primary");
+        if (sing.companion) {
+          addSingularityRender(sing.companion, "secondary");
         }
       }
 
-      // 3. Draw shockwaves
-      for (let i = waves.length - 1; i >= 0; i--) {
-        const w = waves[i];
-        const screenY = w.pageY - currentScrollY * 0.05;
+      drawBinarySpaceWarp(binaryVisual);
 
-        ctx.strokeStyle = `rgba(255, 255, 255, ${w.alpha * 0.18})`;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(w.x, screenY, w.radius, 0, Math.PI * 2);
-        ctx.stroke();
-
-        if (motionEnabled) {
-          w.radius += 6.0;
-          w.alpha = Math.max(0, 1 - w.radius / w.maxRadius);
-        }
-
-        if (w.alpha <= 0 || screenY < -150 || screenY > canvas.height + 150) {
-          waves.splice(i, 1);
-        }
-      }
-
-      // 4. Update and Draw Stars
+      // 3. Update and Draw Stars
       let starsNearCursorCount = 0;
       let cursorClusterCount = 0;
+      const terminalBackStars = [];
+      const terminalFrontStars = [];
+      const canCreateCollapseAtCursor = mouse.x !== null && (
+        !sing || (
+          !sing.finalMerged && !sing.companion && singularityRenders.every(render =>
+            Math.hypot(mouse.x - render.x, mouse.y - render.y) > Math.max(130, render.ehRadius * 2.15)
+          )
+        )
+      );
 
       for (let i = 0; i < stars.length; i++) {
         const star = stars[i];
-
         if (star.consumed) {
           if (motionEnabled) {
             star.recycleTimer++;
@@ -2619,6 +3296,18 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
           if (motionEnabled && star.recycleTimer > 72) {
             star.consumed = false;
             star.recycleTimer = 0;
+            star.finalOrbitOwner = null;
+            star.finalOrbitSeeded = false;
+            star.finalOrbitFront = false;
+            star.finalOrbitCapture = 0;
+            star.finalOrbitTargetRadius = undefined;
+            star.finalOrbitMinRadius = undefined;
+            star.explosionTimer = undefined;
+            // Bug 3: restore original parallax factor
+            if (star.originalFactor !== undefined) {
+              star.factor = star.originalFactor;
+              star.originalFactor = undefined;
+            }
             const edge = Math.random();
             const scrollSeed = currentScrollY * star.factor;
             if (edge < 0.82) {
@@ -2635,159 +3324,302 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
         // Scroll parallax
         const scrollParallax = currentScrollY * star.factor;
-        if (motionEnabled && liveStarSettings.baseDriftSpeed > 0) {
+        // Bug 2: skip natural drift for captured stars to prevent line clumping
+        if (motionEnabled && liveStarSettings.baseDriftSpeed > 0 && !star.finalOrbitOwner) {
           const driftSpeed = liveStarSettings.baseDriftSpeed * (0.22 + star.layer * 0.34);
           star.x += (star.driftX ?? 0) * driftSpeed;
           star.y += (star.driftY ?? -0.36) * driftSpeed;
         }
         let currentY = star.y - scrollParallax;
+        let hasActiveGravity = false;
 
-        // Horizontal wrapping
-        if (star.x < -15) {
-          star.x = canvas.width + 15;
-        } else if (star.x > canvas.width + 15) {
-          star.x = -15;
-        }
+        // Singularity gravitational pull: use the nearest source only to keep the binary prototype cheap.
+        if (gravitySources.length > 0) {
+          let gravityTarget = null;
+          for (const source of gravitySources) {
+            const sourceDist = Math.hypot(source.x - star.x, source.y - currentY);
+            const ownedByTerminal = source.terminal && star.finalOrbitOwner === source.body;
+            
 
-        // Vertical wrapping
-        if (currentY < -15) {
-          star.y = canvas.height + 15 + scrollParallax;
-          currentY = star.y - scrollParallax;
-        } else if (currentY > canvas.height + 15) {
-          star.y = -15 + scrollParallax;
-          currentY = star.y - scrollParallax;
-        }
+            const sourceLimit = source.terminal
+              ? (ownedByTerminal ? source.influenceRadius * 1.5 : source.ehRadius * 7.5)
+              : source.influenceRadius;
 
-        // Singularity Gravitational Pull
-        if (sing) {
-          const singScreenY = sing.pageY - currentScrollY * 0.05;
-          const dist = Math.hypot(sing.x - star.x, singScreenY - currentY);
-          const isMobile = canvas.width < 768;
-          const ehRadius = sing.mass * 0.4 * (isMobile ? 0.55 : 1.0);
-          const influenceRadius = isMobile
-            ? Math.min(240, Math.max(120, 110 + sing.mass * 0.8))
-            : Math.min(760, Math.max(340, 320 + sing.mass * 1.9));
+            if (sourceDist > sourceLimit) continue;
+            const sourceWeight = (ownedByTerminal ? sourceDist * 0.35 : sourceDist) / source.influenceRadius;
+            if (!gravityTarget || sourceWeight < gravityTarget.weight) {
+              gravityTarget = { ...source, dist: sourceDist, weight: sourceWeight };
+            }
+          }
+          if (gravityTarget) {
+            hasActiveGravity = true;
+            const {
+              body,
+              x: sourceX,
+              y: sourceY,
+              dist,
+              ehRadius,
+              influenceRadius,
+              activeFeedSingDist,
+              activeFeedStarDist,
+              terminal,
+            } = gravityTarget;
 
-          const consumeRadius = ehRadius + (star.layer === 0 ? 1.0 : 2.5);
-
-          // Consume check: passive feed and cursor feed share the same event horizon.
-          if (motionEnabled && dist < consumeRadius) {
-            star.consumed = true;
-            star.recycleTimer = 0;
-
-            const distMouseSing = mouse.x !== null ? Math.hypot(sing.x - mouse.x, singScreenY - mouse.y) : 9999;
+            // Active feed vs. passive feed consume check
+            const distMouseSing = mouse.x !== null ? Math.hypot(sourceX - mouse.x, sourceY - mouse.y) : 9999;
             const distStarMouse = mouse.x !== null ? Math.hypot(mouse.x - star.x, mouse.y - currentY) : 9999;
-            const activeFeedSingDist = isMobile ? 110 : 220;
-            const activeFeedStarDist = isMobile ? 100 : 200;
-            const isBeingFed = distMouseSing < activeFeedSingDist && distStarMouse < activeFeedStarDist;
+            const isBeingFed = !terminal && distMouseSing < activeFeedSingDist && distStarMouse < activeFeedStarDist;
 
-            if (isBeingFed && star.layer > 0) {
-              sing.mass += liveStarSettings.blackHoleGrowthRate; // active player feeding grows singularity significantly
-              if (star.layer === 2 && playCustomSfxRef.current) {
-                playCustomSfxRef.current('burst'); // sound indicator when fed
-                waves.push({
-                  x: star.x,
-                  pageY: currentY + currentScrollY * 0.05,
-                  radius: 4,
-                  maxRadius: 100,
-                  alpha: 0.8
-                });
+            // Pre-merger swallow radius: 3.0px passive, 20.0px active feed override!
+            // Terminal stage never swallows.
+            const consumeRadius = terminal
+              ? 0
+              : (ehRadius + (isBeingFed ? 20.0 : (star.layer === 0 ? 1.0 : 3.0)));
+
+            if (terminal && motionEnabled) {
+              // Implosion phase before explosion
+              if (star.implosionTimer !== undefined && star.implosionTimer < (star.implosionDuration ?? 25)) {
+                star.implosionTimer += frameDelta;
+                const t = clamp01(star.implosionTimer / (star.implosionDuration ?? 25));
+                const easeIn = Math.pow(t, 3); // cubic ease-in for acceleration
+
+                const startX = star.implodeStartX ?? star.x;
+                const startY = star.implodeStartY ?? star.y;
+                const targetYCanvas = sourceY + currentScrollY * 0.05;
+
+                star.x = startX * (1 - easeIn) + sourceX * easeIn;
+                star.y = startY * (1 - easeIn) + targetYCanvas * easeIn;
+                currentY = star.y - scrollParallax;
               }
-            } else {
-              const passiveGrowthMultiplier = star.layer === 0 ? 0.035 : star.layer === 1 ? 0.18 : 0.28;
-              sing.mass += liveStarSettings.blackHoleGrowthRate * passiveGrowthMultiplier;
+              // Slower explosion animation phase
+              else if (star.explosionTimer !== undefined && star.explosionTimer < (star.explosionDuration ?? 90)) {
+                star.explosionTimer += frameDelta;
+                const t = clamp01(star.explosionTimer / (star.explosionDuration ?? 90));
+                const easeOut = 1 - Math.pow(1 - t, 3); // cubic ease-out
+                const expAngle = star.explosionAngle ?? 0;
+                const ejectaR = (star.explosionRadius ?? 200) * easeOut;
+                const diskYS = star.explosionDiskYScale ?? 0.28;
+                star.x = sourceX + Math.cos(expAngle) * ejectaR;
+                star.y = (sourceY + Math.sin(expAngle) * ejectaR * diskYS) + currentScrollY * 0.05;
+                currentY = star.y - scrollParallax;
+              } else {
+                // Normal orbital physics (post-explosion or dynamically captured)
+                const ownedFinalStar = star.finalOrbitOwner === body;
+                const influence = ownedFinalStar
+                  ? Math.max(0.42, Math.min(1, (influenceRadius * 1.55 - dist) / (influenceRadius * 1.55)))
+                  : Math.max(0.08, (influenceRadius - dist) / influenceRadius);
+                const diskYScale = star.finalOrbitDiskScale ?? (0.22 + Math.random() * 0.14);
+                const dxDisk = star.x - sourceX;
+                const dyDisk = (currentY - sourceY) / diskYScale;
+                const diskDist = Math.max(1, Math.hypot(dxDisk, dyDisk));
+                const angleFromSource = Math.atan2(dyDisk, dxDisk);
 
-              if (star.layer === 2 && playCustomSfxRef.current) {
-                passiveFeedComboRef.current += 1;
-                const now = performance.now();
-                const shouldPing = passiveFeedComboRef.current >= 4 || now - lastPassiveFeedSfxTimeRef.current > 380;
+                if (star.finalOrbitOwner !== body) {
+                  // Dynamic capture — star drifted into gravity well
+                  const warmth = liveStarSettings.finalGalaxyWarmth ?? 0.76;
+                  star.finalOrbitOwner = body;
+                  star.finalOrbitSeeded = false;
+                  star.finalOrbitTargetRadius = diskDist;
+                  star.finalOrbitDiskScale = diskYScale;
+                  star.finalOrbitBand = Math.random();
+                  // Bug 8: per-star minimum orbit radius
+                  star.finalOrbitMinRadius = ehRadius * (1.2 + Math.random() * 2.8);
+                  // Bug 3: align parallax factor with BH
+                  star.originalFactor = star.factor;
+                  star.y += currentScrollY * (0.05 - star.factor);
+                  star.factor = 0.05;
+                  currentY = star.y - currentScrollY * 0.05;
+                  // Improvement 1: temperature color by distance
+                  const radiusRatio = diskDist / ehRadius;
+                  const colorSeed = Math.random();
+                  star.colorSeed = colorSeed;
+                  const isWarm = colorSeed < warmth;
+                  if (radiusRatio < 2) {
+                    star.colorBase = isWarm ? "245, 245, 255" : "210, 230, 255";
+                  } else if (radiusRatio < 4) {
+                    star.colorBase = isWarm
+                      ? ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "255, 240, 200" : "255, 246, 224")
+                      : ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "225, 240, 255" : "255, 255, 255");
+                  } else {
+                    star.colorBase = isWarm
+                      ? ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "255, 170, 75" : "255, 202, 128")
+                      : ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "160, 200, 255" : "215, 235, 255");
+                  }
+                  star.baseOpacity = Math.max(star.baseOpacity, 0.52 + Math.random() * 0.36);
+                }
 
-                if (shouldPing) {
-                  lastPassiveFeedSfxTimeRef.current = now;
-                  passiveFeedComboRef.current = 0;
-                  playCustomSfxRef.current('burst');
-                  waves.push({
-                    x: star.x,
-                    pageY: currentY + currentScrollY * 0.05,
-                    radius: 3,
-                    maxRadius: 72,
-                    alpha: 0.42
-                  });
+                if (star.finalOrbitOwner === body) {
+                  // Bug 8: per-star minimum orbit radius instead of uniform ehRadius * 1.05
+                  const minR = star.finalOrbitMinRadius ?? ehRadius * 1.5;
+                  const targetRadius = Math.max(minR, star.finalOrbitTargetRadius ?? ehRadius * 4);
+                  // Improvement 4: radial wobble oscillation for organic feel
+                  const wobbleOffset = Math.sin(animationClock * 0.002 + star.twinkleOffset) * ehRadius * 0.06;
+                  const effectiveTarget = targetRadius + wobbleOffset;
+                  const radialError = (diskDist - effectiveTarget) / effectiveTarget;
+                  const spin = body.finalSpinDirection ?? 1;
+                  const tangentX = -Math.sin(angleFromSource) * spin;
+                  const tangentY = Math.cos(angleFromSource) * diskYScale * spin;
+                  const radialX = dxDisk / diskDist;
+                  const radialY = (dyDisk / diskDist) * diskYScale;
+                  // Improvement 2: Keplerian speed — inner stars orbit faster
+                  const keplerBase = 0.22 + star.layer * 0.06;
+                  const orbitSpeed = Math.min(1.8, keplerBase * Math.pow(ehRadius / Math.max(ehRadius * 0.8, diskDist), 0.35) * influence * (1 + body.mass * 0.002));
+
+                  const radialCorrection = radialError > 0
+                    ? Math.min(4.8, radialError * 1.5) * 0.42 * influence
+                    : Math.max(-0.52, radialError) * 0.38 * influence;
+
+                  star.x += tangentX * orbitSpeed - radialX * radialCorrection;
+                  star.y += tangentY * orbitSpeed - radialY * radialCorrection;
+                  star.finalOrbitFront = Math.sin(angleFromSource) > 0;
+                  star.finalOrbitTangentX = tangentX;
+                  star.finalOrbitTangentY = tangentY;
+                  star.finalOrbitCapture = influence;
+                  // Bug 8: 10× slower spiral-in, respects per-star minimum
+                  star.finalOrbitTargetRadius = Math.max(
+                    minR,
+                    targetRadius - (0.0006 + star.layer * 0.0004) * influence * frameDelta,
+                  );
+                  currentY = star.y - scrollParallax;
                 }
               }
             }
-            continue;
-          }
 
-          if (motionEnabled && dist < influenceRadius) {
-            const distMouseSing = mouse.x !== null ? Math.hypot(sing.x - mouse.x, singScreenY - mouse.y) : 9999;
-            const distStarMouse = mouse.x !== null ? Math.hypot(mouse.x - star.x, mouse.y - currentY) : 9999;
-            const activeFeedSingDist = isMobile ? 110 : 220;
-            const activeFeedStarDist = isMobile ? 100 : 200;
-            const isBeingFed = distMouseSing < activeFeedSingDist && distStarMouse < activeFeedStarDist;
-            const influence = Math.max(0.05, (influenceRadius - dist) / influenceRadius);
+            // Consume check: only pre-merger black holes swallow stars
+            const isSwallowed = motionEnabled && !terminal && (dist < consumeRadius);
 
-            let force, speedFallFactor, speedSwirlFactor;
-            const gravityStrength = (liveStarSettings.blackHoleGravity !== undefined ? liveStarSettings.blackHoleGravity : 0.45) * (isMobile ? 0.65 : 1.0);
+            if (isSwallowed) {
+              star.consumed = true;
+              star.recycleTimer = 0;
 
-            if (isBeingFed && star.layer > 0) {
-              // Active player feed: pulled strongly into singularity
-              force = ((sing.mass * 4.8) / (dist + 35)) * gravityStrength;
-              speedFallFactor = 0.88;
-              speedSwirlFactor = 0.06;
-            } else {
-              // Passive field response: keep natural drift, then bend into an orbital vortex near the hole.
-              const layerWeight = 0.55 + star.layer * 0.28;
-              force = (((sing.mass * 4.1 * layerWeight) / (dist + 45)) * Math.max(0.18, influence)) * gravityStrength;
-              speedFallFactor = 0.28 + star.layer * 0.04;
-              speedSwirlFactor = 0.52;
+              const passiveGrowthMultiplier = star.layer === 0 ? 0.035 : star.layer === 1 ? 0.18 : 0.28;
+              if (isBeingFed && star.layer > 0) {
+                addSingularityMass(body, liveStarSettings.blackHoleGrowthRate);
+              } else {
+                addSingularityMass(body, liveStarSettings.blackHoleGrowthRate * passiveGrowthMultiplier);
+              }
+              playCustomSfxRef.current?.("burst");
+              continue;
             }
 
-            const angle = Math.atan2(singScreenY - currentY, sing.x - star.x);
-            const orbitAngle = angle + Math.PI / 2;
+            if (!terminal && motionEnabled) {
+              const rawInfluence = Math.max(0, (influenceRadius - dist) / influenceRadius);
+              const influence = smoothStep(rawInfluence);
 
-            const closeFactor = dist < ehRadius + 34 ? (ehRadius + 34 - dist) / 11 : 0;
-            const speedFall = Math.min(5.5, force * (speedFallFactor + closeFactor * 0.45));
-            const speedSwirl = Math.min(4.5, force * speedSwirlFactor);
+              const gravityStrength = (liveStarSettings.blackHoleGravity !== undefined ? liveStarSettings.blackHoleGravity : 0.45) * (isMobileFrame ? 0.65 : 1.0);
+              const layerWeight = 0.55 + star.layer * 0.28;
+              const force = (((body.mass * 3.45 * layerWeight) / (dist + 58)) * influence) * gravityStrength;
+              const speedFallFactor = 0.18 + star.layer * 0.025;
+              const speedSwirlFactor = 0.58;
 
-            star.x += Math.cos(angle) * speedFall + Math.cos(orbitAngle) * speedSwirl;
-            star.y += Math.sin(angle) * speedFall + Math.sin(orbitAngle) * speedSwirl;
+              const angle = Math.atan2(sourceY - currentY, sourceX - star.x);
+              const orbitAngle = angle + Math.PI / 2;
+              const closeFactor = Math.max(0, Math.min(1, (ehRadius + 32 - dist) / 32));
+              const speedFall = Math.min(3.2, force * (speedFallFactor + closeFactor * 0.18));
+              const speedSwirl = Math.min(4.0, force * (speedSwirlFactor + closeFactor * 0.42));
+
+              star.x += Math.cos(angle) * speedFall + Math.cos(orbitAngle) * speedSwirl;
+              star.y += Math.sin(angle) * speedFall + Math.sin(orbitAngle) * speedSwirl;
+              currentY = star.y - scrollParallax;
+            }
           }
         }
 
-        // Cursor Attraction (Trails behind cursor, active for interactable layer 1 & 2 stars)
-        if (mouse.x !== null && star.layer > 0) {
+        // Horizontal & Vertical wrapping (only for stars that are not owned and not under active gravity)
+        if (!hasActiveGravity && !star.finalOrbitOwner) {
+          if (star.x < -15) {
+            star.x = canvas.width + 15;
+          } else if (star.x > canvas.width + 15) {
+            star.x = -15;
+          }
+
+          if (currentY < -15) {
+            star.y = canvas.height + 15 + scrollParallax;
+            currentY = star.y - scrollParallax;
+          } else if (currentY > canvas.height + 15) {
+            star.y = -15 + scrollParallax;
+            currentY = star.y - scrollParallax;
+          }
+        }
+
+        if (binaryVisual && motionEnabled) {
+          const centerY = binaryVisual.centerPageY - currentScrollY * 0.05;
+          const reach = Math.min(960, Math.max(320, binaryVisual.distance * 2 + 280));
+          const dxBinary = star.x - binaryVisual.centerX;
+          const dyBinary = currentY - centerY;
+          const distBinary = Math.hypot(dxBinary, dyBinary);
+
+          if (distBinary < reach) {
+            const influence = Math.pow(1 - distBinary / reach, 1.4) * binaryVisual.strain;
+            const angle = Math.atan2(dyBinary, dxBinary);
+            const spin = binaryVisual.spinDirection ?? 1;
+            const orbitAngle = angle + spin * Math.PI / 2;
+            const orbitalDrift = Math.min(0.62, influence * (0.095 + star.layer * 0.026));
+            const inwardDrift = Math.min(0.13, influence * 0.014);
+
+            star.x += Math.cos(orbitAngle) * orbitalDrift - Math.cos(angle) * inwardDrift;
+            star.y += Math.sin(orbitAngle) * orbitalDrift - Math.sin(angle) * inwardDrift;
+            currentY = star.y - scrollParallax;
+          }
+        }
+
+        // Cursor Attraction (Trails behind cursor, active only before the final merged singularity)
+        if (mouse.x !== null && !sing?.finalMerged) {
           const dx = mouse.x - star.x;
           const dy = mouse.y - currentY;
           const dist = Math.hypot(dx, dy);
 
           if (dist < 200) {
-            if (dist < 92) {
+            let cursorGrip = 1.0;
+            let nearestBH = null;
+
+            if (gravitySources.length > 0) {
+              let nearestSource = null;
+              let minDist = 9999;
+              for (const source of gravitySources) {
+                const distToSource = Math.hypot(source.x - star.x, source.y - currentY);
+                if (distToSource < minDist) {
+                  minDist = distToSource;
+                  nearestSource = source;
+                }
+              }
+              if (nearestSource) {
+                nearestBH = nearestSource;
+                const distToBH = minDist;
+                
+                 // Bug 1: cursor grip is scaled by baseGrip — BH always wins near EH
+                 const slipStart = nearestSource.ehRadius * 6.5;
+                 const slipEnd = nearestSource.ehRadius * 1.25;
+                 if (distToBH < slipStart) {
+                   const baseGrip = clamp01((distToBH - slipEnd) / (slipStart - slipEnd));
+                   const cursorCloseness = clamp01((120 - dist) / 120);
+                   cursorGrip = Math.pow(baseGrip, 2.5) * (0.15 + cursorCloseness * 0.85);
+                 }
+               }
+            }
+
+            // Only count in cursor cluster if the cursor has a solid grip
+            if (dist < 92 && cursorGrip > 0.5) {
               cursorClusterCount++;
             }
 
-            let shouldPull = true;
-            if (sing) {
-              const singScreenY = sing.pageY - currentScrollY * 0.05;
-              const distToSing = Math.hypot(sing.x - star.x, singScreenY - currentY);
-              const influenceRadius = Math.min(
-                760,
-                Math.max(340, 320 + sing.mass * 1.9),
-              );
-              if (distToSing < influenceRadius) {
-                shouldPull = distToSing > Math.max(150, sing.mass * 0.75);
+            if (motionEnabled) {
+              // Attraction is regulated by cursorGravity settings, scaled by grip
+              const pull = ((200 - dist) / 200) * liveStarSettings.cursorGravity;
+              const safeDist = Math.max(1, dist);
+              star.x += (dx / safeDist) * pull * star.pullFactor * cursorGrip;
+              star.y += (dy / safeDist) * pull * star.pullFactor * cursorGrip;
+
+              // If grip is slipping, pull star towards the event horizon in a smooth stream
+              if (cursorGrip < 1.0 && nearestBH) {
+                const bhAngle = Math.atan2(nearestBH.y - currentY, nearestBH.x - star.x);
+                const streamSpeed = (1 - cursorGrip) * 4.5;
+                star.x += Math.cos(bhAngle) * streamSpeed;
+                star.y += Math.sin(bhAngle) * streamSpeed;
               }
             }
 
-            if (motionEnabled && shouldPull) {
-              // Attraction is regulated by cursorGravity settings
-              const pull = ((200 - dist) / 200) * liveStarSettings.cursorGravity;
-              const safeDist = Math.max(1, dist);
-              star.x += (dx / safeDist) * pull * star.pullFactor;
-              star.y += (dy / safeDist) * pull * star.pullFactor;
-            }
-
-            if (dist < 28 && !sing) {
+            if (dist < 28 && canCreateCollapseAtCursor && cursorGrip > 0.5) {
               starsNearCursorCount++;
             }
           }
@@ -2796,14 +3628,135 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
         // Twinkle calculation
         const twinkle = 1.0 + Math.sin(animationClock * 0.005 * liveStarSettings.twinkleSpeed + star.twinkleOffset) * 0.45 * liveStarSettings.twinkleSpeed;
         const currentOpacity = Math.min(1.0, Math.max(0.05, star.baseOpacity * twinkle));
+        const renderY = star.y - scrollParallax;
+        let captureProgress = 0;
+        let projectedRenderY = renderY;
+        let isInsideShadow = false;
+        let captureTarget = null;
 
-        ctx.fillStyle = `rgba(${star.colorBase}, ${currentOpacity})`;
-        ctx.beginPath();
-        ctx.arc(star.x, currentY, star.size, 0, Math.PI * 2);
-        ctx.fill();
+        if (singularityRenders.length > 0) {
+          for (const render of singularityRenders) {
+            const dxSing = star.x - render.x;
+            const dySing = renderY - render.y;
+            const renderDist = Math.hypot(dxSing, dySing);
+            const progress = Math.max(0, Math.min(1, (render.influenceRadius - renderDist) / render.influenceRadius));
+            if (!captureTarget || progress > captureTarget.progress) {
+              captureTarget = { render, dxSing, dySing, renderDist, progress };
+            }
+          }
+
+          if (captureTarget) {
+            captureProgress = captureTarget.progress;
+            const isOwnedFront = captureTarget.render.sing.finalMerged &&
+                                 star.finalOrbitOwner === captureTarget.render.sing &&
+                                 star.finalOrbitFront;
+            if (isOwnedFront) {
+              isInsideShadow = false;
+            } else {
+              isInsideShadow = captureTarget.renderDist < captureTarget.render.ehRadius * 0.98;
+            }
+
+            if (captureProgress > 0.08) {
+              const diskFlatten = 1 - captureProgress * 0.4;
+              projectedRenderY = captureTarget.render.y + captureTarget.dySing * diskFlatten;
+            }
+          }
+        }
+
+        const stretch = Math.pow(captureProgress, 1.28);
+        const lateFade = captureProgress <= 0.72 ? 1 : Math.max(0, 1 - ((captureProgress - 0.72) / 0.28) * 0.92);
+        const dotAlpha = isInsideShadow ? 0 : currentOpacity;
+        const warpedStar = applyBinaryRenderWarp(star.x, projectedRenderY, binaryVisual);
+        const finalOwnerCapture = captureTarget?.render?.sing?.finalMerged;
+        const ownedByFinalCapture = finalOwnerCapture && star.finalOrbitOwner === captureTarget.render.sing;
+        const finalCapture = finalOwnerCapture && !isInsideShadow && (captureProgress > 0.035 || ownedByFinalCapture);
+        if (finalCapture) {
+          const finalAlpha = currentOpacity * Math.max(ownedByFinalCapture ? 0.78 : 0.48, lateFade);
+
+          // Implosion visual boosts
+          let sizeMultiplier = 1.0;
+          let alphaMultiplier = 1.0;
+          if (star.implosionTimer !== undefined && star.implosionTimer < (star.implosionDuration ?? 25)) {
+            const implProgress = clamp01(star.implosionTimer / (star.implosionDuration ?? 25));
+            alphaMultiplier = 1.0 + implProgress * 1.5;
+            sizeMultiplier = 1.0 + implProgress * 0.6;
+          }
+
+          // Gravitational lensing warp: bends light around the event horizon to create Gargantua 3D depth
+          const ehRadius = captureTarget.render.ehRadius;
+          const distRatio = Math.max(0, 1 - captureTarget.renderDist / (ehRadius * 3.5));
+          const lensWarp = ehRadius * 0.68 * Math.pow(distRatio, 1.5);
+          const warpY = star.finalOrbitFront ? lensWarp : -lensWarp;
+
+          // Dynamically adjust colorBase based on the real-time warmth slider
+          const warmth = liveStarSettings.finalGalaxyWarmth ?? 0.76;
+          const seed = star.colorSeed ?? (star.colorSeed = Math.random());
+          const isWarm = seed < warmth;
+          const radiusRatio = captureTarget.renderDist / Math.max(1, ehRadius);
+          let colorBase;
+          if (radiusRatio < 2.0) {
+            colorBase = isWarm ? "245, 245, 255" : "210, 230, 255";
+          } else if (radiusRatio < 4.0) {
+            colorBase = isWarm
+              ? ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "255, 240, 200" : "255, 246, 224")
+              : ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "225, 240, 255" : "255, 255, 255");
+          } else {
+            colorBase = isWarm
+              ? ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "255, 170, 75" : "255, 202, 128")
+              : ((star.twinkleOffset * 17) % 1.0 < 0.5 ? "160, 200, 255" : "215, 235, 255");
+          }
+          star.colorBase = colorBase;
+
+          const starRender = {
+            x: warpedStar.x,
+            y: warpedStar.y + warpY,
+            prevX: star.lastRenderX,
+            prevY: star.lastRenderY,
+            size: Math.max(0.18, star.size * (1 - stretch * 0.1) * (star.finalOrbitFront ? 1.15 : 1.0) * sizeMultiplier),
+            colorBase: star.colorBase,
+            alpha: finalAlpha * (0.88 + Math.min(0.18, star.finalOrbitCapture ?? 0)) * (star.finalOrbitFront ? 1.25 : 1.0) * alphaMultiplier,
+            captureProgress: ownedByFinalCapture ? Math.max(captureProgress, 0.36) : captureProgress,
+            tangentX: star.finalOrbitTangentX ?? 1,
+            tangentY: star.finalOrbitTangentY ?? 0,
+          };
+          if (star.finalOrbitFront) {
+            terminalFrontStars.push(starRender);
+          } else {
+            terminalBackStars.push(starRender);
+          }
+        } else {
+          drawStarDot(warpedStar.x, warpedStar.y, Math.max(0.18, star.size * (1 - stretch * 0.18)), star.colorBase, dotAlpha);
+        }
+        star.lastRenderX = warpedStar.x;
+        star.lastRenderY = warpedStar.y;
+      }
+      // Improvement 5: Continuous star replenishment for the vortex and background
+      if (sing?.finalMerged && motionEnabled && stars.length < 1250 && Math.random() < 0.12) {
+        const layerIdx = Math.floor(Math.random() * 3);
+        const layerConfig = layers[layerIdx];
+        const newStar = createStar(layerConfig);
+        newStar.x = Math.random() < 0.5 ? -10 : canvas.width + 10;
+        stars.push(newStar);
       }
 
-      if (mouse.x !== null && cursorClusterCount > 0) {
+      terminalBackStars.forEach(star => drawOrbitStar(star, false));
+
+      drawBinaryBridge(binaryVisual, singularityRenders);
+      const mergedBinaryHorizonDrawn = drawBinaryMergedHorizon(binaryVisual, singularityRenders);
+
+      if (!mergedBinaryHorizonDrawn) {
+        for (const render of singularityRenders) {
+          drawSingularitySilhouette(render);
+        }
+      }
+
+      terminalFrontStars.forEach(star => drawOrbitStar(star, true));
+
+      const cursorNearShadow = mouse.x !== null && singularityRenders.some(render =>
+        Math.hypot(mouse.x - render.x, mouse.y - render.y) < render.ehRadius * 1.45
+      );
+
+      if (mouse.x !== null && cursorClusterCount > 0 && !cursorNearShadow) {
         const clusterRadius = Math.min(42, 8 + Math.sqrt(cursorClusterCount) * 4.5);
         const clusterAlpha = Math.min(0.16, 0.025 + cursorClusterCount * 0.008);
         const cursorGlow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, clusterRadius);
@@ -2828,8 +3781,12 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
       // Check collapse trigger (Only interacts with player-gathered stars)
       const isMobile = canvas.width < 768;
-      const collapseThreshold = isMobile ? 8 : 24;
-      if (motionEnabled && starsNearCursorCount >= collapseThreshold && mouse.x !== null) {
+      const isCreatingCompanion = Boolean(sing && !sing.companion && !sing.finalMerged);
+      const configuredCollapseStars = isCreatingCompanion
+        ? (liveStarSettings.secondCollapseStars ?? defaultStarSettings.secondCollapseStars)
+        : (liveStarSettings.firstCollapseStars ?? defaultStarSettings.firstCollapseStars);
+      const collapseThreshold = Math.max(3, Math.round(configuredCollapseStars * (isMobile ? 0.58 : 1)));
+      if (motionEnabled && mouse.x !== null && starsNearCursorCount >= collapseThreshold) {
         triggerCollapse(mouse.x, mouse.y);
       }
  
@@ -2876,6 +3833,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
      window.addEventListener("touchcancel", handleWindowTouchEnd, { passive: true });
  
      return () => {
+       forceFinalStageRef.current = null;
        window.removeEventListener("resize", resizeCanvas);
        window.removeEventListener("mousemove", handleWindowMouseMove);
        window.removeEventListener("mouseleave", handleWindowMouseLeave);
@@ -2901,10 +3859,11 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
   const canEditText = !isDemoMode && (editMode || textEditorOpen);
   const promiseBuilderOptions = reportData.positioningAngles?.length ? reportData.positioningAngles : promiseOptionsState;
-  const activeThemeColors = { ...defaultThemeColors, ...themeColors };
+  const activeThemeColors = deriveThemeColors(themeColors);
   const activeSingularityColors = { ...defaultSingularityColors, ...singularityColors };
   const activeSingularityStyle = { ...defaultSingularityStyle, ...singularityStyle };
   const activeLayoutSettings = { ...defaultLayoutSettings, ...layoutSettings };
+  const activeVisualSettings = { ...defaultVisualSettings, ...visualSettings };
 
   return (
     <main
@@ -3139,9 +4098,98 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
               </button>
             </div>
 
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "5px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
+              {[
+                ["web", "Web"],
+                ["before", "Before"],
+                ["after", "After"],
+                ["audio", "Audio"],
+              ].map(([value, label]) => {
+                const active = visualEditorTab === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setVisualEditorTab(value)}
+                    style={{
+                      border: `1px solid ${active ? activeThemeColors.gold : "rgba(255,255,255,0.1)"}`,
+                      background: active ? hexToRgba(activeThemeColors.gold, 0.16) : "rgba(255,255,255,0.035)",
+                      color: active ? activeThemeColors.ink : "rgba(255,255,255,0.68)",
+                      borderRadius: "6px",
+                      padding: "6px 4px",
+                      cursor: "pointer",
+                      fontSize: "0.58rem",
+                      fontWeight: 800,
+                      fontFamily: "IBM Plex Mono",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                forceFinalStageRef.current?.();
+                setVisualEditorTab("after");
+              }}
+              style={{
+                border: `1px solid ${hexToRgba(activeThemeColors.gold, 0.42)}`,
+                background: hexToRgba(activeThemeColors.gold, 0.12),
+                color: activeThemeColors.ink,
+                borderRadius: "6px",
+                padding: "8px 10px",
+                cursor: "pointer",
+                fontSize: "0.62rem",
+                fontWeight: 900,
+                fontFamily: "IBM Plex Mono",
+                letterSpacing: 0,
+                textTransform: "uppercase",
+              }}
+            >
+              Final Stage
+            </button>
+
+            {visualEditorTab === "web" && (
+              <>
             {/* Kolory motywu */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)" }}>Theme Colors:</span>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                {themePresets.map((preset) => {
+                  const presetTheme = deriveThemeColors(preset.colors);
+                  const isActive =
+                    presetTheme.bg.toLowerCase() === activeThemeColors.bg.toLowerCase()
+                    && presetTheme.gold.toLowerCase() === activeThemeColors.gold.toLowerCase()
+                    && presetTheme.ink.toLowerCase() === activeThemeColors.ink.toLowerCase();
+
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => applyThemePreset(preset.id)}
+                      style={{
+                        border: `1px solid ${isActive ? activeThemeColors.gold : "rgba(255,255,255,0.12)"}`,
+                        background: isActive ? hexToRgba(activeThemeColors.gold, 0.16) : "rgba(255,255,255,0.035)",
+                        color: isActive ? activeThemeColors.ink : "rgba(255,255,255,0.72)",
+                        borderRadius: "6px",
+                        padding: "7px 8px",
+                        cursor: "pointer",
+                        fontSize: "0.62rem",
+                        fontWeight: 800,
+                        fontFamily: "IBM Plex Mono",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
               
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Background:</span>
@@ -3164,31 +4212,11 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Signal Accent:</span>
+                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Primary Accent:</span>
                 <input
                   type="color"
                   value={activeThemeColors.gold}
                   onChange={(e) => updateThemeColor("gold", e.target.value)}
-                  style={{ border: "none", background: "none", cursor: "pointer", width: "28px", height: "24px" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Motion Accent:</span>
-                <input
-                  type="color"
-                  value={activeThemeColors.blue}
-                  onChange={(e) => updateThemeColor("blue", e.target.value)}
-                  style={{ border: "none", background: "none", cursor: "pointer", width: "28px", height: "24px" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Progress Glow:</span>
-                <input
-                  type="color"
-                  value={activeThemeColors.teal}
-                  onChange={(e) => updateThemeColor("teal", e.target.value)}
                   style={{ border: "none", background: "none", cursor: "pointer", width: "28px", height: "24px" }}
                 />
               </div>
@@ -3203,24 +4231,38 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
                 />
               </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Glass Border:</span>
-                <input
-                  type="color"
-                  value={activeThemeColors.cardBorder}
-                  onChange={(e) => updateThemeColor("cardBorder", e.target.value)}
-                  style={{ border: "none", background: "none", cursor: "pointer", width: "28px", height: "24px" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Glass Glow:</span>
-                <input
-                  type="color"
-                  value={activeThemeColors.cardGlow}
-                  onChange={(e) => updateThemeColor("cardGlow", e.target.value)}
-                  style={{ border: "none", background: "none", cursor: "pointer", width: "28px", height: "24px" }}
-                />
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Visual Add-ons:</span>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "5px" }}>
+                  {[
+                    ["off", "Off"],
+                    ["minimal", "Minimal"],
+                    ["rich", "Rich"],
+                  ].map(([value, label]) => {
+                    const active = activeVisualSettings.addOns === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => updateVisualSetting("addOns", value)}
+                        style={{
+                          border: `1px solid ${active ? activeThemeColors.gold : "rgba(255,255,255,0.1)"}`,
+                          background: active ? hexToRgba(activeThemeColors.gold, 0.16) : "rgba(255,255,255,0.035)",
+                          color: active ? activeThemeColors.ink : "rgba(255,255,255,0.68)",
+                          borderRadius: "6px",
+                          padding: "6px 4px",
+                          cursor: "pointer",
+                          fontSize: "0.58rem",
+                          fontWeight: 800,
+                          fontFamily: "IBM Plex Mono",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -3251,13 +4293,17 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
               ))}
             </div>
 
+              </>
+            )}
+
+            {visualEditorTab === "before" && (
+              <>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)" }}>Black Hole Colors:</span>
               {[
                 ["accretionRing", "Accretion Ring"],
                 ["glowInner", "Inner Glow"],
                 ["glowOuter", "Outer Glow"],
-                ["lensingRing", "Lensing Ring"],
               ].map(([key, label]) => (
                 <div key={key} style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: "6px", alignItems: "center" }}>
                   <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>{label}:</span>
@@ -3290,10 +4336,9 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
               {[
                 ["accretionWidth", "Accretion Width", 0.5, 8, 0.1, "px"],
-                ["accretionSoftness", "Ring Softness", 0, 2, 0.05, ""],
-                ["lensingWidth", "Lensing Width", 0.2, 4, 0.1, "px"],
-                ["lensingIntensity", "Lensing Intensity", 0, 1.5, 0.05, ""],
                 ["glowIntensity", "Glow Intensity", 0, 2, 0.05, ""],
+                ["pulseIntensity", "Pulsation Intensity", 0, 1, 0.05, ""],
+                ["nebulaIntensity", "Space Cloud Intensity", 0, 2, 0.05, ""],
               ].map(([key, label, min, max, step, suffix]) => (
                 <div key={key} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -3406,10 +4451,41 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
                 />
               </div>
 
+              {[
+                ["firstCollapseStars", "First Collapse Stars", 10, 70, 1, " stars"],
+                ["secondCollapseStars", "Second Collapse Stars", 10, 80, 1, " stars"],
+                ["blackHoleGravityReach", "Gravity Reach", 0.45, 1.25, 0.05, "x"],
+                ["mergerPace", "Merger Pace", 0.2, 1.4, 0.05, "x"],
+                ["mergerPull", "Merger Pull", 0.4, 1.8, 0.05, "x"],
+              ].map(([key, label, min, max, step, suffix]) => {
+                const isInteger = key === "firstCollapseStars" || key === "secondCollapseStars";
+                const value = starSettings[key] ?? defaultStarSettings[key];
+                const displayValue = isInteger ? Math.round(value) : Number(value).toFixed(2).replace(/\.?0+$/, "");
+                return (
+                  <div key={key} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>{label}:</span>
+                      <span style={{ fontSize: "0.7rem", color: "#fff" }}>{displayValue}{suffix}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={value}
+                      onChange={(e) => updateStarSetting(key, isInteger ? parseInt(e.target.value) : parseFloat(e.target.value))}
+                      style={{ width: "100%", accentColor: activeThemeColors.gold }}
+                    />
+                  </div>
+                );
+              })}
+
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Black Hole Gravity Pull:</span>
-                  <span style={{ fontSize: "0.7rem", color: "#fff" }}>{starSettings.blackHoleGravity !== undefined ? starSettings.blackHoleGravity : 0.45}</span>
+                  <span style={{ fontSize: "0.7rem", color: "#fff" }}>
+                    {Number(starSettings.blackHoleGravity ?? defaultStarSettings.blackHoleGravity).toFixed(2).replace(/\.?0+$/, "")}
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -3423,388 +4499,109 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
               </div>
             </div>
 
-            {/* Audio Volume Controls */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)" }}>Audio Levels (Volume):</span>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Ambient Layer:</span>
-                <select
-                  value={ambientLayer}
-                  onChange={(e) => setAmbientLayer(e.target.value)}
-                  style={{ background: "#111", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "4px", fontSize: "0.65rem", padding: "4px 6px", width: "100%" }}
-                >
-                  <option value="">No ambient layer</option>
-                  <option value="procedural">Procedural deep-space drone</option>
-                  {soundLibrary.map((sound) => (
-                    <option key={`ambient-${sound.name}`} value={sound.name}>{sound.name}</option>
-                  ))}
-                </select>
-              </div>
+              </>
+            )}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>SFX Volume:</span>
-                  <span style={{ fontSize: "0.7rem", color: "#fff" }}>{(sfxVolume * 100).toFixed(0)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0.0"
-                  max="1.0"
-                  step="0.05"
-                  value={sfxVolume}
-                  onChange={(e) => setSfxVolume(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: activeThemeColors.gold }}
-                />
-              </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Ambient Volume:</span>
-                  <span style={{ fontSize: "0.7rem", color: "#fff" }}>{(musicVolume / 0.2 * 100).toFixed(0)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0.0"
-                  max="0.2"
-                  step="0.005"
-                  value={musicVolume}
-                  onChange={(e) => setMusicVolume(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: activeThemeColors.gold }}
-                />
-              </div>
-            </div>
-
-            {/* SFX Mapper */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)" }}>SFX Mapper:</span>
-
-              {[
-                { key: "select", label: "Interface Click / Select" },
-                { key: "burst", label: "Star Absorbed / Feed" },
-                { key: "unlock", label: "Singularity Spawn / Collapse" },
-                { key: "impact", label: "Singularity Shockwave / Impact" },
-                { key: "hover", label: "Hover / Tile Focus" },
-              ].map(({ key: evt, label: eventLabel }) => {
-                const setting = sfxSettings[evt] ?? defaultSfxSettings[evt];
-                return (
-                  <div key={evt} style={{ display: "flex", flexDirection: "column", gap: "7px", background: "rgba(255,255,255,0.02)", padding: "8px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)", marginBottom: "6px" }}>
-                    <span style={{ fontSize: "0.7rem", fontWeight: "bold", textTransform: "uppercase", color: activeThemeColors.blue }}>{eventLabel}</span>
-
-                    <select
-                      value={setting.soundName}
-                      onChange={(e) => {
-                        const soundName = e.target.value;
-                        setSfxSettings(prev => {
-                          const next = {
-                            ...prev,
-                            [evt]: {
-                              ...(prev[evt] ?? defaultSfxSettings[evt]),
-                              soundName,
-                            },
-                          };
-                          localStorage.setItem("indievaders_sfx_settings", JSON.stringify(next));
-                          return next;
-                        });
-                      }}
-                      style={{ background: "#111", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "4px", fontSize: "0.65rem", padding: "4px 6px", width: "100%" }}
-                    >
-                      <option value="">No sound</option>
-                      {evt === "burst" && (
-                        <option value="__piano_cascade">Piano cascade / rising tones</option>
-                      )}
-                      {soundLibrary.map((sound) => (
-                        <option key={`${evt}-${sound.name}`} value={sound.name}>{sound.name}</option>
-                      ))}
-                    </select>
-
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px" }}>
-                      <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.6)" }}>Volume</span>
-                      <span style={{ fontSize: "0.65rem", color: "#fff" }}>{Math.round((setting.volume ?? 1) * 100)}%</span>
+            {visualEditorTab === "after" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
+                <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)" }}>Galaxy After:</span>
+                {[
+                  ["finalGalaxySeedCount", "Orbiting Stars", 80, 520, 10, ""],
+                  ["finalGalaxyReach", "Final Gravity Reach", 0.7, 2.2, 0.05, ""],
+                  ["finalGalaxyWarmth", "Golden Star Mix", 0, 1, 0.05, ""],
+                ].map(([key, label, min, max, step, suffix]) => (
+                  <div key={key} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>{label}:</span>
+                      <span style={{ fontSize: "0.7rem", color: "#fff" }}>
+                        {key === "finalGalaxyWarmth"
+                          ? `${Math.round((starSettings[key] ?? defaultStarSettings[key]) * 100)}%`
+                          : `${key === "finalGalaxySeedCount"
+                            ? Math.round(starSettings[key] ?? defaultStarSettings[key])
+                            : Number(starSettings[key] ?? defaultStarSettings[key]).toFixed(2).replace(/\.?0+$/, "")}${suffix}`}
+                      </span>
                     </div>
                     <input
                       type="range"
-                      min="0"
-                      max="1"
-                      step="0.05"
-                      value={setting.volume ?? 1}
-                      onChange={(e) => {
-                        const volume = parseFloat(e.target.value);
-                        setSfxSettings(prev => {
-                          const next = {
-                            ...prev,
-                            [evt]: {
-                              ...(prev[evt] ?? defaultSfxSettings[evt]),
-                              volume,
-                            },
-                          };
-                          localStorage.setItem("indievaders_sfx_settings", JSON.stringify(next));
-                          return next;
-                        });
-                      }}
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={starSettings[key] ?? defaultStarSettings[key]}
+                      onChange={(e) => updateStarSetting(key, key === "finalGalaxySeedCount" ? parseInt(e.target.value) : parseFloat(e.target.value))}
                       style={{ width: "100%", accentColor: activeThemeColors.gold }}
                     />
+                  </div>
+                ))}
+              </div>
+            )}
 
+            {visualEditorTab === "audio" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
+                <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)" }}>Audio:</span>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>Ambient Layer:</span>
+                  <select
+                    value={ambientLayer}
+                    onChange={(e) => setAmbientLayer(e.target.value)}
+                    style={{ background: "#111", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "4px", fontSize: "0.65rem", padding: "4px 6px", width: "100%" }}
+                  >
+                    <option value="">No ambient layer</option>
+                    <option value="procedural">Procedural deep-space drone</option>
+                  </select>
+                </div>
+
+                {[
+                  ["sfx", "SFX Volume", sfxVolume, 0, 1, 0.05, setSfxVolume],
+                  ["ambient", "Ambient Volume", musicVolume, 0, 0.2, 0.005, setMusicVolume],
+                ].map(([key, label, value, min, max, step, setter]) => (
+                  <div key={key} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.6)" }}>{label}:</span>
+                      <span style={{ fontSize: "0.7rem", color: "#fff" }}>{key === "ambient" ? `${Math.round((value / 0.2) * 100)}%` : `${Math.round(value * 100)}%`}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={min}
+                      max={max}
+                      step={step}
+                      value={value}
+                      onChange={(e) => setter(parseFloat(e.target.value))}
+                      style={{ width: "100%", accentColor: activeThemeColors.gold }}
+                    />
+                  </div>
+                ))}
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
+                  {[
+                    ["select", "Select"],
+                    ["burst", "Burst"],
+                    ["unlock", "Spawn"],
+                    ["impact", "Impact"],
+                  ].map(([eventName, label]) => (
                     <button
-                      onClick={() => playCustomSfx(evt)}
+                      key={eventName}
+                      type="button"
+                      onClick={() => playCustomSfx(eventName)}
                       style={{
                         background: "rgba(255,255,255,0.06)",
                         border: "1px solid rgba(255,255,255,0.1)",
                         borderRadius: "4px",
                         color: "#fff",
                         fontSize: "0.6rem",
-                        padding: "4px 8px",
+                        fontWeight: 800,
+                        padding: "6px 8px",
                         cursor: "pointer",
-                        alignSelf: "flex-end"
+                        fontFamily: "IBM Plex Mono",
+                        textTransform: "uppercase",
                       }}
                     >
-                      Test SFX
+                      Test {label}
                     </button>
-                  </div>
-                );
-              })}
-
-              {/* Sound Library Manager */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px", marginTop: "4px" }}>
-                <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: "rgba(255,255,255,0.8)", textTransform: "uppercase" }}>Sound Library:</span>
-                <div
-                  onDragEnter={(e) => {
-                    e.preventDefault();
-                    setSoundDropActive(true);
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setSoundDropActive(true);
-                  }}
-                  onDragLeave={() => setSoundDropActive(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setSoundDropActive(false);
-                    addSoundFilesToLibrary(e.dataTransfer.files);
-                  }}
-                  style={{
-                    display: "grid",
-                    placeItems: "center",
-                    minHeight: "54px",
-                    border: `1px dashed ${soundDropActive ? activeThemeColors.gold : "rgba(255,255,255,0.18)"}`,
-                    borderRadius: "8px",
-                    background: soundDropActive ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.025)",
-                    color: "rgba(255,255,255,0.7)",
-                    fontSize: "0.65rem",
-                    textAlign: "center",
-                    padding: "8px",
-                  }}
-                >
-                  Drop audio files here or use the picker below
-                </div>
-                <button
-                  onClick={importPianoSeries}
-                  disabled={pianoImporting}
-                  style={{
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.14)",
-                    borderRadius: "6px",
-                    color: "rgba(255,255,255,0.86)",
-                    cursor: pianoImporting ? "wait" : "pointer",
-                    fontSize: "0.62rem",
-                    fontWeight: "800",
-                    padding: "7px 9px",
-                    textAlign: "left",
-                  }}
-                  type="button"
-                >
-                  {pianoImporting ? "Importing Piano Series..." : "Import Piano Series for Star Feed"}
-                </button>
-                {soundLibraryNotice && (
-                  <span style={{ fontSize: "0.62rem", color: soundLibraryNotice.includes("failed") ? "#ffb3a9" : "rgba(255,255,255,0.64)", lineHeight: 1.35 }}>
-                    {soundLibraryNotice}
-                  </span>
-                )}
-                <input
-                  type="file"
-                  accept="audio/*"
-                  multiple
-                  onChange={(e) => {
-                    addSoundFilesToLibrary(e.target.files);
-                    e.target.value = "";
-                  }}
-                  style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.8)", marginBottom: "4px" }}
-                />
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px", maxHeight: "120px", overflowY: "auto", background: "rgba(0,0,0,0.2)", padding: "6px", borderRadius: "6px" }}>
-                  {soundLibrary.map((sound) => (
-                    <div key={sound.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px", fontSize: "0.65rem", color: "rgba(255,255,255,0.8)" }}>
-                      <span style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "205px" }} title={sound.name}>{sound.name}</span>
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", flex: "0 0 auto" }}>
-                        <button
-                          aria-label={`Preview ${sound.name}`}
-                          onClick={() => previewSound(sound.url)}
-                          style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "22px", height: "22px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.16)", borderRadius: "999px", color: activeThemeColors.gold, cursor: "pointer" }}
-                          title="Preview sound"
-                          type="button"
-                        >
-                          <Play size={10} fill="currentColor" aria-hidden="true" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setAmbientLayer((prev) => (prev === sound.name ? "procedural" : prev));
-                            setSoundLibrary(prev => {
-                              const next = prev.filter(item => item.name !== sound.name);
-                              return next.length > 0 ? next : defaultSoundLibrary;
-                            });
-                            setSfxSettings(prev => {
-                              const next = Object.fromEntries(
-                                Object.entries(prev).map(([evt, item]) => [
-                                  evt,
-                                  item.soundName === sound.name
-                                    ? { ...(defaultSfxSettings[evt] ?? defaultSfxSettings.select) }
-                                    : item,
-                                ]),
-                              );
-                              localStorage.setItem("indievaders_sfx_settings", JSON.stringify(next));
-                              return next;
-                            });
-                          }}
-                          style={{ background: "none", border: "none", color: "#ff8888", cursor: "pointer", fontSize: "0.6rem", fontWeight: "bold" }}
-                          type="button"
-                        >
-                          [Delete]
-                        </button>
-                      </div>
-                    </div>
                   ))}
                 </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px", background: "rgba(0,0,0,0.25)", padding: "8px", borderRadius: "4px", marginTop: "4px" }}>
-                  <span style={{ fontSize: "0.6rem", fontWeight: "bold", color: "rgba(255,255,255,0.7)" }}>Browse Ocular Collection:</span>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", fontSize: "0.6rem", color: activeThemeColors.blue, borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: "4px", marginBottom: "4px" }}>
-                    <button
-                      onClick={() => {
-                        setCurrentLocalPath("");
-                        setSelectedLocalSound("");
-                      }}
-                      style={{ background: "none", border: 0, color: activeThemeColors.blue, cursor: "pointer", padding: 0, textDecoration: "underline" }}
-                      type="button"
-                    >
-                      Root
-                    </button>
-                    {currentLocalPath.split('/').filter(Boolean).map((part, pIdx, arr) => {
-                      const subPath = arr.slice(0, pIdx + 1).join('/');
-                      return (
-                        <span key={subPath}>
-                          <span> &gt; </span>
-                          <button
-                            onClick={() => {
-                              setCurrentLocalPath(subPath);
-                              setSelectedLocalSound("");
-                            }}
-                            style={{ background: "none", border: 0, color: activeThemeColors.blue, cursor: "pointer", padding: 0, textDecoration: "underline" }}
-                            type="button"
-                          >
-                            {part}
-                          </button>
-                        </span>
-                      );
-                    })}
-                  </div>
-
-                  {localBrowsingLoading ? (
-                    <span style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.4)" }}>Loading...</span>
-                  ) : localBrowsingError ? (
-                    <span style={{ fontSize: "0.6rem", color: "#ff8888" }}>{localBrowsingError}</span>
-                  ) : (
-                    <>
-                      {localDirEntries.some(e => e.isDir) && (
-                        <select
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            if (val) {
-                              setCurrentLocalPath(prev => prev ? `${prev}/${val}` : val);
-                              setSelectedLocalSound("");
-                            }
-                          }}
-                          value=""
-                          style={{ background: "#111", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "4px", fontSize: "0.65rem", padding: "3px" }}
-                        >
-                          <option value="">-- Go to subfolder --</option>
-                          {localDirEntries.filter(e => e.isDir).map(e => (
-                            <option key={e.name} value={e.name}>{e.name}</option>
-                          ))}
-                        </select>
-                      )}
-                      <select
-                        value={selectedLocalSound}
-                        onChange={(e) => setSelectedLocalSound(e.target.value)}
-                        style={{ background: "#111", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "4px", fontSize: "0.65rem", padding: "3px" }}
-                      >
-                        <option value="">-- Choose sound to add --</option>
-                        {localDirEntries.filter(e => !e.isDir).map(e => {
-                          const relFilePath = currentLocalPath ? `${currentLocalPath}/${e.name}` : e.name;
-                          return (
-                            <option key={e.name} value={relFilePath}>{e.name}</option>
-                          );
-                        })}
-                      </select>
-                    </>
-                  )}
-
-                  {selectedLocalSound && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                      <button
-                        onClick={() => previewSound(`/api/sfx-file?file=${encodeURIComponent(selectedLocalSound)}`)}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          background: "rgba(255,255,255,0.06)",
-                          border: "1px solid rgba(255,255,255,0.16)",
-                          borderRadius: "4px",
-                          color: activeThemeColors.gold,
-                          fontSize: "0.6rem",
-                          fontWeight: "bold",
-                          padding: "5px 8px",
-                          cursor: "pointer",
-                        }}
-                        type="button"
-                      >
-                        <Play size={10} fill="currentColor" aria-hidden="true" />
-                        Preview
-                      </button>
-                      <button
-                        onClick={async () => {
-                          try {
-                            const response = await fetch(`/api/sfx-copy?file=${encodeURIComponent(selectedLocalSound)}`);
-                            if (!response.ok) throw new Error("Copy failed");
-                            const data = await response.json();
-                            if (data.success) {
-                              setSoundLibrary(prev => prev.some(sound => sound.name === data.name)
-                                ? prev
-                                : [...prev, { name: data.name, url: data.url }]);
-                              setSelectedLocalSound("");
-                            }
-                          } catch (err) {
-                            alert(`Error copying sound: ${err.message}`);
-                          }
-                        }}
-                        style={{
-                          background: activeThemeColors.gold,
-                          border: "none",
-                          borderRadius: "4px",
-                          color: "#060910",
-                          fontSize: "0.6rem",
-                          fontWeight: "bold",
-                          padding: "5px 8px",
-                          cursor: "pointer",
-                        }}
-                        type="button"
-                      >
-                        Add to Page Library
-                      </button>
-                    </div>
-                  )}
-                </div>
               </div>
-            </div>
+            )}
 
             {/* Metadane */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
@@ -3930,21 +4727,12 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
                     setRivalCategoriesState(rivalCategories);
                     setPromiseOptionsState(promiseOptions);
                     setThemeColors(defaultThemeColors);
+                    setVisualSettings(defaultVisualSettings);
                     setTextStyles({});
                     setLayoutSettings(defaultLayoutSettings);
                     setSingularityColors(defaultSingularityColors);
                     setSingularityStyle(defaultSingularityStyle);
-                    setStarSettings({
-                      layer0Count: 150,
-                      layer1Count: 100,
-                      layer2Count: 50,
-                      cursorGravity: 0.38,
-                      baseDriftSpeed: 0.15,
-                      twinkleSpeed: 0.3,
-                      blackHoleGrowthRate: 2.5,
-                    });
-                    setSfxSettings(defaultSfxSettings);
-                    setSoundLibrary(defaultSoundLibrary);
+                    setStarSettings(defaultStarSettings);
                     setAmbientLayer("procedural");
                     setMusicEnabled(false);
                     setSelectedTextId(null);
@@ -4266,7 +5054,7 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
       )}
 
 
-      <header className="story-header" style={{ borderBottomColor: "rgba(255,255,255,0.06)" }}>
+      <header className="story-header">
         <a href="#client-report/refractured">{projectName}</a>
         <span style={{ color: "rgba(255,255,255,0.4)" }}>{projectName} Unified Report Experience</span>
       </header>
@@ -4280,9 +5068,19 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
       {/* Redesigned Centered Hero Section */}
       <section className="story-hero">
-        <div className="story-hero-icon-wrapper" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)", color: activeThemeColors.gold }}>
-          <Sparkles size={20} />
-        </div>
+        {activeVisualSettings.addOns !== "off" && (
+          <div
+            className="story-hero-icon-wrapper"
+            style={{
+              borderColor: hexToRgba(activeThemeColors.gold, activeVisualSettings.addOns === "rich" ? 0.34 : 0.16),
+              background: activeVisualSettings.addOns === "rich" ? hexToRgba(activeThemeColors.gold, 0.08) : "rgba(255,255,255,0.02)",
+              color: activeThemeColors.gold,
+              boxShadow: activeVisualSettings.addOns === "rich" ? `0 0 22px ${hexToRgba(activeThemeColors.gold, 0.22)}` : "none",
+            }}
+          >
+            <Sparkles size={20} />
+          </div>
+        )}
       <p className="story-label">
         <EditableText
           id="hero-label"
@@ -4319,7 +5117,17 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
           onSave={(val) => saveHeroData("desc", val)}
         />
       </p>
-        <a className="story-primary-link" href="#story-read" style={{ borderColor: "rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.03)" }}>
+        <a
+          className="story-primary-link"
+          href="#story-read"
+          onClick={(event) => {
+            const target = document.getElementById("story-read");
+            if (!target) return;
+            event.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          style={{ borderColor: "rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.03)" }}
+        >
           Start the report <ArrowRight aria-hidden="true" size={18} />
         </a>
       </section>

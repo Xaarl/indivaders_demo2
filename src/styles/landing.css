@@ -2907,35 +2907,44 @@ button {
 
 /* Alien signals / Invaders */
 .landing-page-v2 .alien-signal {
-  color: var(--landing-gold) !important;
-  filter: drop-shadow(0 0 8px rgba(115, 228, 206, 0.5)) !important;
-  opacity: 0.8;
+  color: rgba(232, 241, 238, 0.9) !important;
+  filter: drop-shadow(0 0 8px rgba(255, 214, 157, 0.32)) !important;
+  opacity: 0.76;
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
 .landing-page-v2 .alien-signal:hover,
 .landing-page-v2 .alien-signal.is-dragging {
   opacity: 1;
-  filter: drop-shadow(0 0 16px var(--landing-gold)) !important;
+  filter: drop-shadow(0 0 18px rgba(255, 238, 210, 0.72)) !important;
 }
 
-/* Make pixel aliens monochromatic (shades of teal) */
+/* Keep V2 invaders monochrome so the report remains the only black-hole surface. */
 .landing-page-v2 .pixel-alien i {
-  background: var(--landing-gold) !important;
+  background: currentColor !important;
 }
 
-/* Black Hole */
+/* Landing V2 keeps the invaders but removes the black-hole visual. */
 .landing-page-v2 .black-hole {
-  background: #000000 !important;
-  border: 1px solid rgba(115, 228, 206, 0.2) !important;
-  box-shadow: 
-    0 0 60px rgba(115, 228, 206, 0.15),
-    inset 0 0 30px rgba(115, 228, 206, 0.1) !important;
+  opacity: 0 !important;
+  pointer-events: none;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
+.landing-page-v2 .black-hole::before,
+.landing-page-v2 .black-hole::after,
 .landing-page-v2 .black-hole span {
-  border-color: var(--landing-gold) !important;
-  opacity: 0.25 !important;
+  display: none !important;
+}
+
+.landing-page-v2 .signal-radar {
+  display: none;
+}
+
+.landing-page-v2 .hero-flashlight {
+  opacity: 0.22;
 }
 
 /* Control Panel */

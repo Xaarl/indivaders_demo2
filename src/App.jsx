@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import GlobalNavbar from './components/GlobalNavbar.jsx';
 import LandingPage from './components/LandingPage.jsx';
-import LandingPageV2 from './components/LandingPageV2.jsx';
-import EarlyReportIntakePage from './components/report-workspace/EarlyReportIntakePage.jsx';
-import ProjectWorkspacePage from './components/report-workspace/ProjectWorkspacePage.jsx';
-import InteractiveReportPage from './components/interactive-report/InteractiveReportPage.jsx';
-import GuidedStoryReport from './components/refractured-report/GuidedStoryReport.jsx';
-import RefracturedAnimationSandbox from './components/refractured-report/story-prototype/RefracturedAnimationSandbox.jsx';
+
+const LandingPageV2 = lazy(() => import('./components/LandingPageV2.jsx'));
+const EarlyReportIntakePage = lazy(() => import('./components/report-workspace/EarlyReportIntakePage.jsx'));
+const ProjectWorkspacePage = lazy(() => import('./components/report-workspace/ProjectWorkspacePage.jsx'));
+const InteractiveReportPage = lazy(() => import('./components/interactive-report/InteractiveReportPage.jsx'));
+const GuidedStoryReport = lazy(() => import('./components/refractured-report/GuidedStoryReport.jsx'));
+const RefracturedAnimationSandbox = lazy(() => import('./components/refractured-report/story-prototype/RefracturedAnimationSandbox.jsx'));
+
+function PageFallback() {
+  return <div className="app-loading-shell" aria-live="polite">Loading...</div>;
+}
 
 function getRouteFromHash() {
   const hash = window.location.hash.split('?')[0];
@@ -113,7 +118,9 @@ function App() {
   return (
     <>
       {showNavbar && <GlobalNavbar />}
-      {renderPage()}
+      <Suspense fallback={<PageFallback />}>
+        {renderPage()}
+      </Suspense>
     </>
   );
 }

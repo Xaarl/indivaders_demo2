@@ -44,10 +44,11 @@ function collectFilters(comparables) {
 }
 
 function marketFitScore(item) {
-  if (item && typeof item.simulatedMarketFitScore === "number") {
+  if (!item) return 0;
+  if (typeof item.simulatedMarketFitScore === "number") {
     return item.simulatedMarketFitScore;
   }
-  if (roleFitScores[item.role]) {
+  if (item.role && roleFitScores[item.role]) {
     return roleFitScores[item.role];
   }
 
