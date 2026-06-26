@@ -52,16 +52,7 @@ function getRouteFromHash() {
 }
 
 function isPublicDemoRuntime() {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  return (
-    import.meta.env.VITE_PUBLIC_DEMO === 'true'
-    || window.location.hostname.includes('indievaders-demo')
-    || window.location.search.includes('demo=true')
-    || window.location.hash.includes('demo=true')
-  );
+  return true;
 }
 
 function App() {

@@ -157,14 +157,14 @@ const rivalCategories = [
 ];
 
 const defaultSoundLibrary = [
-  { name: "pixel-select.wav", url: "/sfx/pixel-select.wav" },
-  { name: "pixel-burst.wav", url: "/sfx/pixel-burst.wav" },
-  { name: "pixel-unlock.wav", url: "/sfx/pixel-unlock.wav" },
-  { name: "DSGNBoom_BOOM-Distant_Ocular_Foundation.wav", url: "/sfx/DSGNBoom_BOOM-Distant_Ocular_Foundation.wav" },
-  { name: "DSGNBoom_BOOM-Quake_Ocular_Foundation.wav", url: "/sfx/DSGNBoom_BOOM-Quake_Ocular_Foundation.wav" },
-  { name: "DSGNWhsh_WHOOSH-Two Steps_Ocular_Foundation.wav", url: "/sfx/DSGNWhsh_WHOOSH-Two Steps_Ocular_Foundation.wav" },
-  { name: "DSGNImpt_IMPACT-Time for Change_Ocular_Foundation.wav", url: "/sfx/DSGNImpt_IMPACT-Time for Change_Ocular_Foundation.wav" },
-  { name: "DSGNImpt_IMPACT-Not What You Think_Ocular_Foundation.wav", url: "/sfx/DSGNImpt_IMPACT-Not What You Think_Ocular_Foundation.wav" },
+  { name: "pixel-select.wav", url: "sfx/pixel-select.wav" },
+  { name: "pixel-burst.wav", url: "sfx/pixel-burst.wav" },
+  { name: "pixel-unlock.wav", url: "sfx/pixel-unlock.wav" },
+  { name: "DSGNBoom_BOOM-Distant_Ocular_Foundation.wav", url: "sfx/DSGNBoom_BOOM-Distant_Ocular_Foundation.wav" },
+  { name: "DSGNBoom_BOOM-Quake_Ocular_Foundation.wav", url: "sfx/DSGNBoom_BOOM-Quake_Ocular_Foundation.wav" },
+  { name: "DSGNWhsh_WHOOSH-Two Steps_Ocular_Foundation.wav", url: "sfx/DSGNWhsh_WHOOSH-Two Steps_Ocular_Foundation.wav" },
+  { name: "DSGNImpt_IMPACT-Time for Change_Ocular_Foundation.wav", url: "sfx/DSGNImpt_IMPACT-Time for Change_Ocular_Foundation.wav" },
+  { name: "DSGNImpt_IMPACT-Not What You Think_Ocular_Foundation.wav", url: "sfx/DSGNImpt_IMPACT-Not What You Think_Ocular_Foundation.wav" },
 ];
 
 const defaultSfxSettings = {
