@@ -3571,7 +3571,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
 
           if (dist < 200) {
             let cursorGrip = 1.0;
-            let nearestBH = null;
 
             if (gravitySources.length > 0) {
               let nearestSource = null;
@@ -3584,7 +3583,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
                 }
               }
               if (nearestSource) {
-                nearestBH = nearestSource;
                 const distToBH = minDist;
                 
                  // Bug 1: cursor grip is scaled by baseGrip — BH always wins near EH
@@ -3609,14 +3607,6 @@ export default function GuidedStoryReport({ report = refracturedPremiumReport, f
               const safeDist = Math.max(1, dist);
               star.x += (dx / safeDist) * pull * star.pullFactor * cursorGrip;
               star.y += (dy / safeDist) * pull * star.pullFactor * cursorGrip;
-
-              // If grip is slipping, pull star towards the event horizon in a smooth stream
-              if (cursorGrip < 1.0 && nearestBH) {
-                const bhAngle = Math.atan2(nearestBH.y - currentY, nearestBH.x - star.x);
-                const streamSpeed = (1 - cursorGrip) * 4.5;
-                star.x += Math.cos(bhAngle) * streamSpeed;
-                star.y += Math.sin(bhAngle) * streamSpeed;
-              }
             }
 
             if (dist < 28 && canCreateCollapseAtCursor && cursorGrip > 0.5) {
